@@ -18,10 +18,39 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'nip',
         'name',
-        'email',
         'password',
+        'jabatan_id',
+        'unitkerja_id',
+        'role_id',
+        'last_login',
     ];
+
+    // Relasi ke model Jabatan
+    public function jabatan()
+    {
+        return $this->belongsTo(JabatanModel::class);
+    }
+
+    // Relasi ke model UnitKerja
+    public function unitkerja()
+    {
+        return $this->belongsTo(UnitKerjaModel::class);
+    }
+
+    // Relasi ke model Role
+    public function role()
+    {
+        return $this->belongsTo(RoleModel::class);
+    }
+
+    // Agar user bisa mengakses Filament Admin Panel
+    public function canAccessFilament(): bool
+    {
+        // Contoh: return $this->role_id === 1; 
+        return true; // Sementara return true agar semua user di tabel bisa login
+    }
 
     /**
      * The attributes that should be hidden for serialization.
