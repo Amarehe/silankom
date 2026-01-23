@@ -20,7 +20,7 @@ class UnitKerjaResource extends Resource
 {
     protected static ?string $model = UnitKerjaModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice;
 
     protected static ?string $recordTitleAttribute = 'Unit Kerja';
 

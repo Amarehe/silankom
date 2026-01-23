@@ -46,9 +46,9 @@ class RoleUsersTable
                             ->icon('heroicon-o-x-circle')
                     ),
 
-            DeleteAction::make()
+                DeleteAction::make()
                     ->modalHeading('Hapus Data Role User')
-                    ->button(), 
+                    ->button(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

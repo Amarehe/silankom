@@ -19,7 +19,7 @@ class ListJabatans extends ListRecords
             CreateAction::make()
                 ->button()
                 ->icon('heroicon-o-plus')
-                ->color('info')
+                ->color('cyan')
                 ->label('Tambah Data') // Opsional: Mengganti label tombol
                 ->modalHeading('Tambah Jabatan Baru') // Opsional: Judul Modal
                 ->modalWidth('xl') // Pilihan: 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl', '6xl', '7xl', 'full'
