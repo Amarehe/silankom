@@ -36,7 +36,7 @@ class ListJabatans extends ListRecords
                 // 2. Kustomisasi Tombol "Cancel" (Batal)
                 ->modalCancelAction(
                     fn(Action $action) =>
-                    $action->label('Batalkan')    // Ganti Tulisan
+                    $action->label('Batal')    // Ganti Tulisan
                         ->color('danger') 
                         ->icon(Heroicon::XCircle)
                         
