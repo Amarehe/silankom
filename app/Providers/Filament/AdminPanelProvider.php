@@ -7,9 +7,13 @@ use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use App\Filament\Pages\Auth\Login;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
+use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Blade;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -57,5 +61,10 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+            
+            // ->renderHook(
+            //     // PanelsRenderHook::BODY_END,
+            //     // fn() => view('sweetalert::alert')
+            // );
     }
 }
