@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
+use Database\Seeders\MerekSeeder;
 use Database\Seeders\JabatanSeeder;
 use Database\Seeders\UnitKerjaSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -26,6 +27,6 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        $this->call([RoleSeeder::class, JabatanSeeder::class, UnitKerjaSeeder::class, UserSeeder::class]);
+        $this->call([RoleSeeder::class, JabatanSeeder::class, UnitKerjaSeeder::class, MerekSeeder::class, UserSeeder::class]);
     }
 }
