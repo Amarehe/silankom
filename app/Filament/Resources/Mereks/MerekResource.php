@@ -20,7 +20,7 @@ class MerekResource extends Resource
 {
     protected static ?string $model = MerekModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::Briefcase;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Star;
 
     protected static ?string $recordTitleAttribute = 'Merek';
 
