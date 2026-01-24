@@ -20,7 +20,7 @@ class JabatanResource extends Resource
 {
     protected static ?string $model = JabatanModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::Identification;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Briefcase;
 
     protected static ?string $recordTitleAttribute = 'Jabatan';
 
