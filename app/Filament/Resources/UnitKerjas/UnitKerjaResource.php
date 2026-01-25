@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\UnitKerjas;
 
-use App\Filament\Resources\UnitKerjas\Pages\CreateUnitKerja;
-use App\Filament\Resources\UnitKerjas\Pages\EditUnitKerja;
 use App\Filament\Resources\UnitKerjas\Pages\ListUnitKerjas;
 use App\Filament\Resources\UnitKerjas\Schemas\UnitKerjaForm;
 use App\Filament\Resources\UnitKerjas\Tables\UnitKerjasTable;
@@ -57,8 +55,6 @@ class UnitKerjaResource extends Resource
     {
         return [
             'index' => ListUnitKerjas::route('/'),
-            // 'create' => CreateUnitKerja::route('/create'),
-            // 'edit' => EditUnitKerja::route('/{record}/edit'),
         ];
     }
 }

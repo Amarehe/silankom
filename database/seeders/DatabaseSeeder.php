@@ -8,6 +8,7 @@ use Database\Seeders\RoleSeeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\MerekSeeder;
 use Database\Seeders\KategoriSeeder;
+use Database\Seeders\BarangSeeder;
 use Database\Seeders\JabatanSeeder;
 use Database\Seeders\UnitKerjaSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -28,6 +29,6 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        $this->call([RoleSeeder::class, JabatanSeeder::class, UnitKerjaSeeder::class, MerekSeeder::class, UserSeeder::class, KategoriSeeder::class]);
+        $this->call([RoleSeeder::class, JabatanSeeder::class, UnitKerjaSeeder::class, MerekSeeder::class, UserSeeder::class, KategoriSeeder::class, BarangSeeder::class]);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Mereks;
 
-use App\Filament\Resources\Mereks\Pages\CreateMerek;
-use App\Filament\Resources\Mereks\Pages\EditMerek;
 use App\Filament\Resources\Mereks\Pages\ListMereks;
 use App\Filament\Resources\Mereks\Schemas\MerekForm;
 use App\Filament\Resources\Mereks\Tables\MereksTable;
@@ -58,8 +56,6 @@ class MerekResource extends Resource
     {
         return [
             'index' => ListMereks::route('/'),
-            // 'create' => CreateMerek::route('/create'),
-            // 'edit' => EditMerek::route('/{record}/edit'),
         ];
     }
 }
