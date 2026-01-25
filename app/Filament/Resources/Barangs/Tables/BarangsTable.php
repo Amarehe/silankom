@@ -7,6 +7,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 
 class BarangsTable
@@ -78,6 +79,20 @@ class BarangsTable
                 //
             ])
             ->recordActions([
+                ViewAction::make()
+                    ->button()
+                    ->modalHeading('Lihat')
+                    ->color('info')
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading('Detail Data Barang')
+                    ->modalWidth('3xl')
+                    ->modalCancelAction(
+                        fn($action) =>
+                        $action->label('Tutup')
+                            ->color('danger')
+                            ->icon('heroicon-o-x-circle')
+                    ),
+
                 EditAction::make()
                     ->button()
                     ->modalHeading('Edit Data Barang')
