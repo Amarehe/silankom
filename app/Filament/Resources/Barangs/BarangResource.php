@@ -56,8 +56,6 @@ class BarangResource extends Resource
     {
         return [
             'index' => ListBarangs::route('/'),
-            // 'create' => CreateBarang::route('/create'),
-            // 'edit' => EditBarang::route('/{record}/edit'),
         ];
     }
 }

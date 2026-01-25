@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Jabatans;
 
-use App\Filament\Resources\Jabatans\Pages\CreateJabatan;
-use App\Filament\Resources\Jabatans\Pages\EditJabatan;
 use App\Filament\Resources\Jabatans\Pages\ListJabatans;
 use App\Filament\Resources\Jabatans\Schemas\JabatanForm;
 use App\Filament\Resources\Jabatans\Tables\JabatansTable;
@@ -58,8 +56,6 @@ class JabatanResource extends Resource
     {
         return [
             'index' => ListJabatans::route('/'),
-            // 'create' => CreateJabatan::route('/create'),
-            // 'edit' => EditJabatan::route('/{record}/edit'),
         ];
     }
 }

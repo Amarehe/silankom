@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Kategoris;
 
-use App\Filament\Resources\Kategoris\Pages\CreateKategori;
-use App\Filament\Resources\Kategoris\Pages\EditKategori;
 use App\Filament\Resources\Kategoris\Pages\ListKategoris;
 use App\Filament\Resources\Kategoris\Schemas\KategoriForm;
 use App\Filament\Resources\Kategoris\Tables\KategorisTable;
@@ -57,8 +55,6 @@ class KategoriResource extends Resource
     {
         return [
             'index' => ListKategoris::route('/'),
-            // 'create' => CreateKategori::route('/create'),
-            // 'edit' => EditKategori::route('/{record}/edit'),
         ];
     }
 }

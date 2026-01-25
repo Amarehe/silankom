@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\RoleUsers;
 
-use App\Filament\Resources\RoleUsers\Pages\CreateRoleUser;
-use App\Filament\Resources\RoleUsers\Pages\EditRoleUser;
 use App\Filament\Resources\RoleUsers\Pages\ListRoleUsers;
 use App\Filament\Resources\RoleUsers\Schemas\RoleUserForm;
 use App\Filament\Resources\RoleUsers\Tables\RoleUsersTable;
@@ -57,8 +55,6 @@ class RoleUserResource extends Resource
     {
         return [
             'index' => ListRoleUsers::route('/'),
-            // 'create' => CreateRoleUser::route('/create'),
-            // 'edit' => EditRoleUser::route('/{record}/edit'),
         ];
     }
 }
