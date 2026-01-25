@@ -26,10 +26,10 @@ class KategoriResource extends Resource
 
     protected static ?string $slug = 'kategori';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Master User';
+    protected static string|UnitEnum|null $navigationGroup = 'Master Inventaris';
 
     // Urutan Navigation
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Kategori';

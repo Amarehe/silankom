@@ -6,6 +6,7 @@ use App\Filament\Resources\Barangs\Pages\CreateBarang;
 use App\Filament\Resources\Barangs\Pages\EditBarang;
 use App\Filament\Resources\Barangs\Pages\ListBarangs;
 use App\Filament\Resources\Barangs\Schemas\BarangForm;
+use App\Filament\Resources\Barangs\Schemas\Baranginfolist;
 use App\Filament\Resources\Barangs\Tables\BarangsTable;
 use App\Models\BarangModel;
 use BackedEnum;
@@ -27,10 +28,10 @@ class BarangResource extends Resource
 
     protected static ?string $slug = 'barang';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Master User';
+    protected static string|UnitEnum|null $navigationGroup = 'Master Inventaris';
 
     // Urutan Navigation
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 1;
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Barang';
@@ -43,6 +44,11 @@ class BarangResource extends Resource
     public static function table(Table $table): Table
     {
         return BarangsTable::configure($table);
+    }
+
+    public static function infolist(Schema $schema): Schema
+    {
+        return Baranginfolist::configure($schema);
     }
 
     public static function getRelations(): array

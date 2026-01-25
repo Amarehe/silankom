@@ -26,10 +26,10 @@ class MerekResource extends Resource
 
     protected static ?string $slug = 'Merek';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Master User';
+    protected static string|UnitEnum|null $navigationGroup = 'Master Inventaris';
 
     // Urutan Navigation
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Merek';
