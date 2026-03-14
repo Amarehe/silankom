@@ -1,0 +1,18 @@
+﻿Checking existing data...
+
+Users:
+  ID: 1 - Quartiez ()
+
+Kategori Barang:
+  ID: 1 - Laptop
+  ID: 2 - PC
+  ID: 3 - Printer
+  ID: 4 - Scanner
+
+Barang:
+  ID: 1 - Laptop Asus ROG Strix G15 (Status: tersedia)
+  ID: 2 - Laptop Dell Latitude 5420 (Status: dipinjam)
+  ID: 3 - PC Lenovo ThinkCentre M720 (Status: tersedia)
+  ID: 4 - Printer HP LaserJet Pro M404dn (Status: tersedia)
+  ID: 5 - Scanner HP ScanJet Pro 2500 (Status: tersedia)
+  ID: 6 - Laptop Acer Aspire 5 (Status: tersedia)

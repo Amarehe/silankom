@@ -30,25 +30,25 @@ class User extends Authenticatable
     // Relasi ke model Jabatan
     public function jabatan()
     {
-        return $this->belongsTo(JabatanModel::class);
+        return $this->belongsTo(JabatanModel::class, 'jabatan_id', 'id');
     }
 
     // Relasi ke model UnitKerja
     public function unitkerja()
     {
-        return $this->belongsTo(UnitKerjaModel::class);
+        return $this->belongsTo(UnitKerjaModel::class, 'unitkerja_id', 'id');
     }
 
     // Relasi ke model Role
     public function role()
     {
-        return $this->belongsTo(RoleModel::class);
+        return $this->belongsTo(RoleModel::class, 'role_id', 'id');
     }
 
     // Agar user bisa mengakses Filament Admin Panel
     public function canAccessFilament(): bool
     {
-        // Contoh: return $this->role_id === 1; 
+        // Contoh: return $this->role_id === 1;
         return true; // Sementara return true agar semua user di tabel bisa login
     }
 
