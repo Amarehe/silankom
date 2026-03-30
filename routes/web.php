@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PeminjamanModel;
+use App\Models\PerbaikanModel;
 use App\Services\TandaTerimaService;
 use Illuminate\Support\Facades\Route;
 
@@ -32,3 +33,18 @@ Route::get('/download-tanda-terima-pengembalian/{peminjaman}', function (Peminja
 
     return TandaTerimaService::generatePengembalian($peminjaman);
 })->middleware('auth')->name('download.tanda-terima-pengembalian');
+
+// Route untuk download PDF surat perbaikan
+Route::get('/download-surat-perbaikan/{perbaikan}', function (PerbaikanModel $perbaikan) {
+    // Pastikan user hanya bisa download PDF miliknya sendiri (kecuali admin)
+    if (auth()->user()->role_id != 1 && $perbaikan->user_id != auth()->id()) {
+        abort(403, 'Unauthorized');
+    }
+
+    // Pastikan perbaikan sudah memiliki nomor surat
+    if ($perbaikan->no_surat === null) {
+        abort(404, 'Surat perbaikan tidak tersedia');
+    }
+
+    return TandaTerimaService::generatePerbaikan($perbaikan);
+})->middleware('auth')->name('download.surat-perbaikan');

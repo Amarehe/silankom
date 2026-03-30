@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\PeminjamanModel;
+use App\Models\PerbaikanModel;
 
 class NomorSuratService
 {
@@ -47,6 +48,28 @@ class NomorSuratService
         $nomorUrut = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
 
         return "Pengembalian/TTPPE/{$bulanRomawi}/{$nomorUrut}/{$tahun}/Komlek";
+    }
+
+    /**
+     * Generate nomor surat perbaikan otomatis
+     * Format: Perbaikan/TTPPE/III/001/2026/Komlek
+     * Auto reset per bulan
+     */
+    public static function generatePerbaikan(): string
+    {
+        $bulan = now()->format('m');
+        $tahun = now()->format('Y');
+        $bulanRomawi = self::toRoman((int) $bulan);
+
+        // Hitung nomor urut untuk bulan ini (auto reset per bulan)
+        $lastNumber = PerbaikanModel::whereYear('created_at', $tahun)
+            ->whereMonth('created_at', $bulan)
+            ->whereNotNull('no_surat')
+            ->count();
+
+        $nomorUrut = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+
+        return "Perbaikan/TTPPE/{$bulanRomawi}/{$nomorUrut}/{$tahun}/Komlek";
     }
 
     /**
