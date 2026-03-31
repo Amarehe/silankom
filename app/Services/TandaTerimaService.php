@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\PeminjamanModel;
+use App\Models\PerbaikanModel;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class TandaTerimaService
@@ -62,5 +63,30 @@ class TandaTerimaService
         $filename = str_replace('/', '-', $peminjaman->nomor_surat_pengembalian);
 
         return $pdf->stream("Tanda_Terima_Pengembalian_{$filename}.pdf");
+    }
+
+    /**
+     * Generate PDF surat perbaikan on-demand (stream langsung ke browser)
+     */
+    public static function generatePerbaikan(PerbaikanModel $perbaikan)
+    {
+        // Eager load semua relasi yang dibutuhkan
+        $perbaikan->load([
+            'pemohon.jabatan',
+            'pemohon.unitkerja',
+            'kategori',
+            'merek',
+            'teknisi.jabatan',
+            'teknisi.unitkerja',
+        ]);
+
+        $pdf = PDF::loadView('pdf.surat_perbaikan_template', [
+            'perbaikan' => $perbaikan,
+        ]);
+
+        // Stream PDF langsung ke browser (tidak disimpan di storage)
+        $filename = str_replace('/', '-', $perbaikan->no_surat);
+
+        return $pdf->stream("Surat_Perbaikan_{$filename}.pdf");
     }
 }
