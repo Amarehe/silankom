@@ -27,7 +27,7 @@ return new class extends Migration
             // Diisi oleh Admin/Teknisi saat proses
             $table->string('serial_number')->nullable();
             $table->text('keterangan')->nullable();
-            $table->enum('status', [
+            $table->enum('status_perbaikan', [
                 'diajukan',
                 'diproses',
                 'selesai',
