@@ -33,7 +33,7 @@ class ReqPerbaikansTable
                     ->label('Merek')
                     ->searchable(),
 
-                TextColumn::make('nama_barang')
+                TextColumn::make('nm_barang')
                     ->label('Nama Barang')
                     ->searchable()
                     ->sortable(),
@@ -52,22 +52,20 @@ class ReqPerbaikansTable
                 BadgeColumn::make('status_perbaikan')
                     ->label('Status')
                     ->color(fn(string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'proses' => 'info',
+                        'diajukan' => 'warning',
+                        'diproses' => 'info',
                         'selesai' => 'success',
-                        'ditolak' => 'danger',
-                        'rusak' => 'danger',
+                        'tidak_bisa_diperbaiki' => 'danger',
                     })
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'pending' => 'Pending',
-                        'proses' => 'Proses',
+                        'diajukan' => 'Diajukan',
+                        'diproses' => 'Diproses',
                         'selesai' => 'Selesai',
-                        'ditolak' => 'Ditolak',
-                        'rusak' => 'Rusak',
+                        'tidak_bisa_diperbaiki' => 'Tidak Bisa Diperbaiki',
                     }),
 
-                TextColumn::make('catatan_teknisi')
-                    ->label('Catatan Teknisi')
+                TextColumn::make('keterangan')
+                    ->label('Keterangan')
                     ->limit(30)
                     ->wrap()
                     ->placeholder('-'),

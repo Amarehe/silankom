@@ -65,21 +65,6 @@ class PengajuansTable
                     ->sortable()
                     ->description(fn(ReqPinjamModel $record): string => $record->created_at->diffForHumans()),
 
-                TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'diproses' => 'warning',
-                        'disetujui' => 'success',
-                        'ditolak' => 'danger',
-                    })
-                    ->icon(fn(string $state): string => match ($state) {
-                        'diproses' => 'heroicon-o-clock',
-                        'disetujui' => 'heroicon-o-check-circle',
-                        'ditolak' => 'heroicon-o-x-circle',
-                    })
-                    ->sortable(),
-
                 TextColumn::make('keterangan')
                     ->label('Keterangan')
                     ->limit(40)
@@ -352,15 +337,6 @@ class PengajuansTable
                     ->button(),
             ])
             ->filters([
-                SelectFilter::make('status')
-                    ->label('Status Pengajuan')
-                    ->options([
-                        'diproses' => 'Sedang Diproses',
-                        'disetujui' => 'Disetujui',
-                        'ditolak' => 'Ditolak',
-                    ])
-                    ->placeholder('Semua Status'),
-
                 SelectFilter::make('kategori')
                     ->label('Kategori Barang')
                     ->relationship('kategori', 'nama_kategori')

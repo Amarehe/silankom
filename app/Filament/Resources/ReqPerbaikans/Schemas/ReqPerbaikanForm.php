@@ -31,7 +31,7 @@ class ReqPerbaikanForm
                 ->preload()
                 ->columnSpanFull(),
 
-            TextInput::make('nama_barang')
+            TextInput::make('nm_barang')
                 ->label('Nama Barang')
                 ->required()
                 ->placeholder('Masukkan nama barang')
@@ -65,11 +65,11 @@ class ReqPerbaikanForm
                 ->placeholder('Masukkan nomor nota dinas')
                 ->columnSpanFull(),
 
-            Hidden::make('user_id')
+            Hidden::make('pemohon_id')
                 ->default(Auth::id()),
 
             Hidden::make('status_perbaikan')
-                ->default('pending'),
+                ->default('diajukan'),
         ]);
     }
 }

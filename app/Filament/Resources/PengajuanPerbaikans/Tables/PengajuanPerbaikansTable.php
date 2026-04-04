@@ -55,7 +55,7 @@ class PengajuanPerbaikansTable
                     ->label('Merek')
                     ->searchable(),
 
-                TextColumn::make('nama_barang')
+                TextColumn::make('nm_barang')
                     ->label('Nama Barang')
                     ->searchable()
                     ->sortable(),
@@ -86,32 +86,23 @@ class PengajuanPerbaikansTable
                 BadgeColumn::make('status_perbaikan')
                     ->label('Status')
                     ->color(fn(string $state): string => match ($state) {
-                        'pending' => 'warning',
-                        'proses' => 'info',
-                        'selesai' => 'success',
-                        'ditolak' => 'danger',
-                        'rusak' => 'danger',
+                        'diajukan' => 'warning',
+                        'diproses' => 'info',
                     })
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'pending' => 'Pending',
-                        'proses' => 'Proses',
-                        'selesai' => 'Selesai',
-                        'ditolak' => 'Ditolak',
-                        'rusak' => 'Rusak',
+                        'diajukan' => 'Diajukan',
+                        'diproses' => 'Diproses',
                     })
                     ->icon(fn(string $state): string => match ($state) {
-                        'pending' => 'heroicon-o-clock',
-                        'proses' => 'heroicon-o-wrench',
-                        'selesai' => 'heroicon-o-check-circle',
-                        'ditolak' => 'heroicon-o-x-circle',
-                        'rusak' => 'heroicon-o-x-circle',
+                        'diajukan' => 'heroicon-o-paper-airplane',
+                        'diproses' => 'heroicon-o-wrench',
                     }),
 
                 TextColumn::make('teknisi.name')
                     ->label('Teknisi')
                     ->placeholder('-'),
 
-                TextColumn::make('catatan_teknisi')
+                TextColumn::make('keterangan')
                     ->label('Keterangan')
                     ->limit(30)
                     ->wrap()
@@ -123,11 +114,8 @@ class PengajuanPerbaikansTable
                 SelectFilter::make('status_perbaikan')
                     ->label('Status')
                     ->options([
-                        'pending' => 'Pending',
-                        'proses' => 'Proses',
-                        'selesai' => 'Selesai',
-                        'ditolak' => 'Ditolak',
-                        'rusak' => 'Rusak',
+                        'diajukan' => 'Diajukan',
+                        'diproses' => 'Diproses',
                     ]),
 
                 SelectFilter::make('kategori_id')
@@ -206,7 +194,7 @@ class PengajuanPerbaikansTable
                                             </div>
                                             <div>
                                                 <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Nama Barang</div>
-                                                <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->nama_barang ?? '-') . "</div>
+                                                <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->nm_barang ?? '-') . "</div>
                                             </div>
                                             <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 14px;\">
                                                 <div>
@@ -236,26 +224,26 @@ class PengajuanPerbaikansTable
                         ->modalSubmitAction(false)
                         ->modalCancelActionLabel('Tutup'),
 
-                    // Proses / Ambil Alih Action (only for pending)
+                    // Proses / Ambil Alih Action (only for diajukan)
                     Action::make('proses')
                         ->label('Proses / Ambil Alih')
                         ->icon('heroicon-o-wrench')
                         ->color('warning')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'pending')
+                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'diajukan')
                         ->form([
                             TextInput::make('serial_number')
                                 ->label('Serial Number')
                                 ->required(),
-                            Textarea::make('catatan_teknisi')
-                                ->label('Catatan')
+                            Textarea::make('keterangan')
+                                ->label('Keterangan')
                                 ->rows(3),
                         ])
                         ->action(function (PerbaikanModel $record, array $data): void {
                             $record->update([
-                                'status_perbaikan' => 'proses',
+                                'status_perbaikan' => 'diproses',
                                 'teknisi_id' => Auth::id(),
                                 'serial_number' => $data['serial_number'],
-                                'catatan_teknisi' => $data['catatan_teknisi'] ?? $record->catatan_teknisi,
+                                'keterangan' => $data['keterangan'] ?? $record->keterangan,
                             ]);
                         })
                         ->successNotification(
@@ -265,14 +253,14 @@ class PengajuanPerbaikansTable
                                 ->body('Item perbaikan berhasil diambil alih dan diproses.')
                         ),
 
-                    // Selesai Action (only for proses)
+                    // Selesai Action (only for diproses)
                     Action::make('selesai')
                         ->label('Selesai')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'proses')
+                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
                         ->form([
-                            Textarea::make('tindakan')
+                            Textarea::make('keterangan')
                                 ->label('Tindakan/Hasil Perbaikan')
                                 ->required()
                                 ->rows(3),
@@ -280,9 +268,8 @@ class PengajuanPerbaikansTable
                         ->action(function (PerbaikanModel $record, array $data): void {
                             $record->update([
                                 'status_perbaikan' => 'selesai',
-                                'tindakan' => $data['tindakan'],
-                                'tgl_perbaikan' => today(),
-                                'no_surat' => NomorSuratService::generatePerbaikan(),
+                                'keterangan' => $data['keterangan'],
+                                'no_surat_perbaikan' => NomorSuratService::generatePerbaikan(),
                             ]);
                         })
                         ->successNotification(
@@ -292,47 +279,22 @@ class PengajuanPerbaikansTable
                                 ->body('Item perbaikan berhasil diselesaikan dan surat telah digenerate.')
                         ),
 
-                    // Tolak Action (only for pending)
-                    Action::make('tolak')
-                        ->label('Tolak')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'pending')
-                        ->form([
-                            Textarea::make('alasan_ditolak')
-                                ->label('Alasan Penolakan')
-                                ->required()
-                                ->rows(3),
-                        ])
-                        ->action(function (PerbaikanModel $record, array $data): void {
-                            $record->update([
-                                'status_perbaikan' => 'ditolak',
-                                'alasan_ditolak' => $data['alasan_ditolak'],
-                            ]);
-                        })
-                        ->successNotification(
-                            Notification::make()
-                                ->warning()
-                                ->title('Pengajuan Ditolak')
-                                ->body('Pengajuan perbaikan berhasil ditolak.')
-                        ),
-
-                    // Tidak Bisa Diperbaiki Action (only for proses)
+                    // Tidak Bisa Diperbaiki Action (only for diproses)
                     Action::make('tidak_bisa_diperbaiki')
                         ->label('Tidak Bisa Diperbaiki')
                         ->icon('heroicon-o-exclamation-circle')
                         ->color('danger')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'proses')
+                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
                         ->form([
-                            Textarea::make('alasan_ditolak')
+                            Textarea::make('keterangan')
                                 ->label('Alasan Tidak Bisa Diperbaiki')
                                 ->required()
                                 ->rows(3),
                         ])
                         ->action(function (PerbaikanModel $record, array $data): void {
                             $record->update([
-                                'status_perbaikan' => 'rusak',
-                                'alasan_ditolak' => $data['alasan_ditolak'],
+                                'status_perbaikan' => 'tidak_bisa_diperbaiki',
+                                'keterangan' => $data['keterangan'],
                             ]);
                         })
                         ->successNotification(

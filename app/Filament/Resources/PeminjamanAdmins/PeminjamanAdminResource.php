@@ -15,31 +15,19 @@ class PeminjamanAdminResource extends Resource
 {
     protected static ?string $model = PeminjamanModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Kelola Peminjaman';
+    protected static ?string $recordTitleAttribute = 'Riwayat Peminjaman';
 
-    protected static ?string $navigationLabel = 'Kelola Peminjaman';
+    protected static ?string $navigationLabel = 'Riwayat Peminjaman';
 
     protected static ?string $slug = 'peminjaman-admin';
 
     protected static string|UnitEnum|null $navigationGroup = 'Admin Peminjaman';
 
-    // Urutan Navigation
     protected static ?int $navigationSort = 2;
 
-    // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
-    protected static ?string $pluralModelLabel = 'Daftar Peminjaman Aktif & Riwayat';
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('status_peminjaman', 'dipinjam')->count() ?: null;
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        return 'info';
-    }
+    protected static ?string $pluralModelLabel = 'Riwayat Peminjaman';
 
     public static function table(Table $table): Table
     {
@@ -53,9 +41,7 @@ class PeminjamanAdminResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array

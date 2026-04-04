@@ -9,6 +9,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class PengajuanResource extends Resource
@@ -44,6 +45,12 @@ class PengajuanResource extends Resource
     public static function table(Table $table): Table
     {
         return PengajuansTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status', 'diproses');
     }
 
     public static function canCreate(): bool

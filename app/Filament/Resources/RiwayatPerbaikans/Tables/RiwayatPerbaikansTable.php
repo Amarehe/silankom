@@ -34,7 +34,7 @@ class RiwayatPerbaikansTable
                     ->label('Merek')
                     ->searchable(),
 
-                TextColumn::make('nama_barang')
+                TextColumn::make('nm_barang')
                     ->label('Nama Barang')
                     ->searchable()
                     ->sortable(),
@@ -54,13 +54,11 @@ class RiwayatPerbaikansTable
                     ->label('Status')
                     ->color(fn(string $state): string => match ($state) {
                         'selesai' => 'success',
-                        'ditolak' => 'danger',
-                        'rusak' => 'danger',
+                        'tidak_bisa_diperbaiki' => 'danger',
                     })
                     ->formatStateUsing(fn(string $state): string => match ($state) {
                         'selesai' => 'Selesai',
-                        'ditolak' => 'Ditolak',
-                        'rusak' => 'Rusak',
+                        'tidak_bisa_diperbaiki' => 'Tidak Bisa Diperbaiki',
                     }),
 
                 TextColumn::make('serial_number')
@@ -73,7 +71,7 @@ class RiwayatPerbaikansTable
                     ->wrap()
                     ->placeholder('-'),
 
-                TextColumn::make('no_surat')
+                TextColumn::make('no_surat_perbaikan')
                     ->label('Nomor Surat')
                     ->placeholder('-')
                     ->copyable(),
@@ -85,7 +83,7 @@ class RiwayatPerbaikansTable
                     ->label('Download PDF')
                     ->icon('heroicon-o-document-arrow-down')
                     ->color('success')
-                    ->visible(fn(PerbaikanModel $record): bool => !empty($record->no_surat))
+                    ->visible(fn(PerbaikanModel $record): bool => !empty($record->no_surat_perbaikan))
                     ->url(fn(PerbaikanModel $record): string => route('download.surat-perbaikan', $record))
                     ->openUrlInNewTab(),
             ]);

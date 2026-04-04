@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Surat Perbaikan - {{ $perbaikan->no_surat }}</title>
+    <title>Surat Perbaikan - {{ $perbaikan->no_surat_perbaikan }}</title>
     <style>
         @page {
             margin: 2cm 2cm 2cm 2cm;
@@ -154,7 +154,7 @@
 
     <!-- NOMOR SURAT -->
     <div class="nomor-surat">
-        Nomor: {{ $perbaikan->no_surat }}
+        Nomor: {{ $perbaikan->no_surat_perbaikan }}
     </div>
 
     <!-- ISI -->
@@ -187,7 +187,7 @@
         <tr>
             <td>Barang berupa</td>
             <td>:</td>
-            <td>{{ $perbaikan->nama_barang ?? '-' }}</td>
+            <td>{{ $perbaikan->nm_barang ?? '-' }}</td>
         </tr>
         <tr>
             <td>Merk/Type</td>
@@ -222,7 +222,7 @@
         <tr>
             <td>Hasil Perbaikan</td>
             <td>:</td>
-            <td>{{ $perbaikan->tindakan ?? '-' }}</td>
+            <td>{{ $perbaikan->keterangan ?? '-' }}</td>
         </tr>
         <tr>
             <td>No. Nota Dinas</td>
@@ -233,7 +233,7 @@
 
     <!-- LOKASI DAN TANGGAL -->
     <div class="lokasi-tanggal">
-        Jakarta, {{ \Carbon\Carbon::parse($perbaikan->tgl_perbaikan ?? $perbaikan->updated_at)->locale('id')->isoFormat('D MMMM Y') }}
+        Jakarta, {{ \Carbon\Carbon::parse($perbaikan->updated_at)->locale('id')->isoFormat('D MMMM Y') }}
     </div>
 
     <!-- TANDA TANGAN -->

@@ -46,7 +46,7 @@ class ReqPerbaikanResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('user_id', Auth::id());
+            ->where('pemohon_id', Auth::id());
     }
 
     public static function getRelations(): array

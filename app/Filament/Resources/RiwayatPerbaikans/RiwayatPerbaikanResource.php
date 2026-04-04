@@ -44,8 +44,8 @@ class RiwayatPerbaikanResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('user_id', Auth::id())
-            ->whereIn('status_perbaikan', ['selesai', 'ditolak', 'rusak']);
+            ->where('pemohon_id', Auth::id())
+            ->whereIn('status_perbaikan', ['selesai', 'tidak_bisa_diperbaiki']);
     }
 
     public static function getRelations(): array
