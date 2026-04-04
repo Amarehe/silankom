@@ -40,7 +40,7 @@ class RiwayatPeminjamanResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // User hanya melihat peminjaman mereka sendiri
+        // User hanya melihat peminjaman mereka sendiri (approved & in-progress & returned)
         return parent::getEloquentQuery()
             ->whereHas('reqPinjam', function ($query) {
                 $query->where('user_id', Auth::id());

@@ -47,9 +47,10 @@ class ReqPinjamResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        // User hanya melihat pengajuan mereka sendiri
+        // User hanya melihat pengajuan mereka yang masih diproses
         return parent::getEloquentQuery()
-            ->where('user_id', Auth::id());
+            ->where('user_id', Auth::id())
+            ->where('status', 'diproses');
     }
 
     public static function getRelations(): array

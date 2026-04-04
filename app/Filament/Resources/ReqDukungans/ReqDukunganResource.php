@@ -46,7 +46,8 @@ class ReqDukunganResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where('pemohon_id', Auth::id());
+            ->where('pemohon_id', Auth::id())
+            ->where('status_dukungan', 'belum_didukung');
     }
 
     public static function getRelations(): array
