@@ -9,17 +9,18 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class KelolaPerbaikanResource extends Resource
 {
     protected static ?string $model = PerbaikanModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Kelola Perbaikan';
+    protected static ?string $recordTitleAttribute = 'Riwayat Perbaikan';
 
-    protected static ?string $navigationLabel = 'Kelola Perbaikan';
+    protected static ?string $navigationLabel = 'Riwayat Perbaikan';
 
     protected static ?string $slug = 'kelola-perbaikan';
 
@@ -27,21 +28,17 @@ class KelolaPerbaikanResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $pluralModelLabel = 'Kelola Perbaikan';
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::where('status_perbaikan', 'proses')->count() ?: null;
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        return 'info';
-    }
+    protected static ?string $pluralModelLabel = 'Riwayat Perbaikan';
 
     public static function table(Table $table): Table
     {
         return KelolaPerbaikansTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereIn('status_perbaikan', ['selesai', 'tidak_bisa_diperbaiki']);
     }
 
     public static function canCreate(): bool

@@ -9,6 +9,8 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class PengajuanPerbaikanResource extends Resource
@@ -31,7 +33,7 @@ class PengajuanPerbaikanResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status_perbaikan', 'pending')->count() ?: null;
+        return static::getModel()::whereIn('status_perbaikan', ['diajukan', 'diproses'])->count() ?: null;
     }
 
     public static function getNavigationBadgeColor(): ?string
@@ -42,6 +44,12 @@ class PengajuanPerbaikanResource extends Resource
     public static function table(Table $table): Table
     {
         return PengajuanPerbaikansTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->whereIn('status_perbaikan', ['diajukan', 'diproses']);
     }
 
     public static function canCreate(): bool
