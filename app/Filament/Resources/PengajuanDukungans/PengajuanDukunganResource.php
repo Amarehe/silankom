@@ -1,33 +1,34 @@
 <?php
 
-namespace App\Filament\Resources\KelolaDukungans;
+namespace App\Filament\Resources\PengajuanDukungans;
 
-use App\Filament\Resources\KelolaDukungans\Pages\ListKelolaDukungans;
-use App\Filament\Resources\KelolaDukungans\Tables\KelolaDukungansTable;
+use App\Filament\Resources\PengajuanDukungans\Pages\ListPengajuanDukungans;
+use App\Filament\Resources\PengajuanDukungans\Tables\PengajuanDukungansTable;
 use App\Models\ReqDukunganModel;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
-class KelolaDukunganResource extends Resource
+class PengajuanDukunganResource extends Resource
 {
     protected static ?string $model = ReqDukunganModel::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
 
-    protected static ?string $recordTitleAttribute = 'Kelola Dukungan';
+    protected static ?string $recordTitleAttribute = 'Pengajuan Dukungan';
 
-    protected static ?string $navigationLabel = 'Kelola Dukungan';
+    protected static ?string $navigationLabel = 'Pengajuan Dukungan';
 
-    protected static ?string $slug = 'kelola-dukungan';
+    protected static ?string $slug = 'pengajuan-dukungan';
 
     protected static string|UnitEnum|null $navigationGroup = 'Admin Dukungan';
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $pluralModelLabel = 'Daftar Request Dukungan';
+    protected static ?string $pluralModelLabel = 'Daftar Pengajuan Dukungan';
 
     public static function getNavigationBadge(): ?string
     {
@@ -41,7 +42,13 @@ class KelolaDukunganResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return KelolaDukungansTable::configure($table);
+        return PengajuanDukungansTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('status_dukungan', 'belum_didukung');
     }
 
     public static function canCreate(): bool
@@ -57,7 +64,7 @@ class KelolaDukunganResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListKelolaDukungans::route('/'),
+            'index' => ListPengajuanDukungans::route('/'),
         ];
     }
 }
