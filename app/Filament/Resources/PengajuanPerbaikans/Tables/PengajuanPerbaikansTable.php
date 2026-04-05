@@ -8,7 +8,10 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -16,7 +19,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
 
 class PengajuanPerbaikansTable
 {
@@ -30,85 +32,73 @@ class PengajuanPerbaikansTable
                     ->alignCenter(),
 
                 TextColumn::make('pemohon.name')
-                    ->label('Nama Pemohon')
-                    ->searchable()
+                    ->label('Pemohon')
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('pemohon', function (Builder $query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%")
+                                ->orWhereHas('unitkerja', function (Builder $query) use ($search) {
+                                    $query->where('nm_unitkerja', 'like', "%{$search}%");
+                                });
+                        });
+                    })
                     ->sortable()
-                    ->description(fn(PerbaikanModel $record): string => $record->pemohon->nip ?? '-')
+                    ->description(fn (PerbaikanModel $record): string => $record->pemohon->unitkerja->nm_unitkerja ?? '-')
                     ->weight('medium')
                     ->wrap(),
 
-                TextColumn::make('pemohon.unitkerja.nm_unitkerja')
-                    ->label('Unit Kerja')
-                    ->searchable()
-                    ->wrap()
-                    ->badge()
-                    ->color('gray'),
-
                 TextColumn::make('kategori.nama_kategori')
-                    ->label('Kategori Barang')
+                    ->label('Kategori')
                     ->searchable()
-                    ->sortable()
                     ->badge()
                     ->color('info'),
-
-                TextColumn::make('merek.nama_merek')
-                    ->label('Merek')
-                    ->searchable(),
 
                 TextColumn::make('nm_barang')
                     ->label('Nama Barang')
                     ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('jumlah')
-                    ->label('Jumlah')
-                    ->alignCenter()
-                    ->suffix(' unit')
-                    ->weight('bold'),
-
-                TextColumn::make('nodis')
-                    ->label('Nomor Nota Dinas')
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->description(fn (PerbaikanModel $record): string => $record->merek->nama_merek ?? '-'),
 
                 TextColumn::make('tgl_pengajuan')
-                    ->label('Tanggal Pengajuan')
-                    ->date('d M Y')
+                    ->label('Tgl. Pengajuan')
+                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
                     ->sortable()
-                    ->description(fn(PerbaikanModel $record): string => $record->created_at->diffForHumans()),
+                    ->description(fn (PerbaikanModel $record): string => $record->created_at->diffForHumans()),
 
                 TextColumn::make('keluhan')
                     ->label('Keluhan')
-                    ->limit(40)
+                    ->limit(35)
                     ->wrap()
                     ->placeholder('-'),
 
                 BadgeColumn::make('status_perbaikan')
                     ->label('Status')
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'diajukan' => 'warning',
                         'diproses' => 'info',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
                         'diajukan' => 'Diajukan',
                         'diproses' => 'Diproses',
+                        default => $state,
                     })
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'diajukan' => 'heroicon-o-paper-airplane',
                         'diproses' => 'heroicon-o-wrench',
+                        default => 'heroicon-o-question-mark-circle',
                     }),
 
                 TextColumn::make('teknisi.name')
                     ->label('Teknisi')
                     ->placeholder('-'),
 
-                TextColumn::make('keterangan')
-                    ->label('Keterangan')
-                    ->limit(30)
+                TextColumn::make('catatan_barang')
+                    ->label('Instruksi Penempatan')
+                    ->limit(35)
                     ->wrap()
                     ->placeholder('-'),
             ])
-            ->modifyQueryUsing(fn($query) => $query->with(['pemohon.jabatan', 'pemohon.unitkerja', 'kategori', 'merek', 'teknisi']))
+            ->modifyQueryUsing(fn ($query) => $query->with(['pemohon.jabatan', 'pemohon.unitkerja', 'kategori', 'merek', 'teknisi']))
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('status_perbaikan')
@@ -124,7 +114,7 @@ class PengajuanPerbaikansTable
                     ->searchable()
                     ->preload(),
 
-                Filter::make('created_at')
+                Filter::make('tgl_pengajuan')
                     ->label('Tanggal Pengajuan')
                     ->form([
                         \Filament\Forms\Components\DatePicker::make('from')
@@ -136,114 +126,200 @@ class PengajuanPerbaikansTable
                         return $query
                             ->when(
                                 $data['from'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('tgl_pengajuan', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tgl_pengajuan', '>=', $date),
                             )
                             ->when(
                                 $data['until'] ?? null,
-                                fn(Builder $query, $date): Builder => $query->whereDate('tgl_pengajuan', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tgl_pengajuan', '<=', $date),
                             );
                     }),
             ])
             ->actions([
                 ActionGroup::make([
-                    // View Detail Action
+                    // Lihat Detail - selalu tampil
                     Action::make('view_detail')
                         ->label('Lihat Detail')
                         ->icon('heroicon-o-eye')
                         ->color('info')
                         ->modalHeading('Detail Pengajuan Perbaikan')
                         ->modalWidth('3xl')
-                        ->modalDescription(fn(PerbaikanModel $record) => new HtmlString("
-                            <div style=\"margin: -24px; padding: 20px 16px 16px 16px;\">
-                                <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;\">
-                                    <div style=\"border-left: 4px solid #3B82F6; background: #F3F4F6; padding: 18px; width: 100%; box-sizing: border-box;\">
-                                        <h3 style=\"margin: 0 0 14px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;\">DATA PEMOHON</h3>
-                                        <div style=\"display: flex; flex-direction: column; gap: 14px;\">
-                                            <div>
-                                                <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Nama Lengkap</div>
-                                                <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->pemohon->name ?? '-') . "</div>
-                                            </div>
-                                            <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 14px;\">
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">NIP</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->pemohon->nip ?? '-') . "</div>
-                                                </div>
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Jabatan</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->pemohon->jabatan->nm_jabatan ?? '-') . "</div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Unit Kerja</div>
-                                                <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->pemohon->unitkerja->nm_unitkerja ?? '-') . "</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div style=\"border-left: 4px solid #10B981; background: #F3F4F6; padding: 18px; width: 100%; box-sizing: border-box;\">
-                                        <h3 style=\"margin: 0 0 14px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;\">RINCIAN PENGAJUAN</h3>
-                                        <div style=\"display: flex; flex-direction: column; gap: 14px;\">
-                                            <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 14px;\">
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Kategori Barang</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->kategori->nama_kategori ?? '-') . "</div>
-                                                </div>
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Merek</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->merek->nama_merek ?? '-') . "</div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Nama Barang</div>
-                                                <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->nm_barang ?? '-') . "</div>
-                                            </div>
-                                            <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 14px;\">
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Jumlah</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . $record->jumlah . " unit</div>
-                                                </div>
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">NOMOR NOTA DINAS</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->nodis ?? '-') . "</div>
-                                                </div>
-                                            </div>
-                                            <div style=\"display: grid; grid-template-columns: 1fr 1fr; gap: 14px;\">
-                                                <div>
-                                                    <div style=\"font-size: 11px; color: #6B7280; margin-bottom: 4px;\">Tanggal Pengajuan</div>
-                                                    <div style=\"font-size: 14px; font-weight: 600; color: #111827;\">" . ($record->tgl_pengajuan?->format('d F Y') ?? '-') . "</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div style=\"border-left: 4px solid #F59E0B; background: #F3F4F6; padding: 18px; margin-bottom: 10px;\">
-                                    <h3 style=\"margin: 0 0 14px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;\">KELUHAN / DESKRIPSI MASALAH</h3>
-                                    <div style=\"font-size: 14px; color: #111827; line-height: 1.6;\">" . nl2br(e($record->keluhan ?? '-')) . "</div>
-                                </div>
-                            </div>
-                        "))
+                        ->infolist([
+                            Section::make('Informasi Pemohon')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('pemohon.name')
+                                            ->label('Nama Pemohon')
+                                            ->icon('heroicon-m-user'),
+                                        TextEntry::make('pemohon.unitkerja.nm_unitkerja')
+                                            ->label('Unit Kerja')
+                                            ->icon('heroicon-m-building-office'),
+                                        TextEntry::make('tgl_pengajuan')
+                                            ->label('Tanggal Pengajuan')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('status_perbaikan')
+                                            ->label('Status')
+                                            ->badge()
+                                            ->color(fn (string $state): string => match ($state) {
+                                                'diajukan' => 'warning',
+                                                'diproses' => 'info',
+                                                'selesai' => 'success',
+                                                'tidak_bisa_diperbaiki' => 'danger',
+                                                default => 'gray',
+                                            })
+                                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                                'diajukan' => 'Diajukan',
+                                                'diproses' => 'Diproses',
+                                                'selesai' => 'Selesai',
+                                                'tidak_bisa_diperbaiki' => 'Tidak Bisa Diperbaiki',
+                                                default => $state,
+                                            }),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Rincian Barang & Masalah')
+                                ->icon('heroicon-o-computer-desktop')
+                                ->schema([
+                                    Grid::make(2)->schema([
+                                        TextEntry::make('nm_barang')
+                                            ->label('Nama Barang / Merek')
+                                            ->html()
+                                            ->formatStateUsing(fn ($record) => "<strong>{$record->nm_barang}</strong><br><small>".($record->merek->nama_merek ?? '-').'</small>'),
+                                        TextEntry::make('keluhan')
+                                            ->label('Keluhan / Kerusakan')
+                                            ->prose()
+                                            ->columnSpanFull(),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Instruksi Pengantaran Barang')
+                                ->icon('heroicon-o-truck')
+                                ->schema([
+                                    TextEntry::make('catatan_barang')
+                                        ->label('Instruksi dari Teknisi')
+                                        ->placeholder('Belum ada instruksi')
+                                        ->prose(),
+                                ])
+                                ->visible(fn ($record) => $record->status_perbaikan === 'diproses'),
+                        ])
+                        ->extraModalFooterActions([
+                            Action::make('download_pdf_from_detail')
+                                ->label('Download PDF')
+                                ->icon('heroicon-o-document-arrow-down')
+                                ->color('success')
+                                ->visible(fn (PerbaikanModel $record): bool => ! empty($record->no_surat_perbaikan))
+                                ->url(fn (PerbaikanModel $record): string => route('download.surat-perbaikan', $record))
+                                ->openUrlInNewTab(),
+
+                            Action::make('update_status_proses_from_detail')
+                                ->label('Proses / Ambil Alih')
+                                ->icon('heroicon-o-wrench-screwdriver')
+                                ->color('warning')
+                                ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diajukan')
+                                ->form([
+                                    TextInput::make('catatan_barang')
+                                        ->label('Instruksi Pengantaran Barang (Opsional)')
+                                        ->placeholder('Contoh: Antarkan ke ruang Telematika atau Diletakkan di ruangan'),
+                                ])
+                                ->action(function (PerbaikanModel $record, array $data): void {
+                                    $record->update([
+                                        'status_perbaikan' => 'diproses',
+                                        'teknisi_id' => auth()->id(),
+                                        'catatan_barang' => $data['catatan_barang'] ?? null,
+                                    ]);
+
+                                    Notification::make()
+                                        ->title('Status Berhasil Diperbarui')
+                                        ->body('Perbaikan sedang diproses.')
+                                        ->success()
+                                        ->send();
+                                }),
+
+                            Action::make('update_status_selesai_from_detail')
+                                ->label('Selesai')
+                                ->icon('heroicon-o-check-circle')
+                                ->color('success')
+                                ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
+                                ->form([
+                                    TextInput::make('serial_number')
+                                        ->label('Serial Number')
+                                        ->placeholder('Masukkan SN barang')
+                                        ->required(),
+                                    Textarea::make('keterangan')
+                                        ->label('Hasil Perbaikan / Tindakan')
+                                        ->placeholder('Jelaskan apa yang sudah diperbaiki')
+                                        ->required(),
+                                    TextInput::make('catatan_barang')
+                                        ->label('Info Pengambilan Barang (Opsional)')
+                                        ->placeholder('Sampaikan jam pengambilan atau tempat pengambilan'),
+                                ])
+                                ->action(function (PerbaikanModel $record, array $data): void {
+                                    $lastNumber = PerbaikanModel::whereNotNull('no_surat_perbaikan')
+                                        ->count() + 1;
+                                    $noSurat = str_pad($lastNumber, 3, '0', STR_PAD_LEFT).'/SLK/'.date('Y');
+
+                                    $record->update([
+                                        'status_perbaikan' => 'selesai',
+                                        'serial_number' => $data['serial_number'],
+                                        'keterangan' => $data['keterangan'],
+                                        'catatan_barang' => $data['catatan_barang'] ?? $record->catatan_barang,
+                                        'no_surat_perbaikan' => $noSurat,
+                                    ]);
+
+                                    Notification::make()
+                                        ->title('Perbaikan Selesai')
+                                        ->body('Data berhasil diperbarui.')
+                                        ->success()
+                                        ->send();
+                                }),
+
+                            Action::make('tidak_bisa_diperbaiki_from_detail')
+                                ->label('Tidak Bisa Diperbaiki')
+                                ->icon('heroicon-o-x-circle')
+                                ->color('danger')
+                                ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
+                                ->form([
+                                    Textarea::make('keterangan')
+                                        ->label('Alasan Tidak Bisa Diperbaiki')
+                                        ->placeholder('Sampaikan alasan teknis mengapa barang tidak bisa diperbaiki')
+                                        ->required(),
+                                ])
+                                ->action(function (PerbaikanModel $record, array $data): void {
+                                    $record->update([
+                                        'status_perbaikan' => 'tidak_bisa_diperbaiki',
+                                        'keterangan' => $data['keterangan'],
+                                    ]);
+
+                                    Notification::make()
+                                        ->title('Status Diperbarui')
+                                        ->body('Item ditandai sebagai tidak bisa diperbaiki.')
+                                        ->warning()
+                                        ->send();
+                                }),
+                        ])
                         ->modalSubmitAction(false)
-                        ->modalCancelActionLabel('Tutup'),
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalCancelAction(fn ($action) => $action->color('gray')),
 
                     // Proses / Ambil Alih Action (only for diajukan)
                     Action::make('proses')
                         ->label('Proses / Ambil Alih')
                         ->icon('heroicon-o-wrench')
                         ->color('warning')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'diajukan')
+                        ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diajukan')
                         ->form([
-                            TextInput::make('serial_number')
-                                ->label('Serial Number')
-                                ->required(),
-                            Textarea::make('keterangan')
-                                ->label('Keterangan')
-                                ->rows(3),
+                            Textarea::make('catatan_barang')
+                                ->label('Instruksi Penempatan Barang')
+                                ->helperText('Diisi dengan instruksi lokasi peletakan/pengantaran barang rusak. Contoh: "Barang diantarkan ke ruang teknisi Gedung A lantai 2"')
+                                ->placeholder('Barang dapat diantarkan langsung ke ruangan...')
+                                ->rows(4),
                         ])
                         ->action(function (PerbaikanModel $record, array $data): void {
                             $record->update([
                                 'status_perbaikan' => 'diproses',
                                 'teknisi_id' => Auth::id(),
-                                'serial_number' => $data['serial_number'],
-                                'keterangan' => $data['keterangan'] ?? $record->keterangan,
+                                'catatan_barang' => $data['catatan_barang'] ?? null,
                             ]);
                         })
                         ->successNotification(
@@ -258,17 +334,28 @@ class PengajuanPerbaikansTable
                         ->label('Selesai')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
+                        ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
                         ->form([
+                            TextInput::make('serial_number')
+                                ->label('Serial Number')
+                                ->placeholder('Masukkan serial number barang')
+                                ->required(),
                             Textarea::make('keterangan')
-                                ->label('Tindakan/Hasil Perbaikan')
+                                ->label('Tindakan / Hasil Perbaikan')
                                 ->required()
+                                ->rows(3),
+                            Textarea::make('catatan_barang')
+                                ->label('Info Pengambilan Barang')
+                                ->helperText('Isi dengan informasi jam & lokasi pengambilan barang untuk disampaikan ke pemohon.')
+                                ->placeholder('Contoh: Barang dapat diambil mulai pukul 10.00 WIB di ruang teknisi Gedung A lt.2')
                                 ->rows(3),
                         ])
                         ->action(function (PerbaikanModel $record, array $data): void {
                             $record->update([
                                 'status_perbaikan' => 'selesai',
+                                'serial_number' => $data['serial_number'],
                                 'keterangan' => $data['keterangan'],
+                                'catatan_barang' => $data['catatan_barang'] ?? $record->catatan_barang,
                                 'no_surat_perbaikan' => NomorSuratService::generatePerbaikan(),
                             ]);
                         })
@@ -284,7 +371,7 @@ class PengajuanPerbaikansTable
                         ->label('Tidak Bisa Diperbaiki')
                         ->icon('heroicon-o-exclamation-circle')
                         ->color('danger')
-                        ->visible(fn(PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
+                        ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diproses')
                         ->form([
                             Textarea::make('keterangan')
                                 ->label('Alasan Tidak Bisa Diperbaiki')
@@ -303,7 +390,11 @@ class PengajuanPerbaikansTable
                                 ->title('Status Diperbarui')
                                 ->body('Item perbaikan ditandai sebagai tidak bisa diperbaiki.')
                         ),
-                ]),
+                ])
+                    ->button()
+                    ->label('Aksi')
+                    ->icon('heroicon-m-chevron-down')
+                    ->color('primary'),
             ]);
     }
 }

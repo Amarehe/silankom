@@ -47,18 +47,3 @@ class ReqPerbaikanResource extends Resource
     {
         return parent::getEloquentQuery()
             ->where('pemohon_id', Auth::id())
-            ->where('status_perbaikan', 'diajukan');
-    }
-
-    public static function getRelations(): array
-    {
-        return [];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListReqPerbaikans::route('/'),
-        ];
-    }
-}
