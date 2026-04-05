@@ -233,7 +233,7 @@
 
     <!-- LOKASI DAN TANGGAL -->
     <div class="lokasi-tanggal">
-        Jakarta, {{ \Carbon\Carbon::parse($perbaikan->updated_at)->locale('id')->isoFormat('D MMMM Y') }}
+        Jakarta, {{ \Carbon\Carbon::parse($perbaikan->tgl_perbaikan ?? $perbaikan->updated_at)->locale('id')->isoFormat('D MMMM Y') }}
     </div>
 
     <!-- TANDA TANGAN -->

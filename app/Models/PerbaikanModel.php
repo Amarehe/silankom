@@ -19,6 +19,7 @@ class PerbaikanModel extends Model
         return [
             'tgl_pengajuan' => 'date',
             'tgl_perbaikan' => 'date',
+            'status_perbaikan' => 'string',
         ];
     }
 
