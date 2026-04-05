@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\KelolaDukungans\Tables;
+namespace App\Filament\Resources\PengajuanDukungans\Tables;
 
 use App\Models\ReqDukunganModel;
 use Filament\Actions\Action;
@@ -11,11 +11,10 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 
-class KelolaDukungansTable
+class PengajuanDukungansTable
 {
     public static function configure(Table $table): Table
     {
@@ -27,11 +26,6 @@ class KelolaDukungansTable
                     ->rowIndex()
                     ->alignCenter()
                     ->width('50px'),
-
-                TextColumn::make('id')
-                    ->label('ID Dukungan')
-                    ->sortable()
-                    ->searchable(),
 
                 TextColumn::make('nomor_nodis')
                     ->label('Nomor Nodis')
@@ -53,49 +47,21 @@ class KelolaDukungansTable
                     ->label('Barang Dibutuhkan')
                     ->formatStateUsing(function ($state) {
                         $item = is_string($state) ? json_decode($state, true) : $state;
-                        if (! is_array($item)) return $state;
-                        
+                        if (! is_array($item)) {
+                            return $state;
+                        }
+
                         $nama = $item['nama'] ?? $item['nama'] ?? '-';
                         $jumlah = $item['jumlah'] ?? $item['jumlah'] ?? 0;
+
                         return "{$nama} ({$jumlah})";
                     })
                     ->bulleted(),
-
-                TextColumn::make('barang_diberikan')
-                    ->label('Barang Diberikan')
-                    ->formatStateUsing(function ($state) {
-                        $item = is_string($state) ? json_decode($state, true) : $state;
-                        if (! is_array($item)) return $state;
-                        
-                        $nama = $item['nama'] ?? $item['nama'] ?? '-';
-                        $jumlah = $item['jumlah'] ?? $item['jumlah'] ?? 0;
-                        return "{$nama} ({$jumlah})";
-                    })
-                    ->bulleted(),
-
-                TextColumn::make('status_dukungan')
-                    ->label('Status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'belum_didukung' => 'warning',
-                        'didukung' => 'success',
-                        'tidak_didukung' => 'danger',
-                    })
-                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'belum_didukung' => 'Belum Didukung',
-                        'didukung' => 'Didukung',
-                        'tidak_didukung' => 'Tidak Didukung',
-                    })
-                    ->sortable(),
 
                 TextColumn::make('pemohon.name')
                     ->label('Pemohon')
                     ->searchable()
                     ->sortable(),
-
-                TextColumn::make('picDukungan.name')
-                    ->label('PIC Admin')
-                    ->placeholder('-'),
             ])
             ->actions([
                 ActionGroup::make([
@@ -104,7 +70,6 @@ class KelolaDukungansTable
                         ->label('Setujui / Dukung')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn (ReqDukunganModel $record) => $record->status_dukungan === 'belum_didukung')
                         ->modalHeading('Setujui Dukungan Kegiatan')
                         ->modalDescription('Isi jumlah barang yang akan diberikan untuk kegiatan ini')
                         ->modalWidth('xl')
@@ -153,7 +118,6 @@ class KelolaDukungansTable
                                 ->rows(3),
                         ])
                         ->action(function (ReqDukunganModel $record, array $data) {
-                            // Simpan hanya nama & jumlah diberikan (buang jumlah_diminta)
                             $barangDiberikan = collect($data['barang_diberikan'])
                                 ->map(fn ($item) => [
                                     'nama' => $item['nama'],
@@ -183,7 +147,6 @@ class KelolaDukungansTable
                         ->label('Tolak')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
-                        ->visible(fn (ReqDukunganModel $record) => $record->status_dukungan === 'belum_didukung')
                         ->modalHeading('Tolak Dukungan Kegiatan')
                         ->modalDescription('Berikan alasan penolakan dukungan')
                         ->modalWidth('lg')
@@ -215,16 +178,6 @@ class KelolaDukungansTable
                     ->size('sm')
                     ->color('warning')
                     ->button(),
-            ])
-            ->filters([
-                SelectFilter::make('status_dukungan')
-                    ->label('Status Dukungan')
-                    ->options([
-                        'belum_didukung' => 'Belum Didukung',
-                        'didukung' => 'Didukung',
-                        'tidak_didukung' => 'Tidak Didukung',
-                    ])
-                    ->placeholder('Semua Status'),
             ])
             ->defaultSort('created_at', 'desc')
             ->striped()
