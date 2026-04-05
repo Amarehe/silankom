@@ -255,16 +255,12 @@ class PengajuanPerbaikansTable
                                         ->placeholder('Sampaikan jam pengambilan atau tempat pengambilan'),
                                 ])
                                 ->action(function (PerbaikanModel $record, array $data): void {
-                                    $lastNumber = PerbaikanModel::whereNotNull('no_surat_perbaikan')
-                                        ->count() + 1;
-                                    $noSurat = str_pad($lastNumber, 3, '0', STR_PAD_LEFT).'/SLK/'.date('Y');
-
                                     $record->update([
                                         'status_perbaikan' => 'selesai',
                                         'serial_number' => $data['serial_number'],
                                         'keterangan' => $data['keterangan'],
                                         'catatan_barang' => $data['catatan_barang'] ?? $record->catatan_barang,
-                                        'no_surat_perbaikan' => $noSurat,
+                                        'no_surat_perbaikan' => NomorSuratService::generatePerbaikan(),
                                     ]);
 
                                     Notification::make()

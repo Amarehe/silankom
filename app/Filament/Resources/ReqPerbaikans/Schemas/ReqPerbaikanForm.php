@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ReqPerbaikans\Schemas;
 
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -36,7 +37,7 @@ class ReqPerbaikanForm
                 ->placeholder('Masukkan nama barang')
                 ->columnSpanFull(),
 
-            TextInput::make('tgl_pengajuan_display')
+            TextInput::make('_tgl_display')
                 ->label('Tanggal Pengajuan')
                 ->default(now()->translatedFormat('l, d F Y'))
                 ->disabled()
@@ -44,7 +45,7 @@ class ReqPerbaikanForm
                 ->columnSpanFull(),
 
             Hidden::make('tgl_pengajuan')
-                ->default(today()),
+                ->default(fn () => now()->toDateString()),
 
             Textarea::make('keluhan')
                 ->label('Keluhan / Deskripsi Masalah')
