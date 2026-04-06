@@ -6,6 +6,8 @@ use App\Models\PerbaikanModel;
 use App\Services\NomorSuratService;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
@@ -30,6 +32,14 @@ class PengajuanPerbaikansTable
                     ->label('No')
                     ->rowIndex()
                     ->alignCenter(),
+
+                TextColumn::make('nodis')
+                    ->label('No. Nota Dinas')
+                    ->searchable()
+                    ->placeholder('-')
+                    ->icon('heroicon-o-document-text')
+                    ->copyable()
+                    ->toggleable(),
 
                 TextColumn::make('pemohon.name')
                     ->label('Pemohon')
@@ -60,7 +70,7 @@ class PengajuanPerbaikansTable
 
                 TextColumn::make('tgl_pengajuan')
                     ->label('Tgl. Pengajuan')
-                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
+                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('d M Y'))
                     ->sortable()
                     ->description(fn (PerbaikanModel $record): string => $record->created_at->diffForHumans()),
 
@@ -158,6 +168,12 @@ class PengajuanPerbaikansTable
                                             ->label('Tanggal Pengajuan')
                                             ->date('l, d F Y')
                                             ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('nodis')
+                                            ->label('No. Nota Dinas')
+                                            ->placeholder('-')
+                                            ->badge()
+                                            ->color('warning')
+                                            ->icon('heroicon-m-document-text'),
                                         TextEntry::make('status_perbaikan')
                                             ->label('Status')
                                             ->badge()
@@ -218,9 +234,11 @@ class PengajuanPerbaikansTable
                                 ->color('warning')
                                 ->visible(fn (PerbaikanModel $record): bool => $record->status_perbaikan === 'diajukan')
                                 ->form([
-                                    TextInput::make('catatan_barang')
-                                        ->label('Instruksi Pengantaran Barang (Opsional)')
-                                        ->placeholder('Contoh: Antarkan ke ruang Telematika atau Diletakkan di ruangan'),
+                                    Textarea::make('catatan_barang')
+                                        ->label('Instruksi Penempatan Barang')
+                                        ->helperText('Diisi dengan instruksi lokasi peletakan/pengantaran barang rusak. Contoh: "Barang diantarkan ke ruang teknisi Gedung A lantai 2"')
+                                        ->placeholder('Barang dapat diantarkan langsung ke ruangan...')
+                                        ->rows(4),
                                 ])
                                 ->action(function (PerbaikanModel $record, array $data): void {
                                     $record->update([
@@ -244,15 +262,17 @@ class PengajuanPerbaikansTable
                                 ->form([
                                     TextInput::make('serial_number')
                                         ->label('Serial Number')
-                                        ->placeholder('Masukkan SN barang')
+                                        ->placeholder('Masukkan serial number barang')
                                         ->required(),
                                     Textarea::make('keterangan')
-                                        ->label('Hasil Perbaikan / Tindakan')
-                                        ->placeholder('Jelaskan apa yang sudah diperbaiki')
-                                        ->required(),
-                                    TextInput::make('catatan_barang')
-                                        ->label('Info Pengambilan Barang (Opsional)')
-                                        ->placeholder('Sampaikan jam pengambilan atau tempat pengambilan'),
+                                        ->label('Tindakan / Hasil Perbaikan')
+                                        ->required()
+                                        ->rows(3),
+                                    Textarea::make('catatan_barang')
+                                        ->label('Info Pengambilan Barang')
+                                        ->helperText('Isi dengan informasi jam & lokasi pengambilan barang untuk disampaikan ke pemohon.')
+                                        ->placeholder('Contoh: Barang dapat diambil mulai pukul 10.00 WIB di ruang teknisi Gedung A lt.2')
+                                        ->rows(3),
                                 ])
                                 ->action(function (PerbaikanModel $record, array $data): void {
                                     $record->update([
@@ -278,8 +298,8 @@ class PengajuanPerbaikansTable
                                 ->form([
                                     Textarea::make('keterangan')
                                         ->label('Alasan Tidak Bisa Diperbaiki')
-                                        ->placeholder('Sampaikan alasan teknis mengapa barang tidak bisa diperbaiki')
-                                        ->required(),
+                                        ->required()
+                                        ->rows(3),
                                 ])
                                 ->action(function (PerbaikanModel $record, array $data): void {
                                     $record->update([
@@ -386,6 +406,11 @@ class PengajuanPerbaikansTable
                                 ->title('Status Diperbarui')
                                 ->body('Item perbaikan ditandai sebagai tidak bisa diperbaiki.')
                         ),
+
+                    EditAction::make()
+                        ->visible(fn () => auth()?->user()?->role_id === 1),
+                    DeleteAction::make()
+                        ->visible(fn () => auth()?->user()?->role_id === 1),
                 ])
                     ->button()
                     ->label('Aksi')

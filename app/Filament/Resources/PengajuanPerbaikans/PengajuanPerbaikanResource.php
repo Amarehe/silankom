@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\PengajuanPerbaikans;
 
+use App\Filament\Resources\PengajuanPerbaikans\Pages\EditPengajuanPerbaikan;
 use App\Filament\Resources\PengajuanPerbaikans\Pages\ListPengajuanPerbaikans;
+use App\Filament\Resources\PengajuanPerbaikans\Schemas\PengajuanPerbaikanEditForm;
 use App\Filament\Resources\PengajuanPerbaikans\Tables\PengajuanPerbaikansTable;
 use App\Models\PerbaikanModel;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,6 +44,11 @@ class PengajuanPerbaikanResource extends Resource
         return 'warning';
     }
 
+    public static function form(Schema $schema): Schema
+    {
+        return PengajuanPerbaikanEditForm::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return PengajuanPerbaikansTable::configure($table);
@@ -57,6 +65,16 @@ class PengajuanPerbaikanResource extends Resource
         return false;
     }
 
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role_id == 1;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role_id == 1;
+    }
+
     public static function getRelations(): array
     {
         return [];
@@ -66,6 +84,7 @@ class PengajuanPerbaikanResource extends Resource
     {
         return [
             'index' => ListPengajuanPerbaikans::route('/'),
+            'edit' => EditPengajuanPerbaikan::route('/{record}/edit'),
         ];
     }
 }
