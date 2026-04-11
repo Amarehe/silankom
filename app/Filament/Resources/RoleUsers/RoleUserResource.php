@@ -6,12 +6,12 @@ use App\Filament\Resources\RoleUsers\Pages\ListRoleUsers;
 use App\Filament\Resources\RoleUsers\Schemas\RoleUserForm;
 use App\Filament\Resources\RoleUsers\Tables\RoleUsersTable;
 use App\Models\RoleModel;
-use App\Models\RoleUser;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class RoleUserResource extends Resource
@@ -33,6 +33,16 @@ class RoleUserResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Role User';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

@@ -35,6 +35,16 @@ class ReqPinjamResource extends Resource
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Peminjaman';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ReqPinjamForm::configure($schema);

@@ -33,6 +33,16 @@ class ReqPerbaikanResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Perbaikan';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ReqPerbaikanForm::configure($schema);
@@ -43,7 +53,7 @@ class ReqPerbaikanResource extends Resource
         return ReqPerbaikansTable::configure($table);
     }
 
-   public static function getEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
             ->where('pemohon_id', Auth::id())

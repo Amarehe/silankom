@@ -165,6 +165,11 @@
     <!-- DATA TABEL -->
     <table class="data-tabel">
         <tr>
+            <td><strong>No. Nota Dinas</strong></td>
+            <td><strong>:</strong></td>
+            <td><strong>{{ $perbaikan->nodis ?? '-' }}</strong></td>
+        </tr>
+        <tr>
             <td>Nama</td>
             <td>:</td>
             <td>{{ $perbaikan->pemohon->name ?? '-' }}</td>
@@ -212,7 +217,7 @@
         <tr>
             <td>Tanggal Pengajuan</td>
             <td>:</td>
-            <td>{{ \Carbon\Carbon::parse($perbaikan->tgl_pengajuan)->locale('id')->isoFormat('D MMMM Y') }}</td>
+            <td>{{ \Carbon\Carbon::parse($perbaikan->tgl_pengajuan)->locale('id')->isoFormat('dddd, D MMMM Y') }}</td>
         </tr>
         <tr>
             <td>Keluhan/Kerusakan</td>
@@ -224,16 +229,12 @@
             <td>:</td>
             <td>{{ $perbaikan->keterangan ?? '-' }}</td>
         </tr>
-        <tr>
-            <td>No. Nota Dinas</td>
-            <td>:</td>
-            <td>{{ $perbaikan->nodis ?? '-' }}</td>
-        </tr>
+
     </table>
 
     <!-- LOKASI DAN TANGGAL -->
     <div class="lokasi-tanggal">
-        Jakarta, {{ \Carbon\Carbon::parse($perbaikan->tgl_perbaikan ?? $perbaikan->updated_at)->locale('id')->isoFormat('D MMMM Y') }}
+        Jakarta, {{ \Carbon\Carbon::parse($perbaikan->tgl_perbaikan ?? $perbaikan->updated_at)->locale('id')->isoFormat('dddd, D MMMM Y') }}
     </div>
 
     <!-- TANDA TANGAN -->

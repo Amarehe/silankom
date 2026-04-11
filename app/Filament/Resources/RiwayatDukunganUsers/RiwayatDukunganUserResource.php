@@ -31,6 +31,16 @@ class RiwayatDukunganUserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Riwayat Pengajuan Dukungan';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
     public static function table(Table $table): Table
     {
         return RiwayatDukunganUserTable::configure($table);

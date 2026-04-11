@@ -35,7 +35,7 @@ class PengajuansTable
                     ->label('Nama Pemohon')
                     ->searchable()
                     ->sortable()
-                    ->description(fn(ReqPinjamModel $record): string => $record->user->nip ?? '-')
+                    ->description(fn (ReqPinjamModel $record): string => $record->user->nip ?? '-')
                     ->weight('medium')
                     ->wrap(),
 
@@ -61,18 +61,18 @@ class PengajuansTable
 
                 TextColumn::make('tanggal_request')
                     ->label('Tanggal Pengajuan')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
                     ->sortable()
-                    ->description(fn(ReqPinjamModel $record): string => $record->created_at->diffForHumans()),
+                    ->description(fn (ReqPinjamModel $record): string => $record->created_at->diffForHumans()),
 
                 TextColumn::make('keterangan')
                     ->label('Keterangan')
                     ->limit(40)
-                    ->tooltip(fn(ReqPinjamModel $record): ?string => $record->keterangan)
+                    ->tooltip(fn (ReqPinjamModel $record): ?string => $record->keterangan)
                     ->wrap()
                     ->placeholder('Tidak ada keterangan'),
             ])
-            ->modifyQueryUsing(fn($query) => $query->with(['user.jabatan', 'user.unitkerja', 'kategori']))
+            ->modifyQueryUsing(fn ($query) => $query->with(['user.jabatan', 'user.unitkerja', 'kategori']))
             ->actions([
                 ActionGroup::make([
                     // View Detail Action
@@ -82,7 +82,7 @@ class PengajuansTable
                         ->color('info')
                         ->modalHeading('Detail Pengajuan Peminjaman')
                         ->modalWidth('3xl')
-                        ->modalDescription(fn(ReqPinjamModel $record) => new HtmlString('
+                        ->modalDescription(fn (ReqPinjamModel $record) => new HtmlString('
                             <div style="margin: -24px; padding: 20px 16px 16px 16px;">
                                 
                                 <!-- Grid Container untuk 2 Card Utama -->
@@ -94,21 +94,21 @@ class PengajuansTable
                                         <div style="display: flex; flex-direction: column; gap: 14px;">
                                             <div>
                                                 <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Nama Lengkap</div>
-                                                <div style="font-size: 14px; font-weight: 600; color: #111827;">' . ($record->user->name ?? '-') . '</div>
+                                                <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->name ?? '-').'</div>
                                             </div>
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                                                 <div>
                                                     <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">NIP</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">' . ($record->user->nip ?? '-') . '</div>
+                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->nip ?? '-').'</div>
                                                 </div>
                                                 <div>
                                                     <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Jabatan</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">' . ($record->user->jabatan->nm_jabatan ?? '-') . '</div>
+                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->jabatan->nm_jabatan ?? '-').'</div>
                                                 </div>
                                             </div>
                                             <div>
                                                 <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Unit Kerja</div>
-                                                <div style="font-size: 14px; font-weight: 600; color: #111827;">' . ($record->user->unitkerja->nm_unitkerja ?? '-') . '</div>
+                                                <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->unitkerja->nm_unitkerja ?? '-').'</div>
                                             </div>
                                         </div>
                                     </div>
@@ -120,27 +120,27 @@ class PengajuansTable
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                                                 <div>
                                                     <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Kategori Barang</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">' . ($record->kategori->nama_kategori ?? '-') . '</div>
+                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->kategori->nama_kategori ?? '-').'</div>
                                                 </div>
                                                 <div>
                                                     <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Jumlah</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">' . $record->jumlah . ' unit</div>
+                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.$record->jumlah.' unit</div>
                                                 </div>
                                             </div>
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
                                                 <div>
                                                     <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Tanggal Pengajuan</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">' . date('d F Y', strtotime($record->tanggal_request)) . '</div>
+                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.\Carbon\Carbon::parse($record->tanggal_request)->translatedFormat('l, d F Y').'</div>
                                                 </div>
                                                 <div>
                                                     <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Status</div>
                                                     <div>
-                                                        ' . match ($record->status) {
+                                                        '.match ($record->status) {
                             'diproses' => '<span style="display: inline-block; padding: 4px 12px; background: #FEF3C7; color: #92400E; border-radius: 4px; font-size: 12px; font-weight: 600;">Diproses</span>',
                             'disetujui' => '<span style="display: inline-block; padding: 4px 12px; background: #D1FAE5; color: #065F46; border-radius: 4px; font-size: 12px; font-weight: 600;">Disetujui</span>',
                             'ditolak' => '<span style="display: inline-block; padding: 4px 12px; background: #FEE2E2; color: #991B1B; border-radius: 4px; font-size: 12px; font-weight: 600;">Ditolak</span>',
-                            default => '<span style="font-size: 14px; font-weight: 600; color: #6B7280;">' . ucfirst($record->status) . '</span>'
-                        } . '
+                            default => '<span style="font-size: 14px; font-weight: 600; color: #6B7280;">'.ucfirst($record->status).'</span>'
+                        }.'
                                                     </div>
                                                 </div>
                                             </div>
@@ -149,21 +149,21 @@ class PengajuansTable
                                     
                                 </div>
                                 
-                                ' . ($record->keterangan ? '
+                                '.($record->keterangan ? '
                                 <!-- KEPERLUAN / KETERANGAN Card (Full Width) -->
                                 <div style="border-left: 4px solid #8B5CF6; background: #F3F4F6; padding: 18px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
                                     <h3 style="margin: 0 0 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;">KEPERLUAN / KETERANGAN</h3>
-                                    <div style="font-size: 14px; font-weight: 500; color: #111827; line-height: 1.5;">' . nl2br(e($record->keterangan)) . '</div>
+                                    <div style="font-size: 14px; font-weight: 500; color: #111827; line-height: 1.5;">'.nl2br(e($record->keterangan)).'</div>
                                 </div>
-                                ' : '') . '
+                                ' : '').'
                                 
-                                ' . ($record->status === 'ditolak' && $record->alasan_penolakan ? '
+                                '.($record->status === 'ditolak' && $record->alasan_penolakan ? '
                                 <!-- ALASAN PENOLAKAN Card (Full Width) -->
                                 <div style="border-left: 4px solid #EF4444; background: #FEE2E2; padding: 18px; width: 100%; box-sizing: border-box;">
                                     <h3 style="margin: 0 0 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #991B1B;">⚠ ALASAN PENOLAKAN</h3>
-                                    <div style="font-size: 14px; font-weight: 500; color: #DC2626; line-height: 1.5;">' . nl2br(e($record->alasan_penolakan)) . '</div>
+                                    <div style="font-size: 14px; font-weight: 500; color: #DC2626; line-height: 1.5;">'.nl2br(e($record->alasan_penolakan)).'</div>
                                 </div>
-                                ' : '') . '
+                                ' : '').'
                                 
                             </div>
                         '))
@@ -176,9 +176,9 @@ class PengajuansTable
                         ->label('Setujui')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn(ReqPinjamModel $record) => $record->status === 'diproses')
+                        ->visible(fn (ReqPinjamModel $record) => $record->status === 'diproses')
                         ->modalHeading('Setujui Pengajuan Peminjaman')
-                        ->modalDescription(fn(ReqPinjamModel $record) => new HtmlString('
+                        ->modalDescription(fn (ReqPinjamModel $record) => new HtmlString('
                             <div style="margin: -24px -24px 20px -24px; padding: 16px 20px; background: #F9FAFB; border-bottom: 2px solid #E5E7EB;">
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
                                     
@@ -188,16 +188,16 @@ class PengajuansTable
                                         <div style="display: flex; flex-direction: column; gap: 8px;">
                                             <div>
                                                 <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Nama Lengkap</div>
-                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">' . ($record->user->name ?? '-') . '</div>
+                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">'.($record->user->name ?? '-').'</div>
                                             </div>
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                                 <div>
                                                     <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">NIP</div>
-                                                    <div style="font-size: 12px; font-weight: 600; color: #111827;">' . ($record->user->nip ?? '-') . '</div>
+                                                    <div style="font-size: 12px; font-weight: 600; color: #111827;">'.($record->user->nip ?? '-').'</div>
                                                 </div>
                                                 <div>
                                                     <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Unit Kerja</div>
-                                                    <div style="font-size: 12px; font-weight: 500; color: #111827;">' . ($record->user->unitkerja->nm_unitkerja ?? '-') . '</div>
+                                                    <div style="font-size: 12px; font-weight: 500; color: #111827;">'.($record->user->unitkerja->nm_unitkerja ?? '-').'</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -209,28 +209,28 @@ class PengajuansTable
                                         <div style="display: flex; flex-direction: column; gap: 8px;">
                                             <div>
                                                 <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Kategori Barang</div>
-                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">' . ($record->kategori->nama_kategori ?? '-') . '</div>
+                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">'.($record->kategori->nama_kategori ?? '-').'</div>
                                             </div>
                                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                                                 <div>
                                                     <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Jumlah</div>
-                                                    <div style="font-size: 13px; font-weight: 700; color: #059669;">' . $record->jumlah . ' Unit</div>
+                                                    <div style="font-size: 13px; font-weight: 700; color: #059669;">'.$record->jumlah.' Unit</div>
                                                 </div>
                                                 <div>
                                                     <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Tanggal Pengajuan</div>
-                                                    <div style="font-size: 12px; font-weight: 500; color: #111827;">' . \Carbon\Carbon::parse($record->tanggal_request)->format('d M Y') . '</div>
+                                                    <div style="font-size: 12px; font-weight: 500; color: #111827;">'.\Carbon\Carbon::parse($record->tanggal_request)->translatedFormat('l, d F Y').'</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     
                                 </div>
-                                ' . ($record->keterangan ? '
+                                '.($record->keterangan ? '
                                 <div style="background: white; border-left: 3px solid #8B5CF6; padding: 10px; border-radius: 6px; margin-top: 12px;">
                                     <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6B7280; margin-bottom: 6px;">KEPERLUAN</div>
-                                    <div style="font-size: 12px; color: #374151; line-height: 1.4;">' . nl2br(e($record->keterangan)) . '</div>
+                                    <div style="font-size: 12px; color: #374151; line-height: 1.4;">'.nl2br(e($record->keterangan)).'</div>
                                 </div>
-                                ' : '') . '
+                                ' : '').'
                             </div>
                             <div style="margin-bottom: 16px; padding: 12px; background: #FEF3C7; border-left: 4px solid #F59E0B; border-radius: 4px;">
                                 <p style="margin: 0; font-size: 13px; color: #92400E; font-weight: 500;">
@@ -308,7 +308,7 @@ class PengajuansTable
                         ->label('Tolak')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
-                        ->visible(fn(ReqPinjamModel $record) => $record->status === 'diproses')
+                        ->visible(fn (ReqPinjamModel $record) => $record->status === 'diproses')
                         ->modalHeading('Tolak Pengajuan Peminjaman')
                         ->modalDescription('Berikan alasan penolakan yang jelas kepada pemohon')
                         ->modalWidth('xl')
@@ -366,20 +366,20 @@ class PengajuansTable
                         return $query
                             ->when(
                                 $data['dari'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_request', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_request', '>=', $date),
                             )
                             ->when(
                                 $data['sampai'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_request', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_request', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['dari'] ?? null) {
-                            $indicators[] = 'Dari: ' . \Carbon\Carbon::parse($data['dari'])->format('d M Y');
+                            $indicators[] = 'Dari: '.\Carbon\Carbon::parse($data['dari'])->format('d M Y');
                         }
                         if ($data['sampai'] ?? null) {
-                            $indicators[] = 'Sampai: ' . \Carbon\Carbon::parse($data['sampai'])->format('d M Y');
+                            $indicators[] = 'Sampai: '.\Carbon\Carbon::parse($data['sampai'])->format('d M Y');
                         }
 
                         return $indicators;
@@ -410,20 +410,20 @@ class PengajuansTable
                         return $query
                             ->when(
                                 $data['min'],
-                                fn(Builder $query, $jumlah): Builder => $query->where('jumlah', '>=', $jumlah),
+                                fn (Builder $query, $jumlah): Builder => $query->where('jumlah', '>=', $jumlah),
                             )
                             ->when(
                                 $data['max'],
-                                fn(Builder $query, $jumlah): Builder => $query->where('jumlah', '<=', $jumlah),
+                                fn (Builder $query, $jumlah): Builder => $query->where('jumlah', '<=', $jumlah),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['min'] ?? null) {
-                            $indicators[] = 'Min: ' . $data['min'] . ' unit';
+                            $indicators[] = 'Min: '.$data['min'].' unit';
                         }
                         if ($data['max'] ?? null) {
-                            $indicators[] = 'Max: ' . $data['max'] . ' unit';
+                            $indicators[] = 'Max: '.$data['max'].' unit';
                         }
 
                         return $indicators;

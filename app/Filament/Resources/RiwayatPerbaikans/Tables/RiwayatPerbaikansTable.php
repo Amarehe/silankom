@@ -23,6 +23,14 @@ class RiwayatPerbaikansTable
                     ->rowIndex()
                     ->alignCenter(),
 
+                TextColumn::make('nodis')
+                    ->label('No. Nota Dinas')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('-')
+                    ->weight('bold')
+                    ->color('primary'),
+
                 TextColumn::make('tgl_pengajuan')
                     ->label('Tgl. Pengajuan')
                     ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
@@ -85,12 +93,18 @@ class RiwayatPerbaikansTable
                                 ->icon('heroicon-o-computer-desktop')
                                 ->schema([
                                     Grid::make(3)->schema([
+                                        TextEntry::make('nodis')
+                                            ->label('Nomor Nota Dinas')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
                                         TextEntry::make('kategori.nama_kategori')->label('Kategori'),
                                         TextEntry::make('merek.nama_merek')->label('Merek'),
                                         TextEntry::make('nm_barang')->label('Nama Barang'),
                                         TextEntry::make('serial_number')->label('Serial Number')->placeholder('-'),
                                         TextEntry::make('jumlah')->label('Jumlah Unit')->suffix(' unit'),
-                                        TextEntry::make('tgl_pengajuan')->label('Tgl. Pengajuan')->date('d F Y'),
+                                        TextEntry::make('tgl_pengajuan')->label('Tgl. Pengajuan')->date('l, d F Y'),
                                     ]),
                                 ])->collapsible(),
 

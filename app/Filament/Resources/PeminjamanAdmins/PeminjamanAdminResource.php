@@ -9,6 +9,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class PeminjamanAdminResource extends Resource
@@ -28,6 +29,16 @@ class PeminjamanAdminResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $pluralModelLabel = 'Riwayat Peminjaman';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
 
     public static function table(Table $table): Table
     {

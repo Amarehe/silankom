@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class KelolaPerbaikanResource extends Resource
@@ -29,6 +30,16 @@ class KelolaPerbaikanResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $pluralModelLabel = 'Riwayat Perbaikan';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return in_array(Auth::user()?->role_id, [1, 2, 3]);
+    }
+
+    public static function canAccess(): bool
+    {
+        return in_array(Auth::user()?->role_id, [1, 2, 3]);
+    }
 
     public static function table(Table $table): Table
     {

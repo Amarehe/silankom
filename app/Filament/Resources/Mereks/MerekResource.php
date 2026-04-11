@@ -5,13 +5,13 @@ namespace App\Filament\Resources\Mereks;
 use App\Filament\Resources\Mereks\Pages\ListMereks;
 use App\Filament\Resources\Mereks\Schemas\MerekForm;
 use App\Filament\Resources\Mereks\Tables\MereksTable;
-use App\Models\Merek;
 use App\Models\MerekModel;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class MerekResource extends Resource
@@ -34,6 +34,15 @@ class MerekResource extends Resource
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Merek';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

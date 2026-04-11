@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Barangs;
 
-use App\Filament\Resources\Barangs\Pages\CreateBarang;
-use App\Filament\Resources\Barangs\Pages\EditBarang;
 use App\Filament\Resources\Barangs\Pages\ListBarangs;
 use App\Filament\Resources\Barangs\Schemas\BarangForm;
 use App\Filament\Resources\Barangs\Schemas\Baranginfolist;
@@ -14,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class BarangResource extends Resource
@@ -35,6 +34,32 @@ class BarangResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Barang';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return in_array(Auth::user()?->role_id, [1, 2, 3]);
+    }
+
+    public static function canAccess(): bool
+    {
+        return in_array(Auth::user()?->role_id, [1, 2, 3]);
+    }
+
+    /** Teknisi hanya bisa melihat, tidak bisa tambah/ubah/hapus. */
+    public static function canCreate(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

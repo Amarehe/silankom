@@ -5,13 +5,13 @@ namespace App\Filament\Resources\UnitKerjas;
 use App\Filament\Resources\UnitKerjas\Pages\ListUnitKerjas;
 use App\Filament\Resources\UnitKerjas\Schemas\UnitKerjaForm;
 use App\Filament\Resources\UnitKerjas\Tables\UnitKerjasTable;
-use App\Models\UnitKerja;
 use App\Models\UnitKerjaModel;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class UnitKerjaResource extends Resource
@@ -33,6 +33,16 @@ class UnitKerjaResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Unit Kerja';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

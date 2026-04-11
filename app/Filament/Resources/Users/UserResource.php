@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class UserResource extends Resource
@@ -36,6 +37,16 @@ class UserResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar User';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

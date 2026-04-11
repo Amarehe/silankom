@@ -31,6 +31,14 @@ class PengajuanPerbaikansTable
                     ->rowIndex()
                     ->alignCenter(),
 
+                TextColumn::make('nodis')
+                    ->label('No. Nota Dinas')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('-')
+                    ->weight('bold')
+                    ->color('primary'),
+
                 TextColumn::make('pemohon.name')
                     ->label('Pemohon')
                     ->searchable(query: function (Builder $query, string $search): Builder {
@@ -148,6 +156,12 @@ class PengajuanPerbaikansTable
                                 ->icon('heroicon-o-user')
                                 ->schema([
                                     Grid::make(3)->schema([
+                                        TextEntry::make('nodis')
+                                            ->label('No. Nota Dinas')
+                                            ->icon('heroicon-m-document-text')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-'),
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
                                             ->icon('heroicon-m-user'),
