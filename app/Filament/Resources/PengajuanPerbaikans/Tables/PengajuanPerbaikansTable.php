@@ -39,7 +39,7 @@ class PengajuanPerbaikansTable
                     ->sortable()
                     ->placeholder('-')
                     ->weight('bold')
-                    ->color('primary'),
+                    ->color('primary')
                     ->placeholder('-')
                     ->icon('heroicon-o-document-text')
                     ->copyable()

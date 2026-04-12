@@ -29,7 +29,7 @@ class RiwayatPerbaikansTable
                     ->sortable()
                     ->placeholder('-')
                     ->weight('bold')
-                    ->color('primary'),
+                    ->color('primary')
                     ->placeholder('-')
                     ->icon('heroicon-o-document-text')
                     ->copyable()
@@ -112,8 +112,6 @@ class RiwayatPerbaikansTable
                                     ]),
                                 ])->collapsible(),
 
-                            Section::make('Hasil Perbaikan')
-                                ->icon('heroicon-o-check-badge')
                             Section::make('Ringkasan Pengajuan')
                                 ->icon('heroicon-o-document-text')
                                 ->schema([
