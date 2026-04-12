@@ -5,6 +5,8 @@ namespace App\Filament\Resources\KelolaPerbaikans\Tables;
 use App\Models\PerbaikanModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -33,6 +35,10 @@ class KelolaPerbaikansTable
                     ->placeholder('-')
                     ->weight('bold')
                     ->color('primary'),
+                    ->placeholder('-')
+                    ->icon('heroicon-o-document-text')
+                    ->copyable()
+                    ->toggleable(),
 
                 TextColumn::make('pemohon.name')
                     ->label('Pemohon')
@@ -91,7 +97,7 @@ class KelolaPerbaikansTable
 
                 TextColumn::make('updated_at')
                     ->label('Tgl. Selesai')
-                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
+                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('d M Y'))
                     ->sortable(),
             ])
             ->modifyQueryUsing(fn ($query) => $query->with(['pemohon.jabatan', 'pemohon.unitkerja', 'kategori', 'merek', 'teknisi']))
@@ -159,6 +165,12 @@ class KelolaPerbaikansTable
                                             ->label('Tanggal Pengajuan')
                                             ->date('l, d F Y')
                                             ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('nodis')
+                                            ->label('No. Nota Dinas')
+                                            ->placeholder('-')
+                                            ->badge()
+                                            ->color('warning')
+                                            ->icon('heroicon-m-document-text'),
                                     ]),
                                 ])->collapsible(),
 
@@ -244,6 +256,11 @@ class KelolaPerbaikansTable
                         ->visible(fn (PerbaikanModel $record): bool => ! empty($record->no_surat_perbaikan))
                         ->url(fn (PerbaikanModel $record): string => route('download.surat-perbaikan', $record))
                         ->openUrlInNewTab(),
+
+                    EditAction::make()
+                        ->visible(fn () => auth()?->user()?->role_id === 1),
+                    DeleteAction::make()
+                        ->visible(fn () => auth()?->user()?->role_id === 1),
                 ])
                     ->button()
                     ->label('Aksi')

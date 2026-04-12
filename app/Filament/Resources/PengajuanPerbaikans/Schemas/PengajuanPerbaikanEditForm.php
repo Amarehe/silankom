@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\ReqPerbaikans\Schemas;
+namespace App\Filament\Resources\PengajuanPerbaikans\Schemas;
 
-use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Auth;
 
-class ReqPerbaikanForm
+class PengajuanPerbaikanEditForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -33,20 +32,17 @@ class ReqPerbaikanForm
             TextInput::make('nm_barang')
                 ->label('Nama Barang')
                 ->required()
-                ->placeholder('Masukkan nama barang')
                 ->columnSpanFull(),
 
             DatePicker::make('tgl_pengajuan')
                 ->label('Tanggal Pengajuan')
                 ->required()
                 ->native(false)
-                ->default(now())
                 ->columnSpanFull(),
 
             Textarea::make('keluhan')
                 ->label('Keluhan / Deskripsi Masalah')
                 ->required()
-                ->placeholder('Jelaskan permasalahan barang yang diajukan')
                 ->rows(3)
                 ->columnSpanFull(),
 
@@ -55,20 +51,44 @@ class ReqPerbaikanForm
                 ->numeric()
                 ->required()
                 ->minValue(1)
-                ->default(1)
                 ->columnSpanFull(),
 
             TextInput::make('nodis')
                 ->label('Nomor Nota Dinas')
-                ->placeholder('Masukkan nomor nota dinas (jika ada)')
-                ->helperText('Opsional. Pengisian nomor Nota Dinas akan membantu percepatan prioritas penanganan pengajuan.')
+                ->placeholder('Masukkan nomor nota dinas (opsional)')
                 ->columnSpanFull(),
 
-            Hidden::make('user_id')
-                ->default(Auth::id()),
+            TextInput::make('serial_number')
+                ->label('Serial Number')
+                ->placeholder('Serial number barang')
+                ->columnSpanFull(),
 
-            Hidden::make('status_perbaikan')
-                ->default('pending'),
+            Textarea::make('keterangan')
+                ->label('Keterangan / Hasil Perbaikan')
+                ->rows(3)
+                ->columnSpanFull(),
+
+            TextInput::make('no_surat_perbaikan')
+                ->label('No. Surat Perbaikan')
+                ->placeholder('Nomor surat perbaikan')
+                ->columnSpanFull(),
+
+            Select::make('status_perbaikan')
+                ->label('Status Perbaikan')
+                ->options([
+                    'diajukan' => 'Diajukan',
+                    'diproses' => 'Diproses',
+                    'selesai' => 'Selesai',
+                    'tidak_bisa_diperbaiki' => 'Tidak Bisa Diperbaiki',
+                ])
+                ->required()
+                ->columnSpanFull(),
+
+            Textarea::make('catatan_barang')
+                ->label('Info Pengambilan Barang')
+                ->placeholder('Instruksi pengambilan barang')
+                ->rows(3)
+                ->columnSpanFull(),
         ]);
     }
 }

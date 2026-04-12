@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Surat Perbaikan - {{ $perbaikan->no_surat_perbaikan }}</title>
+    <title>Surat Perbaikan - {{ $perbaikan->no_surat }}</title>
     <style>
         @page {
             margin: 2cm 2cm 2cm 2cm;
@@ -154,7 +154,7 @@
 
     <!-- NOMOR SURAT -->
     <div class="nomor-surat">
-        Nomor: {{ $perbaikan->no_surat_perbaikan }}
+        Nomor: {{ $perbaikan->no_surat }}
     </div>
 
     <!-- ISI -->
@@ -192,7 +192,7 @@
         <tr>
             <td>Barang berupa</td>
             <td>:</td>
-            <td>{{ $perbaikan->nm_barang ?? '-' }}</td>
+            <td>{{ $perbaikan->nama_barang ?? '-' }}</td>
         </tr>
         <tr>
             <td>Merk/Type</td>
@@ -227,7 +227,7 @@
         <tr>
             <td>Hasil Perbaikan</td>
             <td>:</td>
-            <td>{{ $perbaikan->keterangan ?? '-' }}</td>
+            <td>{{ $perbaikan->tindakan ?? '-' }}</td>
         </tr>
 
     </table>
