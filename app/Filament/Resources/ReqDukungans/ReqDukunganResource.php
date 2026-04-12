@@ -33,6 +33,16 @@ class ReqDukunganResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Dukungan';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return ReqDukunganForm::configure($schema);

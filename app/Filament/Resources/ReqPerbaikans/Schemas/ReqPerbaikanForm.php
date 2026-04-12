@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ReqPerbaikans\Schemas;
 
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -61,8 +60,8 @@ class ReqPerbaikanForm
 
             TextInput::make('nodis')
                 ->label('Nomor Nota Dinas')
-                ->required()
-                ->placeholder('Masukkan nomor nota dinas')
+                ->placeholder('Masukkan nomor nota dinas (jika ada)')
+                ->helperText('Opsional. Pengisian nomor Nota Dinas akan membantu percepatan prioritas penanganan pengajuan.')
                 ->columnSpanFull(),
 
             Hidden::make('user_id')

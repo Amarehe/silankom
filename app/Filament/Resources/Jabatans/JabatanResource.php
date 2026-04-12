@@ -5,13 +5,13 @@ namespace App\Filament\Resources\Jabatans;
 use App\Filament\Resources\Jabatans\Pages\ListJabatans;
 use App\Filament\Resources\Jabatans\Schemas\JabatanForm;
 use App\Filament\Resources\Jabatans\Tables\JabatansTable;
-use App\Models\Jabatan;
 use App\Models\JabatanModel;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class JabatanResource extends Resource
@@ -34,6 +34,15 @@ class JabatanResource extends Resource
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Jabatan';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isSuperAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

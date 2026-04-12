@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class RiwayatDukunganResource extends Resource
@@ -29,6 +30,16 @@ class RiwayatDukunganResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $pluralModelLabel = 'Riwayat Dukungan';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
 
     public static function table(Table $table): Table
     {

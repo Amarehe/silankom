@@ -5,18 +5,18 @@ namespace App\Filament\Resources\Kategoris;
 use App\Filament\Resources\Kategoris\Pages\ListKategoris;
 use App\Filament\Resources\Kategoris\Schemas\KategoriForm;
 use App\Filament\Resources\Kategoris\Tables\KategorisTable;
-use App\Models\Kategori;
 use App\Models\KategoriModel;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class KategoriResource extends Resource
 {
-    protected static ?string $model =  KategoriModel::class;
+    protected static ?string $model = KategoriModel::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Tag;
 
@@ -33,6 +33,16 @@ class KategoriResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Kategori';
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
 
     public static function form(Schema $schema): Schema
     {

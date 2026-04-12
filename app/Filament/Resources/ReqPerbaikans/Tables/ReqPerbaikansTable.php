@@ -23,6 +23,14 @@ class ReqPerbaikansTable
                     ->rowIndex()
                     ->alignCenter(),
 
+                TextColumn::make('nodis')
+                    ->label('No. Nota Dinas')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('-')
+                    ->weight('bold')
+                    ->color('primary'),
+
                 TextColumn::make('tgl_pengajuan')
                     ->label('Tgl. Pengajuan')
                     ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
@@ -89,12 +97,17 @@ class ReqPerbaikansTable
                                 ->icon('heroicon-o-document-text')
                                 ->schema([
                                     Grid::make(2)->schema([
+                                        TextEntry::make('nodis')
+                                            ->label('Nomor Nota Dinas')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
                                         TextEntry::make('kategori.nama_kategori')->label('Kategori'),
                                         TextEntry::make('merek.nama_merek')->label('Merek'),
                                         TextEntry::make('nm_barang')->label('Nama Barang'),
                                         TextEntry::make('jumlah')->label('Jumlah Unit')->suffix(' Unit'),
-                                        TextEntry::make('nodis')->label('Nomor Nota Dinas')->placeholder('-'),
-                                        TextEntry::make('tgl_pengajuan')->label('Tanggal Pengajuan')->date('d F Y'),
+                                        TextEntry::make('tgl_pengajuan')->label('Tanggal Pengajuan')->date('l, d F Y'),
                                     ]),
                                 ])->collapsible(),
 

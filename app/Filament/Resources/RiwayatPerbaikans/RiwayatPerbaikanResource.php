@@ -31,6 +31,16 @@ class RiwayatPerbaikanResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Riwayat Perbaikan';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
     public static function table(Table $table): Table
     {
         return RiwayatPerbaikansTable::configure($table);

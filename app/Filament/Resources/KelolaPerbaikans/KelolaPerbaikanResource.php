@@ -34,9 +34,14 @@ class KelolaPerbaikanResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Riwayat Perbaikan';
 
-    public static function form(Schema $schema): Schema
+    public static function shouldRegisterNavigation(): bool
     {
-        return PengajuanPerbaikanEditForm::configure($schema);
+        return in_array(Auth::user()?->role_id, [1, 2, 3]);
+    }
+
+    public static function canAccess(): bool
+    {
+        return in_array(Auth::user()?->role_id, [1, 2, 3]);
     }
 
     public static function table(Table $table): Table

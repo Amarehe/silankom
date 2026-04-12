@@ -18,7 +18,7 @@ class RiwayatPeminjamansTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query) => $query->with([
+            ->modifyQueryUsing(fn ($query) => $query->with([
                 'reqPinjam.user.jabatan',
                 'reqPinjam.user.unitkerja',
                 'reqPinjam.kategori',
@@ -42,14 +42,14 @@ class RiwayatPeminjamansTable
                         // Nomor Peminjaman (Biru)
                         $html .= '<div class="flex items-center gap-1">';
                         $html .= '<span class="text-xs">📄</span>';
-                        $html .= '<span class="font-semibold text-info-600 dark:text-info-400">' . $record->nomor_surat . '</span>';
+                        $html .= '<span class="font-semibold text-info-600 dark:text-info-400">'.$record->nomor_surat.'</span>';
                         $html .= '</div>';
 
                         // Nomor Pengembalian (Hijau) - hanya jika sudah dikembalikan
                         if ($record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian) {
                             $html .= '<div class="flex items-center gap-1">';
                             $html .= '<span class="text-xs">📄</span>';
-                            $html .= '<span class="font-semibold text-success-600 dark:text-success-400">' . $record->nomor_surat_pengembalian . '</span>';
+                            $html .= '<span class="font-semibold text-success-600 dark:text-success-400">'.$record->nomor_surat_pengembalian.'</span>';
                             $html .= '</div>';
                         }
 
@@ -59,14 +59,14 @@ class RiwayatPeminjamansTable
                     })
                     ->html()
                     ->copyable()
-                    ->copyableState(fn(PeminjamanModel $record): string => $record->nomor_surat . ($record->nomor_surat_pengembalian ? ' | ' . $record->nomor_surat_pengembalian : ''))
+                    ->copyableState(fn (PeminjamanModel $record): string => $record->nomor_surat.($record->nomor_surat_pengembalian ? ' | '.$record->nomor_surat_pengembalian : ''))
                     ->copyMessage('Nomor surat berhasil disalin'),
 
                 TextColumn::make('reqPinjam.user.name')
                     ->label('Peminjam')
                     ->description(
-                        fn(PeminjamanModel $record): string => $record->reqPinjam?->user?->nip .
-                            ' • ' .
+                        fn (PeminjamanModel $record): string => $record->reqPinjam?->user?->nip.
+                            ' • '.
                             $record->reqPinjam?->user?->unitkerja?->nm_unitkerja
                     )
                     ->icon('heroicon-o-user')
@@ -77,8 +77,8 @@ class RiwayatPeminjamansTable
                 TextColumn::make('barang.nama_barang')
                     ->label('Barang')
                     ->description(
-                        fn(PeminjamanModel $record): string => ($record->barang?->merek?->nama_merek ?? '-') .
-                            ' • ' .
+                        fn (PeminjamanModel $record): string => ($record->barang?->merek?->nama_merek ?? '-').
+                            ' • '.
                             ($record->barang?->kategori?->nama_kategori ?? '-')
                     )
                     ->icon('heroicon-o-cube')
@@ -89,7 +89,7 @@ class RiwayatPeminjamansTable
 
                 TextColumn::make('tanggal_serah_terima')
                     ->label('Tgl Pinjam')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
                     ->icon('heroicon-o-calendar')
                     ->sortable()
                     ->alignCenter(),
@@ -97,13 +97,13 @@ class RiwayatPeminjamansTable
                 TextColumn::make('kondisi_barang')
                     ->label('Kondisi Pinjam')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'baik' => 'success',
                         'rusak ringan' => 'warning',
                         'rusak berat' => 'danger',
                         default => 'gray',
                     })
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'baik' => 'heroicon-o-check-circle',
                         'rusak ringan' => 'heroicon-o-exclamation-triangle',
                         'rusak berat' => 'heroicon-o-x-circle',
@@ -113,22 +113,21 @@ class RiwayatPeminjamansTable
 
                 TextColumn::make('tanggal_kembali')
                     ->label('Tgl Kembali')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y') : '-')
                     ->icon('heroicon-o-calendar-days')
-                    ->placeholder('-')
                     ->sortable()
                     ->alignCenter(),
 
                 TextColumn::make('kondisi_kembali')
                     ->label('Kondisi Kembali')
                     ->badge()
-                    ->color(fn(?string $state): string => match ($state) {
+                    ->color(fn (?string $state): string => match ($state) {
                         'baik' => 'success',
                         'rusak ringan' => 'warning',
                         'rusak berat' => 'danger',
                         default => 'gray',
                     })
-                    ->icon(fn(?string $state): string => match ($state) {
+                    ->icon(fn (?string $state): string => match ($state) {
                         'baik' => 'heroicon-o-check-circle',
                         'rusak ringan' => 'heroicon-o-exclamation-triangle',
                         'rusak berat' => 'heroicon-o-x-circle',
@@ -140,12 +139,12 @@ class RiwayatPeminjamansTable
                 TextColumn::make('status_peminjaman')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'dipinjam' => 'info',
                         'dikembalikan' => 'success',
                         default => 'gray',
                     })
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'dipinjam' => 'heroicon-o-arrow-right-circle',
                         'dikembalikan' => 'heroicon-o-check-badge',
                         default => 'heroicon-o-question-mark-circle',
@@ -160,7 +159,7 @@ class RiwayatPeminjamansTable
                         ->label('📄 Peminjaman')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('info')
-                        ->url(fn(PeminjamanModel $record) => route('download.tanda-terima', $record))
+                        ->url(fn (PeminjamanModel $record) => route('download.tanda-terima', $record))
                         ->openUrlInNewTab(),
 
                     // Download Tanda Terima Pengembalian
@@ -168,10 +167,10 @@ class RiwayatPeminjamansTable
                         ->label('📄 Pengembalian')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')
-                        ->url(fn(PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
+                        ->url(fn (PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
                         ->openUrlInNewTab()
                         ->visible(
-                            fn(PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' &&
+                            fn (PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' &&
                                 $record->nomor_surat_pengembalian !== null
                         ),
                 ])
@@ -237,20 +236,20 @@ class RiwayatPeminjamansTable
                         return $query
                             ->when(
                                 $data['dari'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '>=', $date),
                             )
                             ->when(
                                 $data['sampai'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['dari'] ?? null) {
-                            $indicators[] = 'Pinjam dari: ' . \Carbon\Carbon::parse($data['dari'])->format('d M Y');
+                            $indicators[] = 'Pinjam dari: '.\Carbon\Carbon::parse($data['dari'])->format('d M Y');
                         }
                         if ($data['sampai'] ?? null) {
-                            $indicators[] = 'Pinjam sampai: ' . \Carbon\Carbon::parse($data['sampai'])->format('d M Y');
+                            $indicators[] = 'Pinjam sampai: '.\Carbon\Carbon::parse($data['sampai'])->format('d M Y');
                         }
 
                         return $indicators;
@@ -271,20 +270,20 @@ class RiwayatPeminjamansTable
                         return $query
                             ->when(
                                 $data['dari'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_kembali', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_kembali', '>=', $date),
                             )
                             ->when(
                                 $data['sampai'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_kembali', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_kembali', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['dari'] ?? null) {
-                            $indicators[] = 'Kembali dari: ' . \Carbon\Carbon::parse($data['dari'])->format('d M Y');
+                            $indicators[] = 'Kembali dari: '.\Carbon\Carbon::parse($data['dari'])->format('d M Y');
                         }
                         if ($data['sampai'] ?? null) {
-                            $indicators[] = 'Kembali sampai: ' . \Carbon\Carbon::parse($data['sampai'])->format('d M Y');
+                            $indicators[] = 'Kembali sampai: '.\Carbon\Carbon::parse($data['sampai'])->format('d M Y');
                         }
 
                         return $indicators;

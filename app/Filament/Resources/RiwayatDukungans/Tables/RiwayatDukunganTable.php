@@ -31,7 +31,7 @@ class RiwayatDukunganTable
 
                 TextColumn::make('tgl_kegiatan')
                     ->label('Tgl Kegiatan')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
                     ->sortable()
                     ->icon('heroicon-o-calendar'),
 
@@ -85,9 +85,8 @@ class RiwayatDukunganTable
 
                 TextColumn::make('tgl_disetujui')
                     ->label('Tgl Disetujui')
-                    ->date('d M Y')
-                    ->sortable()
-                    ->placeholder('-'),
+                    ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y') : '-')
+                    ->sortable(),
 
                 TextColumn::make('picDukungan.name')
                     ->label('PIC Admin')

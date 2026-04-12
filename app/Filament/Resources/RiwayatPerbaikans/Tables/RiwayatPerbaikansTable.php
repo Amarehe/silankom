@@ -26,6 +26,10 @@ class RiwayatPerbaikansTable
                 TextColumn::make('nodis')
                     ->label('No. Nota Dinas')
                     ->searchable()
+                    ->sortable()
+                    ->placeholder('-')
+                    ->weight('bold')
+                    ->color('primary'),
                     ->placeholder('-')
                     ->icon('heroicon-o-document-text')
                     ->copyable()
@@ -89,6 +93,27 @@ class RiwayatPerbaikansTable
                         ->modalHeading('Detail Riwayat Perbaikan')
                         ->modalWidth('3xl')
                         ->infolist([
+                            Section::make('Rincian Barang')
+                                ->icon('heroicon-o-computer-desktop')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('nodis')
+                                            ->label('Nomor Nota Dinas')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
+                                        TextEntry::make('kategori.nama_kategori')->label('Kategori'),
+                                        TextEntry::make('merek.nama_merek')->label('Merek'),
+                                        TextEntry::make('nm_barang')->label('Nama Barang'),
+                                        TextEntry::make('serial_number')->label('Serial Number')->placeholder('-'),
+                                        TextEntry::make('jumlah')->label('Jumlah Unit')->suffix(' unit'),
+                                        TextEntry::make('tgl_pengajuan')->label('Tgl. Pengajuan')->date('l, d F Y'),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Hasil Perbaikan')
+                                ->icon('heroicon-o-check-badge')
                             Section::make('Ringkasan Pengajuan')
                                 ->icon('heroicon-o-document-text')
                                 ->schema([

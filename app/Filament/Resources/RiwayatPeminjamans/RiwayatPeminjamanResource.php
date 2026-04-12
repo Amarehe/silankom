@@ -33,6 +33,16 @@ class RiwayatPeminjamanResource extends Resource
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Riwayat Peminjaman Saya';
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isKaryawan() ?? false;
+    }
+
     public static function table(Table $table): Table
     {
         return RiwayatPeminjamansTable::configure($table);

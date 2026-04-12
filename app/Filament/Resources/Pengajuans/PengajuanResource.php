@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class PengajuanResource extends Resource
@@ -40,6 +41,16 @@ class PengajuanResource extends Resource
     public static function getNavigationBadgeColor(): ?string
     {
         return 'warning';
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()?->isAdmin() ?? false;
     }
 
     public static function table(Table $table): Table

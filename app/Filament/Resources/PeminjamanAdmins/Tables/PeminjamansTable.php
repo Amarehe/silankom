@@ -22,7 +22,7 @@ class PeminjamansTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query) => $query->with([
+            ->modifyQueryUsing(fn ($query) => $query->with([
                 'reqPinjam.user.unitkerja',
                 'reqPinjam.user.jabatan',
                 'barang.kategori',
@@ -45,14 +45,14 @@ class PeminjamansTable
                         // Nomor Peminjaman (Biru)
                         $html .= '<div class="flex items-center gap-1">';
                         $html .= '<span class="text-xs">📄</span>';
-                        $html .= '<span class="font-semibold text-info-600 dark:text-info-400">' . $record->nomor_surat . '</span>';
+                        $html .= '<span class="font-semibold text-info-600 dark:text-info-400">'.$record->nomor_surat.'</span>';
                         $html .= '</div>';
 
                         // Nomor Pengembalian (Hijau) - hanya jika sudah dikembalikan
                         if ($record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian) {
                             $html .= '<div class="flex items-center gap-1">';
                             $html .= '<span class="text-xs">📄</span>';
-                            $html .= '<span class="font-semibold text-success-600 dark:text-success-400">' . $record->nomor_surat_pengembalian . '</span>';
+                            $html .= '<span class="font-semibold text-success-600 dark:text-success-400">'.$record->nomor_surat_pengembalian.'</span>';
                             $html .= '</div>';
                         }
 
@@ -62,7 +62,7 @@ class PeminjamansTable
                     })
                     ->html()
                     ->copyable()
-                    ->copyableState(fn(PeminjamanModel $record): string => $record->nomor_surat . ($record->nomor_surat_pengembalian ? ' | ' . $record->nomor_surat_pengembalian : ''))
+                    ->copyableState(fn (PeminjamanModel $record): string => $record->nomor_surat.($record->nomor_surat_pengembalian ? ' | '.$record->nomor_surat_pengembalian : ''))
                     ->copyMessage('Nomor surat berhasil disalin'),
 
                 TextColumn::make('reqPinjam.user.name')
@@ -70,7 +70,7 @@ class PeminjamansTable
                     ->searchable()
                     ->sortable()
                     ->description(
-                        fn(PeminjamanModel $record): string => ($record->reqPinjam->user->nip ?? '-') . ' • ' . ($record->reqPinjam->user->unitkerja->nm_unitkerja ?? '-')
+                        fn (PeminjamanModel $record): string => ($record->reqPinjam->user->nip ?? '-').' • '.($record->reqPinjam->user->unitkerja->nm_unitkerja ?? '-')
                     )
                     ->weight('medium')
                     ->wrap(),
@@ -80,29 +80,29 @@ class PeminjamansTable
                     ->searchable()
                     ->sortable()
                     ->description(
-                        fn(PeminjamanModel $record): string => ($record->barang->kategori->nama_kategori ?? '-') . ' • ' . ($record->barang->merek->nama_merek ?? '-')
+                        fn (PeminjamanModel $record): string => ($record->barang->kategori->nama_kategori ?? '-').' • '.($record->barang->merek->nama_merek ?? '-')
                     )
                     ->icon('heroicon-o-cube')
                     ->wrap(),
 
                 TextColumn::make('tanggal_serah_terima')
                     ->label('Tanggal Pinjam')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
                     ->sortable()
                     ->description(
-                        fn(PeminjamanModel $record): string => $record->created_at->diffForHumans()
+                        fn (PeminjamanModel $record): string => $record->created_at->diffForHumans()
                     )
                     ->icon('heroicon-o-calendar'),
 
                 TextColumn::make('kondisi_barang')
                     ->label('Kondisi')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'baik' => 'success',
                         'rusak ringan' => 'warning',
                         'rusak berat' => 'danger',
                     })
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'baik' => 'heroicon-o-check-circle',
                         'rusak ringan' => 'heroicon-o-exclamation-triangle',
                         'rusak berat' => 'heroicon-o-x-circle',
@@ -110,22 +110,21 @@ class PeminjamansTable
 
                 TextColumn::make('tanggal_kembali')
                     ->label('Tgl Kembali')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y') : '-')
                     ->icon('heroicon-o-calendar-days')
-                    ->placeholder('-')
                     ->sortable()
                     ->alignCenter(),
 
                 TextColumn::make('kondisi_kembali')
                     ->label('Kondisi Kembali')
                     ->badge()
-                    ->color(fn(?string $state): string => match ($state) {
+                    ->color(fn (?string $state): string => match ($state) {
                         'baik' => 'success',
                         'rusak ringan' => 'warning',
                         'rusak berat' => 'danger',
                         default => 'gray',
                     })
-                    ->icon(fn(?string $state): string => match ($state) {
+                    ->icon(fn (?string $state): string => match ($state) {
                         'baik' => 'heroicon-o-check-circle',
                         'rusak ringan' => 'heroicon-o-exclamation-triangle',
                         'rusak berat' => 'heroicon-o-x-circle',
@@ -137,11 +136,11 @@ class PeminjamansTable
                 TextColumn::make('status_peminjaman')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'dipinjam' => 'info',
                         'dikembalikan' => 'success',
                     })
-                    ->icon(fn(string $state): string => match ($state) {
+                    ->icon(fn (string $state): string => match ($state) {
                         'dipinjam' => 'heroicon-o-arrow-right-circle',
                         'dikembalikan' => 'heroicon-o-check-badge',
                     })
@@ -154,7 +153,7 @@ class PeminjamansTable
                         ->label('Proses Pengembalian')
                         ->icon('heroicon-o-arrow-uturn-left')
                         ->color('warning')
-                        ->visible(fn(PeminjamanModel $record) => $record->status_peminjaman === 'dipinjam')
+                        ->visible(fn (PeminjamanModel $record) => $record->status_peminjaman === 'dipinjam')
                         ->modalHeading('Proses Pengembalian Barang')
                         ->modalDescription('Silakan isi form pengembalian barang di bawah ini')
                         ->modalWidth('xl')
@@ -223,7 +222,7 @@ class PeminjamansTable
                         ->label('📄 Peminjaman')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('info')
-                        ->url(fn(PeminjamanModel $record) => route('download.tanda-terima', $record))
+                        ->url(fn (PeminjamanModel $record) => route('download.tanda-terima', $record))
                         ->openUrlInNewTab(),
 
                     // Download PDF Tanda Terima Pengembalian
@@ -231,8 +230,8 @@ class PeminjamansTable
                         ->label('📄 Pengembalian')
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')
-                        ->visible(fn(PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian)
-                        ->url(fn(PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
+                        ->visible(fn (PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian)
+                        ->url(fn (PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
                         ->openUrlInNewTab(),
                 ])
                     ->label('Aksi')
@@ -288,20 +287,20 @@ class PeminjamansTable
                         return $query
                             ->when(
                                 $data['dari'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '>=', $date),
                             )
                             ->when(
                                 $data['sampai'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('tanggal_serah_terima', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
                         if ($data['dari'] ?? null) {
-                            $indicators[] = 'Dari: ' . \Carbon\Carbon::parse($data['dari'])->format('d M Y');
+                            $indicators[] = 'Dari: '.\Carbon\Carbon::parse($data['dari'])->format('d M Y');
                         }
                         if ($data['sampai'] ?? null) {
-                            $indicators[] = 'Sampai: ' . \Carbon\Carbon::parse($data['sampai'])->format('d M Y');
+                            $indicators[] = 'Sampai: '.\Carbon\Carbon::parse($data['sampai'])->format('d M Y');
                         }
 
                         return $indicators;

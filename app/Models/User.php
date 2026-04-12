@@ -48,8 +48,35 @@ class User extends Authenticatable
     // Agar user bisa mengakses Filament Admin Panel
     public function canAccessFilament(): bool
     {
-        // Contoh: return $this->role_id === 1;
-        return true; // Sementara return true agar semua user di tabel bisa login
+        return true;
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role_id === 1;
+    }
+
+    public function isAdminKomlek(): bool
+    {
+        return $this->role_id === 2;
+    }
+
+    public function isTeknisiKomlek(): bool
+    {
+        return $this->role_id === 3;
+    }
+
+    public function isKaryawan(): bool
+    {
+        return $this->role_id === 4;
+    }
+
+    /**
+     * Returns true for Super Admin & Admin Komlek.
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->role_id, [1, 2]);
     }
 
     /**

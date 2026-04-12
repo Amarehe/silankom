@@ -39,7 +39,7 @@ class PengajuanDukungansTable
 
                 TextColumn::make('tgl_kegiatan')
                     ->label('Tgl Kegiatan')
-                    ->date('d M Y')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
                     ->sortable()
                     ->icon('heroicon-o-calendar'),
 

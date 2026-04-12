@@ -36,6 +36,10 @@ class PengajuanPerbaikansTable
                 TextColumn::make('nodis')
                     ->label('No. Nota Dinas')
                     ->searchable()
+                    ->sortable()
+                    ->placeholder('-')
+                    ->weight('bold')
+                    ->color('primary'),
                     ->placeholder('-')
                     ->icon('heroicon-o-document-text')
                     ->copyable()
@@ -158,6 +162,12 @@ class PengajuanPerbaikansTable
                                 ->icon('heroicon-o-user')
                                 ->schema([
                                     Grid::make(3)->schema([
+                                        TextEntry::make('nodis')
+                                            ->label('No. Nota Dinas')
+                                            ->icon('heroicon-m-document-text')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-'),
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
                                             ->icon('heroicon-m-user'),
