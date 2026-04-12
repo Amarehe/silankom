@@ -19,13 +19,12 @@ class PerbaikanModel extends Model
         return [
             'tgl_pengajuan' => 'date',
             'tgl_perbaikan' => 'date',
-            'status_perbaikan' => 'string',
         ];
     }
 
     public function pemohon(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'pemohon_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function kategori(): BelongsTo

@@ -23,9 +23,17 @@ class RiwayatPerbaikansTable
                     ->rowIndex()
                     ->alignCenter(),
 
+                TextColumn::make('nodis')
+                    ->label('No. Nota Dinas')
+                    ->searchable()
+                    ->placeholder('-')
+                    ->icon('heroicon-o-document-text')
+                    ->copyable()
+                    ->toggleable(),
+
                 TextColumn::make('tgl_pengajuan')
                     ->label('Tgl. Pengajuan')
-                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
+                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('d M Y'))
                     ->sortable(),
 
                 TextColumn::make('kategori.nama_kategori')
@@ -81,25 +89,22 @@ class RiwayatPerbaikansTable
                         ->modalHeading('Detail Riwayat Perbaikan')
                         ->modalWidth('3xl')
                         ->infolist([
-                            Section::make('Rincian Barang')
-                                ->icon('heroicon-o-computer-desktop')
-                                ->schema([
-                                    Grid::make(3)->schema([
-                                        TextEntry::make('kategori.nama_kategori')->label('Kategori'),
-                                        TextEntry::make('merek.nama_merek')->label('Merek'),
-                                        TextEntry::make('nm_barang')->label('Nama Barang'),
-                                        TextEntry::make('serial_number')->label('Serial Number')->placeholder('-'),
-                                        TextEntry::make('jumlah')->label('Jumlah Unit')->suffix(' unit'),
-                                        TextEntry::make('tgl_pengajuan')->label('Tgl. Pengajuan')->date('d F Y'),
-                                    ]),
-                                ])->collapsible(),
-
-                            Section::make('Hasil Perbaikan')
-                                ->icon('heroicon-o-check-badge')
+                            Section::make('Ringkasan Pengajuan')
+                                ->icon('heroicon-o-document-text')
                                 ->schema([
                                     Grid::make(2)->schema([
+                                        TextEntry::make('nodis')
+                                            ->label('No. Nota Dinas')
+                                            ->placeholder('Tidak ada')
+                                            ->badge()
+                                            ->color('warning')
+                                            ->icon('heroicon-m-document-text'),
+                                        TextEntry::make('tgl_pengajuan')
+                                            ->label('Tanggal Pengajuan')
+                                            ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
+                                            ->icon('heroicon-m-calendar-days'),
                                         TextEntry::make('status_perbaikan')
-                                            ->label('Status Akhir')
+                                            ->label('Status Perbaikan')
                                             ->badge()
                                             ->color(fn (string $state): string => match ($state) {
                                                 'selesai' => 'success',
@@ -107,28 +112,82 @@ class RiwayatPerbaikansTable
                                                 default => 'gray',
                                             })
                                             ->formatStateUsing(fn (string $state): string => match ($state) {
-                                                'selesai' => 'Selesai',
-                                                'tidak_bisa_diperbaiki' => 'Tidak Bisa Diperbaiki',
+                                                'selesai' => '✅ Selesai',
+                                                'tidak_bisa_diperbaiki' => '❌ Tidak Bisa Diperbaiki',
                                                 default => $state,
+                                            })
+                                            ->icon(fn (string $state): string => match ($state) {
+                                                'selesai' => 'heroicon-o-check-circle',
+                                                'tidak_bisa_diperbaiki' => 'heroicon-o-x-circle',
+                                                default => 'heroicon-o-clock',
                                             }),
-                                        TextEntry::make('no_surat_perbaikan')->label('Nomor Surat')->placeholder('-'),
-                                        TextEntry::make('teknisi.name')->label('Teknisi Penanggung Jawab')->placeholder('-'),
-                                    ]),
-                                ])->collapsible(),
-
-                            Section::make('Keluhan & Hasil')
-                                ->icon('heroicon-o-clipboard-document-list')
-                                ->schema([
-                                    Grid::make(2)->schema([
-                                        TextEntry::make('keluhan')->label('Keluhan / Kerusakan')->prose(),
-                                        TextEntry::make('keterangan')->label('Keterangan Hasil')->prose(),
+                                        TextEntry::make('no_surat_perbaikan')
+                                            ->label('No. Surat Perbaikan')
+                                            ->placeholder('Belum diterbitkan')
+                                            ->copyable()
+                                            ->icon('heroicon-m-document-check'),
                                     ]),
                                 ]),
 
-                            Section::make('Info Pengambilan Barang')
-                                ->icon('heroicon-o-gift')
+                            Section::make('Data Barang')
+                                ->icon('heroicon-o-computer-desktop')
                                 ->schema([
-                                    TextEntry::make('catatan_barang')->label('Instruksi')->placeholder('-'),
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('kategori.nama_kategori')
+                                            ->label('Kategori')
+                                            ->badge()
+                                            ->color('info'),
+                                        TextEntry::make('merek.nama_merek')
+                                            ->label('Merek')
+                                            ->icon('heroicon-m-tag'),
+                                        TextEntry::make('nm_barang')
+                                            ->label('Nama Barang')
+                                            ->weight('bold')
+                                            ->icon('heroicon-m-computer-desktop'),
+                                        TextEntry::make('serial_number')
+                                            ->label('Serial Number')
+                                            ->placeholder('-')
+                                            ->copyable()
+                                            ->icon('heroicon-m-hashtag'),
+                                        TextEntry::make('jumlah')
+                                            ->label('Jumlah')
+                                            ->suffix(' Unit')
+                                            ->icon('heroicon-m-cube'),
+                                        TextEntry::make('keluhan')
+                                            ->label('Keluhan / Kerusakan')
+                                            ->prose()
+                                            ->columnSpanFull(),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Hasil Perbaikan')
+                                ->icon('heroicon-o-wrench-screwdriver')
+                                ->schema([
+                                    Grid::make(2)->schema([
+                                        TextEntry::make('teknisi.name')
+                                            ->label('Teknisi Penanggung Jawab')
+                                            ->placeholder('Belum ditentukan')
+                                            ->icon('heroicon-m-user-circle'),
+                                        TextEntry::make('updated_at')
+                                            ->label('Tanggal Diselesaikan')
+                                            ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
+                                            ->icon('heroicon-m-check-badge'),
+                                        TextEntry::make('keterangan')
+                                            ->label('Tindakan / Hasil Perbaikan')
+                                            ->prose()
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Info Pengambilan Barang')
+                                ->icon('heroicon-o-archive-box-arrow-down')
+                                ->description('Silakan datang sesuai instruksi berikut untuk mengambil barang Anda.')
+                                ->schema([
+                                    TextEntry::make('catatan_barang')
+                                        ->label('Instruksi dari Teknisi')
+                                        ->prose()
+                                        ->placeholder('-'),
                                 ])
                                 ->visible(fn (PerbaikanModel $record) => ! empty($record->catatan_barang)),
                         ])

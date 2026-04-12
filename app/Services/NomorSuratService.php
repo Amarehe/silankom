@@ -62,10 +62,9 @@ class NomorSuratService
         $bulanRomawi = self::toRoman((int) $bulan);
 
         // Hitung nomor urut untuk bulan ini (auto reset per bulan)
-        // Kita hitung berdasarkan updated_at karena nomor surat digenerate saat status 'selesai'
-        $lastNumber = PerbaikanModel::whereYear('updated_at', $tahun)
-            ->whereMonth('updated_at', $bulan)
-            ->whereNotNull('no_surat_perbaikan')
+        $lastNumber = PerbaikanModel::whereYear('created_at', $tahun)
+            ->whereMonth('created_at', $bulan)
+            ->whereNotNull('no_surat')
             ->count();
 
         $nomorUrut = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);

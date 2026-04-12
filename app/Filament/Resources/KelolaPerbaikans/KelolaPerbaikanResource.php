@@ -2,14 +2,18 @@
 
 namespace App\Filament\Resources\KelolaPerbaikans;
 
+use App\Filament\Resources\KelolaPerbaikans\Pages\EditKelolaPerbaikan;
 use App\Filament\Resources\KelolaPerbaikans\Pages\ListKelolaPerbaikans;
 use App\Filament\Resources\KelolaPerbaikans\Tables\KelolaPerbaikansTable;
+use App\Filament\Resources\PengajuanPerbaikans\Schemas\PengajuanPerbaikanEditForm;
 use App\Models\PerbaikanModel;
 use BackedEnum;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
 class KelolaPerbaikanResource extends Resource
@@ -30,6 +34,11 @@ class KelolaPerbaikanResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Riwayat Perbaikan';
 
+    public static function form(Schema $schema): Schema
+    {
+        return PengajuanPerbaikanEditForm::configure($schema);
+    }
+
     public static function table(Table $table): Table
     {
         return KelolaPerbaikansTable::configure($table);
@@ -46,6 +55,16 @@ class KelolaPerbaikanResource extends Resource
         return false;
     }
 
+    public static function canEdit($record): bool
+    {
+        return Auth::user()?->role_id == 1;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return Auth::user()?->role_id == 1;
+    }
+
     public static function getRelations(): array
     {
         return [];
@@ -55,6 +74,7 @@ class KelolaPerbaikanResource extends Resource
     {
         return [
             'index' => ListKelolaPerbaikans::route('/'),
+            'edit' => EditKelolaPerbaikan::route('/{record}/edit'),
         ];
     }
 }
