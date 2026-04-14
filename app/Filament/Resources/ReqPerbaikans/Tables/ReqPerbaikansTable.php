@@ -102,6 +102,7 @@ class ReqPerbaikansTable
                                             ->weight('bold')
                                             ->color('primary')
                                             ->placeholder('-')
+                                            ->copyable()
                                             ->columnSpanFull(),
                                         TextEntry::make('kategori.nama_kategori')->label('Kategori'),
                                         TextEntry::make('merek.nama_merek')->label('Merek'),

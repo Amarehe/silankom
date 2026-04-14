@@ -25,7 +25,7 @@ class PengajuanResource extends Resource
 
     protected static ?string $slug = 'pengajuan';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Admin Peminjaman';
+    protected static string|UnitEnum|null $navigationGroup = 'Kelola Peminjaman';
 
     // Urutan Navigation
     protected static ?int $navigationSort = 1;

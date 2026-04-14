@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\PengajuanPerbaikans;
 
-use App\Filament\Resources\PengajuanPerbaikans\Pages\EditPengajuanPerbaikan;
 use App\Filament\Resources\PengajuanPerbaikans\Pages\ListPengajuanPerbaikans;
 use App\Filament\Resources\PengajuanPerbaikans\Schemas\PengajuanPerbaikanEditForm;
 use App\Filament\Resources\PengajuanPerbaikans\Tables\PengajuanPerbaikansTable;
@@ -28,7 +27,7 @@ class PengajuanPerbaikanResource extends Resource
 
     protected static ?string $slug = 'pengajuan-perbaikan';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Admin Perbaikan';
+    protected static string|UnitEnum|null $navigationGroup = 'Kelola Perbaikan';
 
     protected static ?int $navigationSort = 1;
 
@@ -94,7 +93,6 @@ class PengajuanPerbaikanResource extends Resource
     {
         return [
             'index' => ListPengajuanPerbaikans::route('/'),
-            'edit' => EditPengajuanPerbaikan::route('/{record}/edit'),
         ];
     }
 }

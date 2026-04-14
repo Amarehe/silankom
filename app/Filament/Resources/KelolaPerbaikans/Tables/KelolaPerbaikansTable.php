@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\KelolaPerbaikans\Tables;
 
+use App\Filament\Resources\PengajuanPerbaikans\Schemas\PengajuanPerbaikanEditForm;
 use App\Models\PerbaikanModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -149,12 +150,6 @@ class KelolaPerbaikansTable
                                 ->icon('heroicon-o-user')
                                 ->schema([
                                     Grid::make(3)->schema([
-                                        TextEntry::make('nodis')
-                                            ->label('No. Nota Dinas')
-                                            ->icon('heroicon-m-document-text')
-                                            ->weight('bold')
-                                            ->color('primary')
-                                            ->placeholder('-'),
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
                                             ->icon('heroicon-m-user'),
@@ -170,6 +165,8 @@ class KelolaPerbaikansTable
                                             ->placeholder('-')
                                             ->badge()
                                             ->color('warning')
+                                            ->weight('bold')
+                                            ->copyable()
                                             ->icon('heroicon-m-document-text'),
                                     ]),
                                 ])->collapsible(),
@@ -258,9 +255,16 @@ class KelolaPerbaikansTable
                         ->openUrlInNewTab(),
 
                     EditAction::make()
-                        ->visible(fn () => auth()?->user()?->role_id === 1),
+                        ->modalHeading('Edit Data Perbaikan')
+                        ->modalWidth('2xl')
+                        ->form(PengajuanPerbaikanEditForm::getFormSchema())
+                        ->successNotificationTitle('Data perbaikan berhasil diperbarui')
+                        ->modalSubmitAction(fn ($action) => $action->label('Simpan Perubahan')->color('success'))
+                        ->modalCancelAction(fn ($action) => $action->label('Batal')->color('gray'))
+                        ->visible(fn () => auth()?->user()?->role_id == 1),
                     DeleteAction::make()
-                        ->visible(fn () => auth()?->user()?->role_id === 1),
+                        ->modalHeading('Hapus Data Perbaikan')
+                        ->visible(fn () => auth()?->user()?->role_id == 1),
                 ])
                     ->button()
                     ->label('Aksi')

@@ -85,7 +85,7 @@ class TandaTerimaService
         ]);
 
         // Stream PDF langsung ke browser (tidak disimpan di storage)
-        $filename = str_replace('/', '-', $perbaikan->no_surat);
+        $filename = str_replace('/', '-', $perbaikan->no_surat_perbaikan);
 
         return $pdf->stream("Surat_Perbaikan_{$filename}.pdf");
     }
