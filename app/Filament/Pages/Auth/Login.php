@@ -28,12 +28,24 @@ class Login extends PagesLogin
     protected function getLoginFormComponent(): Component
     {
         return TextInput::make('nip')
-            ->label('NIP')
-            ->placeholder('Masukkan NIP Anda')
+            ->label('NIP / NRP')
+            ->placeholder('Masukkan NIP / NRP Anda')
             ->required()
             ->autocomplete()
             ->autofocus()
             ->extraInputAttributes(['tabindex' => 1]);
+    }
+
+    protected function getPasswordFormComponent(): Component
+    {
+        return TextInput::make('password')
+            ->label('Password')
+            ->placeholder('Masukkan Password Anda')
+            ->password()
+            ->revealable(filament()->arePasswordsRevealable())
+            ->autocomplete('current-password')
+            ->required()
+            ->extraInputAttributes(['tabindex' => 2]);
     }
 
     protected function getCredentialsFromFormData(array $data): array

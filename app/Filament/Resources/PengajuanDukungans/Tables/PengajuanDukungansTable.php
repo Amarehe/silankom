@@ -9,7 +9,10 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +22,7 @@ class PengajuanDukungansTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['pemohon', 'picDukungan']))
+            ->modifyQueryUsing(fn ($query) => $query->with(['pemohon.unitkerja', 'pemohon.jabatan', 'picDukungan']))
             ->columns([
                 TextColumn::make('rowIndex')
                     ->label('No')
@@ -65,6 +68,90 @@ class PengajuanDukungansTable
             ])
             ->actions([
                 ActionGroup::make([
+                    // View Detail Action
+                    Action::make('view_detail')
+                        ->label('Lihat Detail')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->modalHeading('Detail Pengajuan Dukungan')
+                        ->modalWidth('3xl')
+                        ->infolist([
+                            Section::make('Informasi Pemohon')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('pemohon.name')
+                                            ->label('Nama Pemohon')
+                                            ->icon('heroicon-m-user')
+                                            ->weight('bold'),
+                                        TextEntry::make('pemohon.unitkerja.nm_unitkerja')
+                                            ->label('Unit Kerja')
+                                            ->icon('heroicon-m-building-office')
+                                            ->placeholder('-'),
+                                        TextEntry::make('pemohon.jabatan.nm_jabatan')
+                                            ->label('Jabatan')
+                                            ->icon('heroicon-m-briefcase')
+                                            ->placeholder('-'),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Detail Kegiatan')
+                                ->icon('heroicon-o-calendar-days')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('nomor_nodis')
+                                            ->label('Nomor Nodis')
+                                            ->icon('heroicon-m-document-text')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-'),
+                                        TextEntry::make('ruangan')
+                                            ->label('Ruangan')
+                                            ->icon('heroicon-m-map-pin'),
+                                        TextEntry::make('tgl_kegiatan')
+                                            ->label('Tanggal Kegiatan')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar'),
+                                    ]),
+                                    TextEntry::make('deskripsi_kegiatan')
+                                        ->label('Deskripsi Kegiatan')
+                                        ->prose()
+                                        ->placeholder('-'),
+                                ])->collapsible(),
+
+                            Section::make('Barang Dibutuhkan')
+                                ->icon('heroicon-o-cube')
+                                ->schema([
+                                    TextEntry::make('req_barang')
+                                        ->label('Daftar Barang')
+                                        ->formatStateUsing(function ($state) {
+                                            $item = is_string($state) ? json_decode($state, true) : $state;
+                                            if (! is_array($item)) {
+                                                return $state;
+                                            }
+
+                                            $nama = $item['nama'] ?? '-';
+                                            $jumlah = $item['jumlah'] ?? 0;
+
+                                            return "{$nama} ({$jumlah} unit)";
+                                        })
+                                        ->bulleted(),
+                                ]),
+
+                            Section::make('Keterangan')
+                                ->icon('heroicon-o-document-text')
+                                ->schema([
+                                    TextEntry::make('keterangan')
+                                        ->label('Keterangan Tambahan')
+                                        ->prose()
+                                        ->placeholder('-'),
+                                ])
+                                ->visible(fn (ReqDukunganModel $record) => ! empty($record->keterangan)),
+                        ])
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalCancelAction(fn ($action) => $action->color('gray')),
+
                     // Approve Action
                     Action::make('approve')
                         ->label('Setujui / Dukung')

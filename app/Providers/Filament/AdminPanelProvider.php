@@ -32,7 +32,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('/')
-            ->brandName('SILANKOM')
+            ->brandLogo(view('components.brand-logo'))
+            ->favicon(asset('favicon.ico'))
             ->login(Login::class)
             ->colors([
                 'primary' => Color::Amber,

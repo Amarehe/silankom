@@ -11,6 +11,9 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -18,7 +21,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\HtmlString;
 
 class PengajuansTable
 {
@@ -82,94 +84,87 @@ class PengajuansTable
                         ->color('info')
                         ->modalHeading('Detail Pengajuan Peminjaman')
                         ->modalWidth('3xl')
-                        ->modalDescription(fn (ReqPinjamModel $record) => new HtmlString('
-                            <div style="margin: -24px; padding: 20px 16px 16px 16px;">
-                                
-                                <!-- Grid Container untuk 2 Card Utama -->
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
-                                    
-                                    <!-- DATA PEMOHON Card (Kiri) -->
-                                    <div style="border-left: 4px solid #3B82F6; background: #F3F4F6; padding: 18px; width: 100%; box-sizing: border-box;">
-                                        <h3 style="margin: 0 0 14px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;">DATA PEMOHON</h3>
-                                        <div style="display: flex; flex-direction: column; gap: 14px;">
-                                            <div>
-                                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Nama Lengkap</div>
-                                                <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->name ?? '-').'</div>
-                                            </div>
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                                                <div>
-                                                    <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">NIP</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->nip ?? '-').'</div>
-                                                </div>
-                                                <div>
-                                                    <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Jabatan</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->jabatan->nm_jabatan ?? '-').'</div>
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Unit Kerja</div>
-                                                <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->user->unitkerja->nm_unitkerja ?? '-').'</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- RINCIAN PENGAJUAN Card (Kanan) -->
-                                    <div style="border-left: 4px solid #10B981; background: #F3F4F6; padding: 18px; width: 100%; box-sizing: border-box;">
-                                        <h3 style="margin: 0 0 14px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;">RINCIAN PENGAJUAN</h3>
-                                        <div style="display: flex; flex-direction: column; gap: 14px;">
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                                                <div>
-                                                    <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Kategori Barang</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.($record->kategori->nama_kategori ?? '-').'</div>
-                                                </div>
-                                                <div>
-                                                    <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Jumlah</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.$record->jumlah.' unit</div>
-                                                </div>
-                                            </div>
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-                                                <div>
-                                                    <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Tanggal Pengajuan</div>
-                                                    <div style="font-size: 14px; font-weight: 600; color: #111827;">'.\Carbon\Carbon::parse($record->tanggal_request)->translatedFormat('l, d F Y').'</div>
-                                                </div>
-                                                <div>
-                                                    <div style="font-size: 11px; color: #6B7280; margin-bottom: 4px;">Status</div>
-                                                    <div>
-                                                        '.match ($record->status) {
-                            'diproses' => '<span style="display: inline-block; padding: 4px 12px; background: #FEF3C7; color: #92400E; border-radius: 4px; font-size: 12px; font-weight: 600;">Diproses</span>',
-                            'disetujui' => '<span style="display: inline-block; padding: 4px 12px; background: #D1FAE5; color: #065F46; border-radius: 4px; font-size: 12px; font-weight: 600;">Disetujui</span>',
-                            'ditolak' => '<span style="display: inline-block; padding: 4px 12px; background: #FEE2E2; color: #991B1B; border-radius: 4px; font-size: 12px; font-weight: 600;">Ditolak</span>',
-                            default => '<span style="font-size: 14px; font-weight: 600; color: #6B7280;">'.ucfirst($record->status).'</span>'
-                        }.'
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                
-                                '.($record->keterangan ? '
-                                <!-- KEPERLUAN / KETERANGAN Card (Full Width) -->
-                                <div style="border-left: 4px solid #8B5CF6; background: #F3F4F6; padding: 18px; margin-bottom: 10px; width: 100%; box-sizing: border-box;">
-                                    <h3 style="margin: 0 0 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #374151;">KEPERLUAN / KETERANGAN</h3>
-                                    <div style="font-size: 14px; font-weight: 500; color: #111827; line-height: 1.5;">'.nl2br(e($record->keterangan)).'</div>
-                                </div>
-                                ' : '').'
-                                
-                                '.($record->status === 'ditolak' && $record->alasan_penolakan ? '
-                                <!-- ALASAN PENOLAKAN Card (Full Width) -->
-                                <div style="border-left: 4px solid #EF4444; background: #FEE2E2; padding: 18px; width: 100%; box-sizing: border-box;">
-                                    <h3 style="margin: 0 0 10px 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #991B1B;">⚠ ALASAN PENOLAKAN</h3>
-                                    <div style="font-size: 14px; font-weight: 500; color: #DC2626; line-height: 1.5;">'.nl2br(e($record->alasan_penolakan)).'</div>
-                                </div>
-                                ' : '').'
-                                
-                            </div>
-                        '))
-                        ->modalFooterActions([])
+                        ->infolist([
+                            Section::make('Informasi Pemohon')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('user.name')
+                                            ->label('Nama Lengkap')
+                                            ->icon('heroicon-m-user')
+                                            ->weight('bold'),
+                                        TextEntry::make('user.nip')
+                                            ->label('NIP')
+                                            ->icon('heroicon-m-identification')
+                                            ->placeholder('-'),
+                                        TextEntry::make('user.jabatan.nm_jabatan')
+                                            ->label('Jabatan')
+                                            ->icon('heroicon-m-briefcase')
+                                            ->placeholder('-'),
+                                        TextEntry::make('user.unitkerja.nm_unitkerja')
+                                            ->label('Unit Kerja')
+                                            ->icon('heroicon-m-building-office'),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Rincian Pengajuan')
+                                ->icon('heroicon-o-clipboard-document-list')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('kategori.nama_kategori')
+                                            ->label('Kategori Barang')
+                                            ->badge()
+                                            ->color('info'),
+                                        TextEntry::make('jumlah')
+                                            ->label('Jumlah')
+                                            ->suffix(' Unit')
+                                            ->icon('heroicon-m-cube')
+                                            ->weight('bold'),
+                                        TextEntry::make('tanggal_request')
+                                            ->label('Tanggal Pengajuan')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('status')
+                                            ->label('Status')
+                                            ->badge()
+                                            ->color(fn (string $state): string => match ($state) {
+                                                'diproses' => 'warning',
+                                                'disetujui' => 'success',
+                                                'ditolak' => 'danger',
+                                                default => 'gray',
+                                            })
+                                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                                'diproses' => 'Diproses',
+                                                'disetujui' => 'Disetujui',
+                                                'ditolak' => 'Ditolak',
+                                                default => ucfirst($state),
+                                            }),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Keperluan / Keterangan')
+                                ->icon('heroicon-o-document-text')
+                                ->schema([
+                                    TextEntry::make('keterangan')
+                                        ->label('Keterangan')
+                                        ->prose()
+                                        ->placeholder('-'),
+                                ])
+                                ->visible(fn (ReqPinjamModel $record) => ! empty($record->keterangan)),
+
+                            Section::make('Alasan Penolakan')
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->schema([
+                                    TextEntry::make('alasan_penolakan')
+                                        ->label('Alasan')
+                                        ->prose()
+                                        ->color('danger'),
+                                ])
+                                ->visible(fn (ReqPinjamModel $record) => $record->status === 'ditolak' && ! empty($record->alasan_penolakan)),
+                        ])
                         ->modalSubmitAction(false)
-                        ->modalCancelActionLabel('Tutup'),
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalCancelAction(fn ($action) => $action->color('gray')),
 
                     // Approve Action
                     Action::make('approve')
@@ -178,67 +173,55 @@ class PengajuansTable
                         ->color('success')
                         ->visible(fn (ReqPinjamModel $record) => $record->status === 'diproses')
                         ->modalHeading('Setujui Pengajuan Peminjaman')
-                        ->modalDescription(fn (ReqPinjamModel $record) => new HtmlString('
-                            <div style="margin: -24px -24px 20px -24px; padding: 16px 20px; background: #F9FAFB; border-bottom: 2px solid #E5E7EB;">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                                    
-                                    <!-- DATA PEMOHON -->
-                                    <div style="background: white; border-left: 3px solid #3B82F6; padding: 12px; border-radius: 6px;">
-                                        <h4 style="margin: 0 0 10px 0; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6B7280;">DATA PEMOHON</h4>
-                                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                                            <div>
-                                                <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Nama Lengkap</div>
-                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">'.($record->user->name ?? '-').'</div>
-                                            </div>
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                                <div>
-                                                    <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">NIP</div>
-                                                    <div style="font-size: 12px; font-weight: 600; color: #111827;">'.($record->user->nip ?? '-').'</div>
-                                                </div>
-                                                <div>
-                                                    <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Unit Kerja</div>
-                                                    <div style="font-size: 12px; font-weight: 500; color: #111827;">'.($record->user->unitkerja->nm_unitkerja ?? '-').'</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- RINCIAN PENGAJUAN -->
-                                    <div style="background: white; border-left: 3px solid #10B981; padding: 12px; border-radius: 6px;">
-                                        <h4 style="margin: 0 0 10px 0; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6B7280;">RINCIAN PENGAJUAN</h4>
-                                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                                            <div>
-                                                <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Kategori Barang</div>
-                                                <div style="font-size: 13px; font-weight: 600; color: #111827;">'.($record->kategori->nama_kategori ?? '-').'</div>
-                                            </div>
-                                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                                <div>
-                                                    <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Jumlah</div>
-                                                    <div style="font-size: 13px; font-weight: 700; color: #059669;">'.$record->jumlah.' Unit</div>
-                                                </div>
-                                                <div>
-                                                    <div style="font-size: 10px; color: #9CA3AF; margin-bottom: 2px;">Tanggal Pengajuan</div>
-                                                    <div style="font-size: 12px; font-weight: 500; color: #111827;">'.\Carbon\Carbon::parse($record->tanggal_request)->translatedFormat('l, d F Y').'</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                '.($record->keterangan ? '
-                                <div style="background: white; border-left: 3px solid #8B5CF6; padding: 10px; border-radius: 6px; margin-top: 12px;">
-                                    <div style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: #6B7280; margin-bottom: 6px;">KEPERLUAN</div>
-                                    <div style="font-size: 12px; color: #374151; line-height: 1.4;">'.nl2br(e($record->keterangan)).'</div>
-                                </div>
-                                ' : '').'
-                            </div>
-                            <div style="margin-bottom: 16px; padding: 12px; background: #FEF3C7; border-left: 4px solid #F59E0B; border-radius: 4px;">
-                                <p style="margin: 0; font-size: 13px; color: #92400E; font-weight: 500;">
-                                    📋 Lengkapi form di bawah untuk menyetujui pengajuan ini
-                                </p>
-                            </div>
-                        '))
                         ->modalWidth('3xl')
+                        ->infolist([
+                            Section::make('Informasi Pemohon')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('user.name')
+                                            ->label('Nama Lengkap')
+                                            ->icon('heroicon-m-user')
+                                            ->weight('bold'),
+                                        TextEntry::make('user.nip')
+                                            ->label('NIP')
+                                            ->icon('heroicon-m-identification')
+                                            ->placeholder('-'),
+                                        TextEntry::make('user.unitkerja.nm_unitkerja')
+                                            ->label('Unit Kerja')
+                                            ->icon('heroicon-m-building-office'),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Rincian Pengajuan')
+                                ->icon('heroicon-o-clipboard-document-list')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('kategori.nama_kategori')
+                                            ->label('Kategori Barang')
+                                            ->badge()
+                                            ->color('info'),
+                                        TextEntry::make('jumlah')
+                                            ->label('Jumlah')
+                                            ->suffix(' Unit')
+                                            ->weight('bold')
+                                            ->color('success'),
+                                        TextEntry::make('tanggal_request')
+                                            ->label('Tanggal Pengajuan')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar'),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Keperluan / Keterangan')
+                                ->icon('heroicon-o-document-text')
+                                ->schema([
+                                    TextEntry::make('keterangan')
+                                        ->label('Keterangan')
+                                        ->prose(),
+                                ])
+                                ->visible(fn (ReqPinjamModel $record) => ! empty($record->keterangan)),
+                        ])
                         ->form([
                             Select::make('barang_id')
                                 ->label('Pilih Barang')

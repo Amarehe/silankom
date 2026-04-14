@@ -10,6 +10,9 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -148,6 +151,154 @@ class PeminjamansTable
             ])
             ->actions([
                 ActionGroup::make([
+                    // View Detail Action
+                    Action::make('view_detail')
+                        ->label('Lihat Detail')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->modalHeading('Detail Peminjaman')
+                        ->modalWidth('3xl')
+                        ->infolist([
+                            Section::make('Informasi Peminjam')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('reqPinjam.user.name')
+                                            ->label('Nama Lengkap')
+                                            ->icon('heroicon-m-user')
+                                            ->weight('bold'),
+                                        TextEntry::make('reqPinjam.user.nip')
+                                            ->label('NIP')
+                                            ->icon('heroicon-m-identification')
+                                            ->placeholder('-'),
+                                        TextEntry::make('reqPinjam.user.jabatan.nm_jabatan')
+                                            ->label('Jabatan')
+                                            ->icon('heroicon-m-briefcase')
+                                            ->placeholder('-'),
+                                        TextEntry::make('reqPinjam.user.unitkerja.nm_unitkerja')
+                                            ->label('Unit Kerja')
+                                            ->icon('heroicon-m-building-office'),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Data Peminjaman')
+                                ->icon('heroicon-o-clipboard-document-list')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('nomor_surat')
+                                            ->label('Nomor Surat Peminjaman')
+                                            ->icon('heroicon-m-document-text')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->copyable(),
+                                        TextEntry::make('barang.nama_barang')
+                                            ->label('Nama Barang')
+                                            ->icon('heroicon-m-computer-desktop'),
+                                        TextEntry::make('barang.kategori.nama_kategori')
+                                            ->label('Kategori')
+                                            ->badge()
+                                            ->color('info'),
+                                        TextEntry::make('barang.merek.nama_merek')
+                                            ->label('Merek')
+                                            ->icon('heroicon-m-tag')
+                                            ->placeholder('-'),
+                                        TextEntry::make('tanggal_serah_terima')
+                                            ->label('Tanggal Serah Terima')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('kondisi_barang')
+                                            ->label('Kondisi Barang')
+                                            ->badge()
+                                            ->color(fn (string $state): string => match ($state) {
+                                                'baik' => 'success',
+                                                'rusak ringan' => 'warning',
+                                                'rusak berat' => 'danger',
+                                                default => 'gray',
+                                            }),
+                                        TextEntry::make('status_peminjaman')
+                                            ->label('Status')
+                                            ->badge()
+                                            ->color(fn (string $state): string => match ($state) {
+                                                'dipinjam' => 'info',
+                                                'dikembalikan' => 'success',
+                                                default => 'gray',
+                                            })
+                                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                                'dipinjam' => 'Dipinjam',
+                                                'dikembalikan' => 'Dikembalikan',
+                                                default => ucfirst($state),
+                                            }),
+                                    ]),
+                                ])->collapsible(),
+
+                            Section::make('Kelengkapan & Catatan')
+                                ->icon('heroicon-o-document-text')
+                                ->schema([
+                                    Grid::make(2)->schema([
+                                        TextEntry::make('kelengkapan')
+                                            ->label('Kelengkapan')
+                                            ->prose()
+                                            ->placeholder('-'),
+                                        TextEntry::make('catatan_admin')
+                                            ->label('Catatan Admin')
+                                            ->prose()
+                                            ->placeholder('-'),
+                                    ]),
+                                ])
+                                ->visible(fn (PeminjamanModel $record) => ! empty($record->kelengkapan) || ! empty($record->catatan_admin)),
+
+                            Section::make('Info Pengembalian')
+                                ->icon('heroicon-o-arrow-uturn-left')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('nomor_surat_pengembalian')
+                                            ->label('Nomor Surat Pengembalian')
+                                            ->icon('heroicon-m-document-text')
+                                            ->weight('bold')
+                                            ->color('success')
+                                            ->copyable()
+                                            ->placeholder('-'),
+                                        TextEntry::make('tanggal_kembali')
+                                            ->label('Tanggal Kembali')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar-days'),
+                                        TextEntry::make('kondisi_kembali')
+                                            ->label('Kondisi Kembali')
+                                            ->badge()
+                                            ->color(fn (?string $state): string => match ($state) {
+                                                'baik' => 'success',
+                                                'rusak ringan' => 'warning',
+                                                'rusak berat' => 'danger',
+                                                default => 'gray',
+                                            }),
+                                        TextEntry::make('catatan_pengembalian')
+                                            ->label('Catatan Pengembalian')
+                                            ->prose()
+                                            ->placeholder('-')
+                                            ->columnSpanFull(),
+                                    ]),
+                                ])
+                                ->visible(fn (PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan'),
+                        ])
+                        ->extraModalFooterActions([
+                            Action::make('download_peminjaman_from_detail')
+                                ->label('📄 Peminjaman')
+                                ->icon('heroicon-o-arrow-down-tray')
+                                ->color('info')
+                                ->url(fn (PeminjamanModel $record) => route('download.tanda-terima', $record))
+                                ->openUrlInNewTab(),
+                            Action::make('download_pengembalian_from_detail')
+                                ->label('📄 Pengembalian')
+                                ->icon('heroicon-o-arrow-down-tray')
+                                ->color('success')
+                                ->visible(fn (PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian)
+                                ->url(fn (PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
+                                ->openUrlInNewTab(),
+                        ])
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalCancelAction(fn ($action) => $action->color('gray')),
+
                     // Return Action (Modal dengan Form)
                     Action::make('return')
                         ->label('Proses Pengembalian')

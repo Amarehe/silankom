@@ -2,6 +2,12 @@
 
 namespace App\Filament\Resources\RiwayatDukunganUsers\Tables;
 
+use App\Models\ReqDukunganModel;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -11,6 +17,7 @@ class RiwayatDukunganUserTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn ($query) => $query->with(['picDukungan']))
             ->columns([
                 TextColumn::make('rowIndex')
                     ->label('No')
@@ -100,6 +107,132 @@ class RiwayatDukunganUserTable
                 TextColumn::make('picDukungan.name')
                     ->label('PIC Admin')
                     ->placeholder('-'),
+            ])
+            ->actions([
+                ActionGroup::make([
+                    Action::make('view_detail')
+                        ->label('Lihat Detail')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->modalHeading('Detail Riwayat Dukungan')
+                        ->modalWidth('3xl')
+                        ->infolist([
+                            Section::make('Detail Kegiatan')
+                                ->icon('heroicon-o-calendar-days')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('nomor_nodis')
+                                            ->label('Nomor Nodis')
+                                            ->icon('heroicon-m-document-text')
+                                            ->weight('bold')
+                                            ->color('primary')
+                                            ->placeholder('-'),
+                                        TextEntry::make('ruangan')
+                                            ->label('Ruangan')
+                                            ->icon('heroicon-m-map-pin'),
+                                        TextEntry::make('tgl_kegiatan')
+                                            ->label('Tanggal Kegiatan')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-calendar'),
+                                    ]),
+                                    TextEntry::make('deskripsi_kegiatan')
+                                        ->label('Deskripsi Kegiatan')
+                                        ->prose()
+                                        ->placeholder('-'),
+                                ])->collapsible(),
+
+                            Section::make('Barang Diminta')
+                                ->icon('heroicon-o-cube')
+                                ->schema([
+                                    TextEntry::make('req_barang')
+                                        ->label('Daftar Barang Diminta')
+                                        ->formatStateUsing(function ($state) {
+                                            $item = is_string($state) ? json_decode($state, true) : $state;
+                                            if (! is_array($item)) {
+                                                return $state;
+                                            }
+
+                                            $nama = $item['nama'] ?? '-';
+                                            $jumlah = $item['jumlah'] ?? 0;
+
+                                            return "{$nama} ({$jumlah} unit)";
+                                        })
+                                        ->bulleted(),
+                                ]),
+
+                            Section::make('Barang Diberikan')
+                                ->icon('heroicon-o-gift')
+                                ->schema([
+                                    TextEntry::make('barang_diberikan')
+                                        ->label('Daftar Barang Diberikan')
+                                        ->formatStateUsing(function ($state) {
+                                            $item = is_string($state) ? json_decode($state, true) : $state;
+                                            if (! is_array($item)) {
+                                                return $state;
+                                            }
+
+                                            $nama = $item['nama'] ?? '-';
+                                            $jumlah = $item['jumlah'] ?? 0;
+
+                                            return "{$nama} ({$jumlah} unit)";
+                                        })
+                                        ->bulleted(),
+                                ])
+                                ->visible(fn (ReqDukunganModel $record) => ! empty($record->barang_diberikan)),
+
+                            Section::make('Keputusan')
+                                ->icon('heroicon-o-shield-check')
+                                ->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('status_dukungan')
+                                            ->label('Status')
+                                            ->badge()
+                                            ->color(fn (string $state): string => match ($state) {
+                                                'belum_didukung' => 'warning',
+                                                'didukung' => 'success',
+                                                'tidak_didukung' => 'danger',
+                                                default => 'gray',
+                                            })
+                                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                                                'belum_didukung' => 'Belum Didukung',
+                                                'didukung' => 'Didukung',
+                                                'tidak_didukung' => 'Tidak Didukung',
+                                                default => ucfirst($state),
+                                            }),
+                                        TextEntry::make('tgl_disetujui')
+                                            ->label('Tanggal Disetujui')
+                                            ->date('l, d F Y')
+                                            ->icon('heroicon-m-check-badge')
+                                            ->placeholder('-'),
+                                        TextEntry::make('picDukungan.name')
+                                            ->label('PIC Admin')
+                                            ->icon('heroicon-m-user-circle')
+                                            ->placeholder('-'),
+                                    ]),
+                                    TextEntry::make('keterangan')
+                                        ->label('Keterangan')
+                                        ->prose()
+                                        ->placeholder('-'),
+                                ]),
+
+                            Section::make('Alasan Penolakan')
+                                ->icon('heroicon-o-exclamation-triangle')
+                                ->schema([
+                                    TextEntry::make('alasan_ditolak')
+                                        ->label('Alasan')
+                                        ->prose()
+                                        ->color('danger'),
+                                ])
+                                ->visible(fn (ReqDukunganModel $record) => $record->status_dukungan === 'tidak_didukung' && ! empty($record->alasan_ditolak)),
+                        ])
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Tutup')
+                        ->modalCancelAction(fn ($action) => $action->color('gray')),
+                ])
+                    ->button()
+                    ->label('Aksi')
+                    ->icon('heroicon-m-chevron-down')
+                    ->color('primary'),
             ])
             ->filters([
                 SelectFilter::make('status_dukungan')
