@@ -52,6 +52,8 @@ class PengajuanPerbaikanResource extends Resource
     public static function canAccess(): bool
     {
         return in_array(Auth::user()?->role_id, [1, 2, 3]);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return PengajuanPerbaikanEditForm::configure($schema);
