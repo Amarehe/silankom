@@ -10,9 +10,12 @@ use Filament\Schemas\Schema;
 
 class PengajuanPerbaikanEditForm
 {
-    public static function configure(Schema $schema): Schema
+    /**
+     * @return array<int, mixed>
+     */
+    public static function getFormSchema(): array
     {
-        return $schema->schema([
+        return [
             Select::make('kategori_id')
                 ->label('Kategori Barang')
                 ->relationship('kategori', 'nama_kategori')
@@ -89,6 +92,11 @@ class PengajuanPerbaikanEditForm
                 ->placeholder('Instruksi pengambilan barang')
                 ->rows(3)
                 ->columnSpanFull(),
-        ]);
+        ];
+    }
+
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema->schema(self::getFormSchema());
     }
 }

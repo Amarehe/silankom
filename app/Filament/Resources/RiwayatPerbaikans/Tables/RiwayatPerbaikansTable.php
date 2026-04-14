@@ -97,12 +97,6 @@ class RiwayatPerbaikansTable
                                 ->icon('heroicon-o-computer-desktop')
                                 ->schema([
                                     Grid::make(3)->schema([
-                                        TextEntry::make('nodis')
-                                            ->label('Nomor Nota Dinas')
-                                            ->weight('bold')
-                                            ->color('primary')
-                                            ->placeholder('-')
-                                            ->columnSpanFull(),
                                         TextEntry::make('kategori.nama_kategori')->label('Kategori'),
                                         TextEntry::make('merek.nama_merek')->label('Merek'),
                                         TextEntry::make('nm_barang')->label('Nama Barang'),
@@ -121,6 +115,8 @@ class RiwayatPerbaikansTable
                                             ->placeholder('Tidak ada')
                                             ->badge()
                                             ->color('warning')
+                                            ->weight('bold')
+                                            ->copyable()
                                             ->icon('heroicon-m-document-text'),
                                         TextEntry::make('tgl_pengajuan')
                                             ->label('Tanggal Pengajuan')

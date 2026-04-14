@@ -2,14 +2,11 @@
 
 namespace App\Filament\Resources\KelolaPerbaikans;
 
-use App\Filament\Resources\KelolaPerbaikans\Pages\EditKelolaPerbaikan;
 use App\Filament\Resources\KelolaPerbaikans\Pages\ListKelolaPerbaikans;
 use App\Filament\Resources\KelolaPerbaikans\Tables\KelolaPerbaikansTable;
-use App\Filament\Resources\PengajuanPerbaikans\Schemas\PengajuanPerbaikanEditForm;
 use App\Models\PerbaikanModel;
 use BackedEnum;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,7 +25,7 @@ class KelolaPerbaikanResource extends Resource
 
     protected static ?string $slug = 'kelola-perbaikan';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Admin Perbaikan';
+    protected static string|UnitEnum|null $navigationGroup = 'Kelola Perbaikan';
 
     protected static ?int $navigationSort = 2;
 
@@ -79,7 +76,6 @@ class KelolaPerbaikanResource extends Resource
     {
         return [
             'index' => ListKelolaPerbaikans::route('/'),
-            'edit' => EditKelolaPerbaikan::route('/{record}/edit'),
         ];
     }
 }

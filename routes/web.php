@@ -37,12 +37,12 @@ Route::get('/download-tanda-terima-pengembalian/{peminjaman}', function (Peminja
 // Route untuk download PDF surat perbaikan
 Route::get('/download-surat-perbaikan/{perbaikan}', function (PerbaikanModel $perbaikan) {
     // Pastikan user hanya bisa download PDF miliknya sendiri (kecuali admin)
-    if (auth()->user()->role_id != 1 && $perbaikan->user_id != auth()->id()) {
+    if (auth()->user()->role_id != 1 && $perbaikan->pemohon_id != auth()->id()) {
         abort(403, 'Unauthorized');
     }
 
     // Pastikan perbaikan sudah memiliki nomor surat
-    if ($perbaikan->no_surat === null) {
+    if ($perbaikan->no_surat_perbaikan === null) {
         abort(404, 'Surat perbaikan tidak tersedia');
     }
 

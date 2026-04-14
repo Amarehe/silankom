@@ -24,7 +24,7 @@ class PeminjamanAdminResource extends Resource
 
     protected static ?string $slug = 'peminjaman-admin';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Admin Peminjaman';
+    protected static string|UnitEnum|null $navigationGroup = 'Kelola Peminjaman';
 
     protected static ?int $navigationSort = 2;
 

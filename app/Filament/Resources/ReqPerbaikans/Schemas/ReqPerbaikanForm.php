@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\ReqPerbaikans\Schemas;
 
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -37,12 +36,15 @@ class ReqPerbaikanForm
                 ->placeholder('Masukkan nama barang')
                 ->columnSpanFull(),
 
-            DatePicker::make('tgl_pengajuan')
+            TextInput::make('tgl_pengajuan_display')
                 ->label('Tanggal Pengajuan')
-                ->required()
-                ->native(false)
-                ->default(now())
+                ->default(fn () => now()->translatedFormat('l, d F Y'))
+                ->disabled()
+                ->dehydrated(false)
                 ->columnSpanFull(),
+
+            Hidden::make('tgl_pengajuan')
+                ->default(fn () => now()->toDateString()),
 
             Textarea::make('keluhan')
                 ->label('Keluhan / Deskripsi Masalah')
@@ -65,11 +67,11 @@ class ReqPerbaikanForm
                 ->helperText('Opsional. Pengisian nomor Nota Dinas akan membantu percepatan prioritas penanganan pengajuan.')
                 ->columnSpanFull(),
 
-            Hidden::make('user_id')
-                ->default(Auth::id()),
+            Hidden::make('pemohon_id')
+                ->default(fn () => Auth::id()),
 
             Hidden::make('status_perbaikan')
-                ->default('pending'),
+                ->default('diajukan'),
         ]);
     }
 }

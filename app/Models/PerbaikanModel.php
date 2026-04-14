@@ -24,7 +24,7 @@ class PerbaikanModel extends Model
 
     public function pemohon(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'pemohon_id');
     }
 
     public function kategori(): BelongsTo

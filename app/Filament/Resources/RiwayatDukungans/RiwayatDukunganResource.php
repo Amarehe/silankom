@@ -25,7 +25,7 @@ class RiwayatDukunganResource extends Resource
 
     protected static ?string $slug = 'riwayat-dukungan';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Admin Dukungan';
+    protected static string|UnitEnum|null $navigationGroup = 'Kelola Dukungan';
 
     protected static ?int $navigationSort = 2;
 
