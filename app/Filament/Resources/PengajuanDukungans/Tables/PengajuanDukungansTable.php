@@ -36,7 +36,7 @@ class PengajuanDukungansTable
                     ->sortable()
                     ->copyable()
                     ->copyMessage('Nomor nodis disalin!')
-                    ->icon('heroicon-o-document-duplicate')
+                    ->icon('heroicon-s-document-duplicate')
                     ->tooltip('Klik untuk menyalin')
                     ->weight('bold')
                     ->color('primary'),
@@ -135,11 +135,19 @@ class PengajuanDukungansTable
                                     Grid::make(3)->schema([
                                         TextEntry::make('ruangan')
                                             ->label('Ruangan')
-                                            ->icon('heroicon-m-map-pin'),
+                                            ->icon('heroicon-m-map-pin')
+                                            ->placeholder('-'),
                                         TextEntry::make('tgl_kegiatan')
                                             ->label('Tanggal Kegiatan')
                                             ->date('l, d F Y')
-                                            ->icon('heroicon-m-calendar'),
+                                            ->icon('heroicon-m-calendar')
+                                            ->placeholder('-'),
+                                        TextEntry::make('waktu')
+                                            ->label('Waktu')
+                                            ->icon('heroicon-m-clock')
+                                            ->placeholder('-'),
+                                    ]),
+                                    Grid::make(3)->schema([
                                         TextEntry::make('created_at')
                                             ->label('Tanggal Pengajuan')
                                             ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
@@ -187,6 +195,7 @@ class PengajuanDukungansTable
                                     ->label('Setujui / Dukung')
                                     ->icon('heroicon-o-check-circle')
                                     ->color('success')
+                                    ->cancelParentActions()
                                     ->requiresConfirmation()
                                     ->modalHeading('Setujui Dukungan Kegiatan')
                                     ->modalDescription('Isi jumlah barang yang akan diberikan untuk kegiatan ini')
@@ -259,6 +268,36 @@ class PengajuanDukungansTable
                                             ->send();
                                     })
                                     ->modalSubmitActionLabel('Setujui Dukungan')
+                                    ->modalCancelActionLabel('Batal')
+                                    ->after(function ($action) {
+                                        return redirect(request()->header('Referer'));
+                                    }),
+                                Action::make('reject_from_detail')
+                                    ->label('Tolak')
+                                    ->icon('heroicon-o-x-circle')
+                                    ->color('danger')
+                                    ->cancelParentActions()
+                                    ->modalHeading('Tolak Dukungan Kegiatan')
+                                    ->modalDescription('Berikan alasan penolakan dukungan')
+                                    ->modalWidth('lg')
+                                    ->form([
+                                        Textarea::make('alasan_ditolak')
+                                            ->label('Alasan Penolakan')
+                                            ->required()
+                                            ->placeholder('Jelaskan alasan penolakan')
+                                            ->rows(3),
+                                    ])
+                                    ->action(function (ReqDukunganModel $record, array $data) {
+                                        $record->update([
+                                            'status_dukungan' => 'tidak_didukung',
+                                            'alasan_ditolak' => $data['alasan_ditolak'],
+                                            'pic_dukungan_id' => Auth::id(),
+                                        ]);
+                                    })
+                                    ->after(function ($action) {
+                                        return redirect(request()->header('Referer'));
+                                    })
+                                    ->modalSubmitActionLabel('Tolak Dukungan')
                                     ->modalCancelActionLabel('Batal'),
                             ]
                             : []
@@ -266,7 +305,6 @@ class PengajuanDukungansTable
                         ->modalCancelActionLabel('Tutup')
                         ->modalCancelAction(fn ($action) => $action->color('gray')),
 
-                    // Approve Action
                     Action::make('approve')
                         ->label('Setujui / Dukung')
                         ->icon('heroicon-o-check-circle')
@@ -379,7 +417,7 @@ class PengajuanDukungansTable
                     ->label('Aksi')
                     ->icon('heroicon-m-chevron-down')
                     ->size('sm')
-                    ->color('warning')
+                    ->color('primary')
                     ->button(),
             ])
             ->defaultSort('created_at', 'desc')
