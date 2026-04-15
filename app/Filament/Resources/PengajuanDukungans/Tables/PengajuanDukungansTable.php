@@ -33,7 +33,20 @@ class PengajuanDukungansTable
                 TextColumn::make('nomor_nodis')
                     ->label('Nomor Nodis')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->copyable()
+                    ->copyMessage('Nomor nodis disalin!')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->tooltip('Klik untuk menyalin')
+                    ->weight('bold')
+                    ->color('primary'),
+
+                TextColumn::make('nama_kegiatan')
+                    ->label('Nama Kegiatan')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(30)
+                    ->wrap(),
 
                 TextColumn::make('ruangan')
                     ->label('Ruangan')
@@ -45,6 +58,12 @@ class PengajuanDukungansTable
                     ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
                     ->sortable()
                     ->icon('heroicon-o-calendar'),
+
+                TextColumn::make('created_at')
+                    ->label('Tgl Pengajuan')
+                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
+                    ->sortable()
+                    ->icon('heroicon-o-clock'),
 
                 TextColumn::make('req_barang')
                     ->label('Barang Dibutuhkan')
@@ -98,13 +117,22 @@ class PengajuanDukungansTable
                             Section::make('Detail Kegiatan')
                                 ->icon('heroicon-o-calendar-days')
                                 ->schema([
-                                    Grid::make(3)->schema([
+                                    Grid::make(2)->schema([
                                         TextEntry::make('nomor_nodis')
                                             ->label('Nomor Nodis')
                                             ->icon('heroicon-m-document-text')
                                             ->weight('bold')
                                             ->color('primary')
+                                            ->copyable()
+                                            ->copyMessage('Nomor nodis disalin!')
                                             ->placeholder('-'),
+                                        TextEntry::make('nama_kegiatan')
+                                            ->label('Nama Kegiatan')
+                                            ->icon('heroicon-m-tag')
+                                            ->weight('bold')
+                                            ->placeholder('-'),
+                                    ]),
+                                    Grid::make(3)->schema([
                                         TextEntry::make('ruangan')
                                             ->label('Ruangan')
                                             ->icon('heroicon-m-map-pin'),
@@ -112,6 +140,10 @@ class PengajuanDukungansTable
                                             ->label('Tanggal Kegiatan')
                                             ->date('l, d F Y')
                                             ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('created_at')
+                                            ->label('Tanggal Pengajuan')
+                                            ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
+                                            ->icon('heroicon-m-clock'),
                                     ]),
                                     TextEntry::make('deskripsi_kegiatan')
                                         ->label('Deskripsi Kegiatan')
@@ -149,6 +181,88 @@ class PengajuanDukungansTable
                                 ->visible(fn (ReqDukunganModel $record) => ! empty($record->keterangan)),
                         ])
                         ->modalSubmitAction(false)
+                        ->extraModalFooterActions(fn (ReqDukunganModel $record): array => $record->status_dukungan === 'belum_didukung'
+                            ? [
+                                Action::make('approve_from_detail')
+                                    ->label('Setujui / Dukung')
+                                    ->icon('heroicon-o-check-circle')
+                                    ->color('success')
+                                    ->requiresConfirmation()
+                                    ->modalHeading('Setujui Dukungan Kegiatan')
+                                    ->modalDescription('Isi jumlah barang yang akan diberikan untuk kegiatan ini')
+                                    ->modalWidth('xl')
+                                    ->fillForm(fn (): array => [
+                                        'tgl_disetujui' => now()->format('Y-m-d'),
+                                        'barang_diberikan' => collect($record->req_barang ?? [])
+                                            ->map(fn ($item) => [
+                                                'nama' => $item['nama'] ?? '',
+                                                'jumlah_diminta' => $item['jumlah'] ?? 0,
+                                                'jumlah' => $item['jumlah'] ?? 0,
+                                            ])
+                                            ->toArray(),
+                                    ])
+                                    ->form([
+                                        DatePicker::make('tgl_disetujui')
+                                            ->label('Tanggal Disetujui')
+                                            ->required()
+                                            ->native(false)
+                                            ->displayFormat('l, d F Y'),
+
+                                        Repeater::make('barang_diberikan')
+                                            ->label('Barang yang Diberikan')
+                                            ->schema([
+                                                TextInput::make('nama')
+                                                    ->label('Nama Barang')
+                                                    ->required(),
+                                                TextInput::make('jumlah_diminta')
+                                                    ->label('Jumlah Diminta')
+                                                    ->numeric()
+                                                    ->disabled()
+                                                    ->dehydrated(false),
+                                                TextInput::make('jumlah')
+                                                    ->label('Jumlah Diberikan')
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->minValue(0),
+                                            ])
+                                            ->columns(3)
+                                            ->addable(true)
+                                            ->addActionLabel('Tambah Barang')
+                                            ->deletable(true)
+                                            ->reorderable(false),
+
+                                        Textarea::make('catatan_admin')
+                                            ->label('Catatan Admin')
+                                            ->placeholder('Catatan tambahan (opsional)')
+                                            ->rows(3),
+                                    ])
+                                    ->action(function (array $data) use ($record) {
+                                        $barangDiberikan = collect($data['barang_diberikan'])
+                                            ->map(fn ($item) => [
+                                                'nama' => $item['nama'],
+                                                'jumlah' => $item['jumlah'],
+                                            ])
+                                            ->toArray();
+
+                                        $record->update([
+                                            'status_dukungan' => 'didukung',
+                                            'tgl_disetujui' => $data['tgl_disetujui'],
+                                            'barang_diberikan' => $barangDiberikan,
+                                            'catatan_admin' => $data['catatan_admin'] ?? null,
+                                            'pic_dukungan_id' => Auth::id(),
+                                        ]);
+
+                                        Notification::make()
+                                            ->success()
+                                            ->title('Dukungan Disetujui')
+                                            ->body('Request dukungan telah berhasil disetujui.')
+                                            ->send();
+                                    })
+                                    ->modalSubmitActionLabel('Setujui Dukungan')
+                                    ->modalCancelActionLabel('Batal'),
+                            ]
+                            : []
+                        )
                         ->modalCancelActionLabel('Tutup')
                         ->modalCancelAction(fn ($action) => $action->color('gray')),
 
@@ -157,6 +271,7 @@ class PengajuanDukungansTable
                         ->label('Setujui / Dukung')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
+                        ->requiresConfirmation()
                         ->modalHeading('Setujui Dukungan Kegiatan')
                         ->modalDescription('Isi jumlah barang yang akan diberikan untuk kegiatan ini')
                         ->modalWidth('xl')
@@ -174,15 +289,15 @@ class PengajuanDukungansTable
                             DatePicker::make('tgl_disetujui')
                                 ->label('Tanggal Disetujui')
                                 ->required()
-                                ->native(false),
+                                ->native(false)
+                                ->displayFormat('l, d F Y'),
 
                             Repeater::make('barang_diberikan')
                                 ->label('Barang yang Diberikan')
                                 ->schema([
                                     TextInput::make('nama')
                                         ->label('Nama Barang')
-                                        ->disabled()
-                                        ->dehydrated(),
+                                        ->required(),
                                     TextInput::make('jumlah_diminta')
                                         ->label('Jumlah Diminta')
                                         ->numeric()
@@ -195,8 +310,9 @@ class PengajuanDukungansTable
                                         ->minValue(0),
                                 ])
                                 ->columns(3)
-                                ->addable(false)
-                                ->deletable(false)
+                                ->addable(true)
+                                ->addActionLabel('Tambah Barang')
+                                ->deletable(true)
                                 ->reorderable(false),
 
                             Textarea::make('catatan_admin')
@@ -219,13 +335,13 @@ class PengajuanDukungansTable
                                 'catatan_admin' => $data['catatan_admin'] ?? null,
                                 'pic_dukungan_id' => Auth::id(),
                             ]);
-                        })
-                        ->successNotification(
+
                             Notification::make()
                                 ->success()
                                 ->title('Dukungan Disetujui')
                                 ->body('Request dukungan telah berhasil disetujui.')
-                        )
+                                ->send();
+                        })
                         ->modalSubmitActionLabel('Setujui Dukungan')
                         ->modalCancelActionLabel('Batal'),
 
@@ -261,7 +377,7 @@ class PengajuanDukungansTable
                         ->modalCancelActionLabel('Batal'),
                 ])
                     ->label('Aksi')
-                    ->icon('heroicon-o-ellipsis-vertical')
+                    ->icon('heroicon-m-chevron-down')
                     ->size('sm')
                     ->color('warning')
                     ->button(),
