@@ -28,7 +28,18 @@ class RiwayatDukunganTable
                 TextColumn::make('nomor_nodis')
                     ->label('Nomor Nodis')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->copyable()
+                    ->copyMessage('Nomor nodis disalin!')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->tooltip('Klik untuk menyalin'),
+
+                TextColumn::make('nama_kegiatan')
+                    ->label('Nama Kegiatan')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(30)
+                    ->wrap(),
 
                 TextColumn::make('ruangan')
                     ->label('Ruangan')
@@ -134,13 +145,22 @@ class RiwayatDukunganTable
                             Section::make('Detail Kegiatan')
                                 ->icon('heroicon-o-calendar-days')
                                 ->schema([
-                                    Grid::make(3)->schema([
+                                    Grid::make(2)->schema([
                                         TextEntry::make('nomor_nodis')
                                             ->label('Nomor Nodis')
                                             ->icon('heroicon-m-document-text')
                                             ->weight('bold')
                                             ->color('primary')
+                                            ->copyable()
+                                            ->copyMessage('Nomor nodis disalin!')
                                             ->placeholder('-'),
+                                        TextEntry::make('nama_kegiatan')
+                                            ->label('Nama Kegiatan')
+                                            ->icon('heroicon-m-tag')
+                                            ->weight('bold')
+                                            ->placeholder('-'),
+                                    ]),
+                                    Grid::make(3)->schema([
                                         TextEntry::make('ruangan')
                                             ->label('Ruangan')
                                             ->icon('heroicon-m-map-pin'),
@@ -148,6 +168,10 @@ class RiwayatDukunganTable
                                             ->label('Tanggal Kegiatan')
                                             ->date('l, d F Y')
                                             ->icon('heroicon-m-calendar'),
+                                        TextEntry::make('created_at')
+                                            ->label('Tanggal Pengajuan')
+                                            ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
+                                            ->icon('heroicon-m-clock'),
                                     ]),
                                     TextEntry::make('deskripsi_kegiatan')
                                         ->label('Deskripsi Kegiatan')
@@ -213,7 +237,7 @@ class RiwayatDukunganTable
                                             }),
                                         TextEntry::make('tgl_disetujui')
                                             ->label('Tanggal Disetujui')
-                                            ->date('l, d F Y')
+                                            ->formatStateUsing(fn ($state) => $state ? \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y') : '-')
                                             ->icon('heroicon-m-check-badge')
                                             ->placeholder('-'),
                                         TextEntry::make('picDukungan.name')

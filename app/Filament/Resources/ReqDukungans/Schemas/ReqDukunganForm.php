@@ -21,10 +21,17 @@ class ReqDukunganForm
                 ->placeholder('Masukkan nomor nodis')
                 ->columnSpanFull(),
 
-            TextInput::make('deskripsi_kegiatan')
+            TextInput::make('nama_kegiatan')
+                ->label('Nama Kegiatan')
+                ->required()
+                ->placeholder('Nama kegiatan yang akan dilaksanakan')
+                ->columnSpanFull(),
+
+            Textarea::make('deskripsi_kegiatan')
                 ->label('Deskripsi Kegiatan')
                 ->required()
-                ->placeholder('Deskripsi singkat kegiatan')
+                ->placeholder('Deskripsi lengkap kegiatan')
+                ->rows(4)
                 ->columnSpanFull(),
 
             TextInput::make('ruangan')
@@ -37,6 +44,7 @@ class ReqDukunganForm
                 ->label('Tanggal Kegiatan')
                 ->required()
                 ->native(false)
+                ->displayFormat('l, d F Y')
                 ->columnSpanFull(),
 
             TextInput::make('waktu')
