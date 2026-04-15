@@ -28,8 +28,10 @@ class ReqDukungansTable
                     ->sortable()
                     ->copyable()
                     ->copyMessage('Nomor nodis disalin!')
-                    ->icon('heroicon-o-document-duplicate')
-                    ->tooltip('Klik untuk menyalin'),
+                    ->icon('heroicon-s-document-duplicate')
+                    ->tooltip('Klik untuk menyalin')
+                    ->weight('bold')
+                    ->color('primary'),
 
                 TextColumn::make('nama_kegiatan')
                     ->label('Nama Kegiatan')
@@ -128,11 +130,19 @@ class ReqDukungansTable
                                     Grid::make(3)->schema([
                                         TextEntry::make('ruangan')
                                             ->label('Ruangan')
-                                            ->icon('heroicon-m-map-pin'),
+                                            ->icon('heroicon-m-map-pin')
+                                            ->placeholder('-'),
                                         TextEntry::make('tgl_kegiatan')
                                             ->label('Tanggal Kegiatan')
                                             ->date('l, d F Y')
-                                            ->icon('heroicon-m-calendar'),
+                                            ->icon('heroicon-m-calendar')
+                                            ->placeholder('-'),
+                                        TextEntry::make('waktu')
+                                            ->label('Waktu')
+                                            ->icon('heroicon-m-clock')
+                                            ->placeholder('-'),
+                                    ]),
+                                    Grid::make(3)->schema([
                                         TextEntry::make('created_at')
                                             ->label('Tanggal Pengajuan')
                                             ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y'))
