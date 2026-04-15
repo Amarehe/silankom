@@ -109,12 +109,18 @@ class RiwayatPerbaikansTable
                             Section::make('Ringkasan Pengajuan')
                                 ->icon('heroicon-o-document-text')
                                 ->schema([
-                                    Grid::make(2)->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('pemohon.name')
+                                            ->label('Nama Pemohon')
+                                            ->icon('heroicon-m-user'),
+                                        TextEntry::make('pemohon.jabatan.nm_jabatan')
+                                            ->label('Jabatan')
+                                            ->icon('heroicon-m-briefcase')
+                                            ->placeholder('-'),
                                         TextEntry::make('nodis')
                                             ->label('No. Nota Dinas')
                                             ->placeholder('Tidak ada')
-                                            ->badge()
-                                            ->color('warning')
+                                            ->color('primary')
                                             ->weight('bold')
                                             ->copyable()
                                             ->icon('heroicon-m-document-text'),
@@ -143,6 +149,8 @@ class RiwayatPerbaikansTable
                                         TextEntry::make('no_surat_perbaikan')
                                             ->label('No. Surat Perbaikan')
                                             ->placeholder('Belum diterbitkan')
+                                            ->color('primary')
+                                            ->weight('bold')
                                             ->copyable()
                                             ->icon('heroicon-m-document-check'),
                                     ]),

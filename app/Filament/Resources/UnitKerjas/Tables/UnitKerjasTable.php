@@ -27,28 +27,32 @@ class UnitKerjasTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                EditAction::make()
-                    ->button()
-                    ->modalHeading('Edit Data Unit Kerja')
-                    ->modalWidth('xl')
-                    ->successNotificationTitle('Data Unit Kerja berhasil diubah')
-                    ->modalSubmitAction(
-                        fn($action) =>
-                        $action->label('Ubah Data') // Ganti Tulisan
-                            ->color('success')     // Ganti Warna (success, danger, info, warning)
-                            ->icon('heroicon-o-pencil-square') // Tambah Icon (Opsional)
-                    )
-                    ->modalCancelAction(
-                        fn($action) =>
-                        $action->label('Batal')    // Ganti Tulisan
-                            ->color('danger')
-                            ->icon('heroicon-o-x-circle')
-                    ),
+            ->actions([
+                \Filament\Actions\ActionGroup::make([
+                    EditAction::make()
+                        ->modalHeading('Edit Data Unit Kerja')
+                        ->modalWidth('xl')
+                        ->successNotificationTitle('Data Unit Kerja berhasil diubah')
+                        ->modalSubmitAction(
+                            fn($action) =>
+                            $action->label('Ubah Data') // Ganti Tulisan
+                                ->color('success')     // Ganti Warna (success, danger, info, warning)
+                                ->icon('heroicon-o-pencil-square') // Tambah Icon (Opsional)
+                        )
+                        ->modalCancelAction(
+                            fn($action) =>
+                            $action->label('Batal')    // Ganti Tulisan
+                                ->color('danger')
+                                ->icon('heroicon-o-x-circle')
+                        ),
 
-            DeleteAction::make()
-                    ->modalHeading('Hapus Data Unit Kerja')
-                    ->button(),
+                    DeleteAction::make()
+                        ->modalHeading('Hapus Data Unit Kerja'),
+                ])
+                ->button()
+                ->label('Aksi')
+                ->icon('heroicon-m-chevron-down')
+                ->color('primary')
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

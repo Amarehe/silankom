@@ -96,14 +96,21 @@ class ReqPerbaikansTable
                             Section::make('Rincian Barang & Pengajuan')
                                 ->icon('heroicon-o-document-text')
                                 ->schema([
-                                    Grid::make(2)->schema([
+                                    Grid::make(3)->schema([
+                                        TextEntry::make('pemohon.name')
+                                            ->label('Nama Pemohon')
+                                            ->icon('heroicon-m-user'),
+                                        TextEntry::make('pemohon.jabatan.nm_jabatan')
+                                            ->label('Jabatan')
+                                            ->icon('heroicon-m-briefcase')
+                                            ->placeholder('-'),
                                         TextEntry::make('nodis')
                                             ->label('Nomor Nota Dinas')
                                             ->weight('bold')
                                             ->color('primary')
                                             ->placeholder('-')
                                             ->copyable()
-                                            ->columnSpanFull(),
+                                            ->icon('heroicon-m-document-text'),
                                         TextEntry::make('kategori.nama_kategori')->label('Kategori'),
                                         TextEntry::make('merek.nama_merek')->label('Merek'),
                                         TextEntry::make('nm_barang')->label('Nama Barang'),
@@ -140,6 +147,14 @@ class ReqPerbaikansTable
                                         TextEntry::make('catatan_barang')
                                             ->label('Instruksi / Catatan dari Teknisi')
                                             ->placeholder('Belum ada instruksi'),
+                                        TextEntry::make('no_surat_perbaikan')
+                                            ->label('No. Surat Perbaikan')
+                                            ->placeholder('Belum diterbitkan')
+                                            ->color('primary')
+                                            ->weight('bold')
+                                            ->copyable()
+                                            ->icon('heroicon-m-document-check')
+                                            ->visible(fn ($record) => !empty($record->no_surat_perbaikan)),
                                     ]),
                                 ]),
                         ])

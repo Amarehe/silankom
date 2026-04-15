@@ -78,42 +78,45 @@ class BarangsTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make()
-                    ->button()
-                    ->modalHeading('Lihat')
-                    ->color('info')
-                    ->icon('heroicon-o-eye')
-                    ->modalHeading('Detail Data Barang')
-                    ->modalWidth('3xl')
-                    ->modalCancelAction(
-                        fn($action) =>
-                        $action->label('Tutup')
-                            ->color('danger')
-                            ->icon('heroicon-o-x-circle')
-                    ),
+            ->actions([
+                \Filament\Actions\ActionGroup::make([
+                    ViewAction::make()
+                        ->modalHeading('Lihat')
+                        ->color('info')
+                        ->icon('heroicon-o-eye')
+                        ->modalHeading('Detail Data Barang')
+                        ->modalWidth('3xl')
+                        ->modalCancelAction(
+                            fn($action) =>
+                            $action->label('Tutup')
+                                ->color('danger')
+                                ->icon('heroicon-o-x-circle')
+                        ),
 
-                EditAction::make()
-                    ->button()
-                    ->modalHeading('Edit Data Barang')
-                    ->modalWidth('2xl')
-                    ->successNotificationTitle('Data Barang berhasil diubah')
-                    ->modalSubmitAction(
-                        fn($action) =>
-                        $action->label('Ubah Data')
-                            ->color('success')
-                            ->icon('heroicon-o-pencil-square')
-                    )
-                    ->modalCancelAction(
-                        fn($action) =>
-                        $action->label('Batal')
-                            ->color('danger')
-                            ->icon('heroicon-o-x-circle')
-                    ),
+                    EditAction::make()
+                        ->modalHeading('Edit Data Barang')
+                        ->modalWidth('2xl')
+                        ->successNotificationTitle('Data Barang berhasil diubah')
+                        ->modalSubmitAction(
+                            fn($action) =>
+                            $action->label('Ubah Data')
+                                ->color('success')
+                                ->icon('heroicon-o-pencil-square')
+                        )
+                        ->modalCancelAction(
+                            fn($action) =>
+                            $action->label('Batal')
+                                ->color('danger')
+                                ->icon('heroicon-o-x-circle')
+                        ),
 
-                DeleteAction::make()
-                    ->modalHeading('Hapus Data Barang')
-                    ->button(),
+                    DeleteAction::make()
+                        ->modalHeading('Hapus Data Barang'),
+                ])
+                ->button()
+                ->label('Aksi')
+                ->icon('heroicon-m-chevron-down')
+                ->color('primary')
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

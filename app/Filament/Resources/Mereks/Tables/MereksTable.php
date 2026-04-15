@@ -31,29 +31,32 @@ class MereksTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                EditAction::make()
-                    ->button()
-                    ->modalHeading('Edit Data Merek')
-                    ->modalWidth('xl')
-                    ->successNotificationTitle('Data Merek berhasil diubah')
-                    ->modalSubmitAction(
-                        fn(Action $action) =>
-                        $action->label('Ubah Data') // Ganti Tulisan
-                            ->color('success')     // Ganti Warna (success, danger, info, warning)
-                            ->icon('heroicon-o-pencil-square') // Tambah Icon (Opsional)
-                    )
-                    ->modalCancelAction(
-                        fn(Action $action) =>
-                        $action->label('Batal')    // Ganti Tulisan
-                            ->color('danger')
-                            ->icon(Heroicon::XCircle)
+            ->actions([
+                \Filament\Actions\ActionGroup::make([
+                    EditAction::make()
+                        ->modalHeading('Edit Data Merek')
+                        ->modalWidth('xl')
+                        ->successNotificationTitle('Data Merek berhasil diubah')
+                        ->modalSubmitAction(
+                            fn(Action $action) =>
+                            $action->label('Ubah Data') // Ganti Tulisan
+                                ->color('success')     // Ganti Warna (success, danger, info, warning)
+                                ->icon('heroicon-o-pencil-square') // Tambah Icon (Opsional)
+                        )
+                        ->modalCancelAction(
+                            fn(Action $action) =>
+                            $action->label('Batal')    // Ganti Tulisan
+                                ->color('danger')
+                                ->icon(Heroicon::XCircle)
 
-                    ),
-                DeleteAction::make()
-                    ->modalHeading('Hapus Data Merek')
-                    ->button()
-                    ,
+                        ),
+                    DeleteAction::make()
+                        ->modalHeading('Hapus Data Merek'),
+                ])
+                ->button()
+                ->label('Aksi')
+                ->icon('heroicon-m-chevron-down')
+                ->color('primary')
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -309,11 +309,10 @@ class RiwayatPeminjamansTable
                                 $record->nomor_surat_pengembalian !== null
                         ),
                 ])
+                    ->button()
                     ->label('Aksi')
-                    ->icon('heroicon-o-ellipsis-vertical')
-                    ->size('sm')
-                    ->color('warning')
-                    ->button(),
+                    ->icon('heroicon-m-chevron-down')
+                    ->color('primary'),
             ])
             ->filters([
                 SelectFilter::make('status_peminjaman')
