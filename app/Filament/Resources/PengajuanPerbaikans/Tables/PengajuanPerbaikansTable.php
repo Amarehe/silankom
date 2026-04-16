@@ -166,21 +166,24 @@ class PengajuanPerbaikansTable
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
                                             ->icon('heroicon-m-user'),
+                                        TextEntry::make('pemohon.jabatan.nm_jabatan')
+                                            ->label('Jabatan')
+                                            ->icon('heroicon-m-briefcase')
+                                            ->placeholder('-'),
                                         TextEntry::make('pemohon.unitkerja.nm_unitkerja')
                                             ->label('Unit Kerja')
                                             ->icon('heroicon-m-building-office'),
+                                        TextEntry::make('nodis')
+                                            ->label('No. Nota Dinas')
+                                            ->placeholder('-')
+                                            ->color('primary')
+                                            ->weight('bold')
+                                            ->copyable()
+                                            ->icon('heroicon-m-document-text'),
                                         TextEntry::make('tgl_pengajuan')
                                             ->label('Tanggal Pengajuan')
                                             ->date('l, d F Y')
                                             ->icon('heroicon-m-calendar'),
-                                        TextEntry::make('nodis')
-                                            ->label('No. Nota Dinas')
-                                            ->placeholder('-')
-                                            ->badge()
-                                            ->color('warning')
-                                            ->weight('bold')
-                                            ->copyable()
-                                            ->icon('heroicon-m-document-text'),
                                         TextEntry::make('status_perbaikan')
                                             ->label('Status')
                                             ->badge()
@@ -198,6 +201,14 @@ class PengajuanPerbaikansTable
                                                 'tidak_bisa_diperbaiki' => 'Tidak Bisa Diperbaiki',
                                                 default => $state,
                                             }),
+                                        TextEntry::make('no_surat_perbaikan')
+                                            ->label('No. Surat Perbaikan')
+                                            ->placeholder('Belum diterbitkan')
+                                            ->color('primary')
+                                            ->weight('bold')
+                                            ->copyable()
+                                            ->icon('heroicon-m-document-check')
+                                            ->visible(fn ($record) => !empty($record->no_surat_perbaikan)),
                                     ]),
                                 ])->collapsible(),
 

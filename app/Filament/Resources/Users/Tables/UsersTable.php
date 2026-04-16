@@ -61,45 +61,48 @@ class UsersTable
             ->filters([
                 //
             ])
-            ->recordActions([
-                ViewAction::make()
-                    ->button()
-                    ->label('Lihat')
-                    ->color('info')
-                    ->icon('heroicon-o-eye')
-                    ->modalHeading('Detail Data User') // Judul Modal
-                    ->modalWidth('3xl')
-                    ->modalCancelAction(
-                        fn($action) =>
-                        $action->label('Tutup')    // Ganti Tulisan
-                            ->color('danger')
-                            ->icon('heroicon-o-x-circle')
-                    ),
+            ->actions([
+                \Filament\Actions\ActionGroup::make([
+                    ViewAction::make()
+                        ->label('Lihat')
+                        ->color('info')
+                        ->icon('heroicon-o-eye')
+                        ->modalHeading('Detail Data User') // Judul Modal
+                        ->modalWidth('3xl')
+                        ->modalCancelAction(
+                            fn($action) =>
+                            $action->label('Tutup')    // Ganti Tulisan
+                                ->color('danger')
+                                ->icon('heroicon-o-x-circle')
+                        ),
 
-                EditAction::make()
-                    ->button()
-                    ->label('Ubah')
-                    ->color('warning')
-                    ->icon('heroicon-o-pencil-square')
-                    ->modalHeading('Edit Data User') // Judul Modal
-                    ->modalWidth('3xl')
-                    ->successNotificationTitle('Data User berhasil diubah')
-                    ->modalSubmitAction(
-                        fn($action) =>
-                        $action->label('Ubah Data') // Ganti Tulisan
-                            ->color('success')     // Ganti Warna (success, danger, info, warning)
-                            ->icon('heroicon-o-pencil-square') // Tambah Icon (Opsional)
-                    )
-                    ->modalCancelAction(
-                        fn($action) =>
-                        $action->label('Batal')    // Ganti Tulisan
-                            ->color('danger')
-                            ->icon('heroicon-o-x-circle')
-                    ),
+                    EditAction::make()
+                        ->label('Ubah')
+                        ->color('warning')
+                        ->icon('heroicon-o-pencil-square')
+                        ->modalHeading('Edit Data User') // Judul Modal
+                        ->modalWidth('3xl')
+                        ->successNotificationTitle('Data User berhasil diubah')
+                        ->modalSubmitAction(
+                            fn($action) =>
+                            $action->label('Ubah Data') // Ganti Tulisan
+                                ->color('success')     // Ganti Warna (success, danger, info, warning)
+                                ->icon('heroicon-o-pencil-square') // Tambah Icon (Opsional)
+                        )
+                        ->modalCancelAction(
+                            fn($action) =>
+                            $action->label('Batal')    // Ganti Tulisan
+                                ->color('danger')
+                                ->icon('heroicon-o-x-circle')
+                        ),
 
-                DeleteAction::make()
-                    ->modalHeading('Hapus Data User')
-                    ->button(),
+                    DeleteAction::make()
+                        ->modalHeading('Hapus Data User'),
+                ])
+                ->button()
+                ->label('Aksi')
+                ->icon('heroicon-m-chevron-down')
+                ->color('primary')
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

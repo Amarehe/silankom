@@ -385,11 +385,10 @@ class PeminjamansTable
                         ->url(fn (PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
                         ->openUrlInNewTab(),
                 ])
+                    ->button()
                     ->label('Aksi')
-                    ->icon('heroicon-o-ellipsis-vertical')
-                    ->size('sm')
-                    ->color('warning')
-                    ->button(),
+                    ->icon('heroicon-m-chevron-down')
+                    ->color('primary'),
             ])
             ->filters([
                 SelectFilter::make('status_peminjaman')

@@ -313,11 +313,10 @@ class PengajuansTable
                         ->modalCancelActionLabel('Batal')
                         ->requiresConfirmation(),
                 ])
+                    ->button()
                     ->label('Aksi')
-                    ->icon('heroicon-m-ellipsis-vertical')
-                    ->size('sm')
-                    ->color('primary')
-                    ->button(),
+                    ->icon('heroicon-m-chevron-down')
+                    ->color('primary'),
             ])
             ->filters([
                 SelectFilter::make('kategori')
