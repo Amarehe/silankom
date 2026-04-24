@@ -94,8 +94,13 @@ class Login extends PagesLogin
             }
 
             // 4. Custom Login Redirects based on Role
-            if ($user?->isSuperAdmin() || $user?->isKaryawan()) {
-                $url = $user->isSuperAdmin() ? SuperAdminDashboard::getUrl() : \App\Filament\Pages\KaryawanDashboard::getUrl();
+            if ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isKaryawan()) {
+                $url = match (true) {
+                    $user->isSuperAdmin() => SuperAdminDashboard::getUrl(),
+                    $user->isAdminKomlek() => \App\Filament\Pages\AdminKomlekDashboard::getUrl(),
+                    $user->isKaryawan() => \App\Filament\Pages\KaryawanDashboard::getUrl(),
+                    default => '/',
+                };
 
                 return new class($url) implements ContractLoginResponse
                 {
