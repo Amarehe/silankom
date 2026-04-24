@@ -31,6 +31,7 @@ class TeknisiKomlekDashboard extends BaseDashboard
         return [
             StatsOverviewTeknisi::class,
             PerbaikanChart::class,
+            \App\Filament\Widgets\DukunganChart::class,
             AktivitasTerbaruTeknisi::class,
         ];
     }

@@ -29,6 +29,8 @@ class StatsOverviewTeknisi extends BaseWidget
         return [
             $this->buildPerbaikanDiambilStat($userId, $startOfMonth),
             $this->buildPerbaikanSelesaiStat($userId, $startOfMonth),
+            $this->buildDukunganDiambilStat($userId, $startOfMonth),
+            $this->buildDukunganSelesaiStat($userId, $startOfMonth),
         ];
     }
 
@@ -63,6 +65,40 @@ class StatsOverviewTeknisi extends BaseWidget
         return Stat::make('Perbaikan Selesai', number_format($selesai))
             ->description($bulanIni > 0 ? "+{$bulanIni} bulan ini" : 'Tidak ada bulan ini')
             ->descriptionIcon('heroicon-m-check-badge')
+            ->color('success');
+    }
+
+    private function buildDukunganDiambilStat(int $userId, Carbon $startOfMonth): Stat
+    {
+        $pending = \App\Models\ReqDukunganModel::query()
+            ->where('pic_dukungan_id', $userId)
+            ->whereIn('status_dukungan', ['sedang_diproses'])
+            ->count();
+
+        $total = \App\Models\ReqDukunganModel::query()->where('pic_dukungan_id', $userId)->count();
+
+        return Stat::make('Dukungan Diambil', number_format($pending))
+            ->description("{$total} total dukungan diambil")
+            ->descriptionIcon('heroicon-m-ticket')
+            ->color('warning');
+    }
+
+    private function buildDukunganSelesaiStat(int $userId, Carbon $startOfMonth): Stat
+    {
+        $selesai = \App\Models\ReqDukunganModel::query()
+            ->where('pic_dukungan_id', $userId)
+            ->whereIn('status_dukungan', ['didukung', 'tidak_didukung'])
+            ->count();
+
+        $bulanIni = \App\Models\ReqDukunganModel::query()
+            ->where('pic_dukungan_id', $userId)
+            ->whereIn('status_dukungan', ['didukung', 'tidak_didukung'])
+            ->where('updated_at', '>=', $startOfMonth)
+            ->count();
+
+        return Stat::make('Dukungan Selesai', number_format($selesai))
+            ->description($bulanIni > 0 ? "+{$bulanIni} bulan ini" : 'Tidak ada bulan ini')
+            ->descriptionIcon('heroicon-m-check-circle')
             ->color('success');
     }
 }

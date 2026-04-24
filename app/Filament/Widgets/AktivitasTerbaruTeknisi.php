@@ -60,6 +60,32 @@ class AktivitasTerbaruTeknisi extends Widget
                 ]);
             });
 
+        // Dukungan yang ditugaskan kepada saya
+        \App\Models\ReqDukunganModel::query()
+            ->with('pemohon')
+            ->where('pic_dukungan_id', $userId)
+            ->latest()
+            ->limit(10)
+            ->get()
+            ->each(function ($item) use ($aktivitas): void {
+                $statusLabel = match ($item->status_dukungan) {
+                    'belum_didukung' => 'menunggu tindak lanjut',
+                    'sedang_diproses' => 'sedang diproses (Tugas Anda)',
+                    'didukung' => 'dukungan berhasil diselesaikan',
+                    'tidak_didukung' => 'dukungan dibatalkan/ditolak',
+                    default => 'status dukungan diperbarui',
+                };
+
+                $aktivitas->push([
+                    'waktu' => $item->updated_at,
+                    'ikon' => $this->getIkonByStatus($item->status_dukungan, 'dukungan'),
+                    'warna' => $this->getWarnaByStatus($item->status_dukungan, 'dukungan'),
+                    'deskripsi' => ucfirst($statusLabel),
+                    'user' => $item->pemohon?->name ?? 'User',
+                    'modul' => 'Dukungan',
+                ]);
+            });
+
         return $aktivitas->sortByDesc('waktu')->take(10)->values();
     }
 
@@ -73,6 +99,13 @@ class AktivitasTerbaruTeknisi extends Widget
                 'tidak_bisa_diperbaiki' => 'heroicon-o-x-circle',
                 default => 'heroicon-o-wrench',
             },
+            'dukungan' => match ($status) {
+                'belum_didukung' => 'heroicon-o-hand-raised',
+                'sedang_diproses' => 'heroicon-o-arrow-path',
+                'didukung' => 'heroicon-o-check-circle',
+                'tidak_didukung' => 'heroicon-o-x-circle',
+                default => 'heroicon-o-hand-raised',
+            },
             default => 'heroicon-o-bell',
         };
     }
@@ -85,6 +118,13 @@ class AktivitasTerbaruTeknisi extends Widget
                 'diproses' => 'info',
                 'selesai' => 'success',
                 'tidak_bisa_diperbaiki' => 'danger',
+                default => 'gray',
+            },
+            'dukungan' => match ($status) {
+                'belum_didukung' => 'warning',
+                'sedang_diproses' => 'info',
+                'didukung' => 'success',
+                'tidak_didukung' => 'danger',
                 default => 'gray',
             },
             default => 'gray',
