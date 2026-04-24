@@ -13,6 +13,28 @@ class Dashboard extends BaseDashboard
      */
     public static function shouldRegisterNavigation(): bool
     {
-        return ! Auth::user()?->isSuperAdmin();
+        $user = Auth::user();
+
+        // Sembunyikan default Dashboard untuk semua role khusus
+        return ! ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isTeknisiKomlek() || $user?->isKaryawan());
+    }
+
+    public function mount()
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            $url = match (true) {
+                $user->isSuperAdmin() => SuperAdminDashboard::getUrl(),
+                $user->isAdminKomlek() => AdminKomlekDashboard::getUrl(),
+                $user->isTeknisiKomlek() => TeknisiKomlekDashboard::getUrl(),
+                $user->isKaryawan() => KaryawanDashboard::getUrl(),
+                default => null,
+            };
+
+            if ($url) {
+                return redirect()->to($url);
+            }
+        }
     }
 }

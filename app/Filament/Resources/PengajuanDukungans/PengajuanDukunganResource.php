@@ -43,12 +43,12 @@ class PengajuanDukunganResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->isAdmin() ?? false;
+        return Auth::user()?->isAdmin() || Auth::user()?->isTeknisiKomlek() ?? false;
     }
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->isAdmin() ?? false;
+        return Auth::user()?->isAdmin() || Auth::user()?->isTeknisiKomlek() ?? false;
     }
 
     public static function table(Table $table): Table

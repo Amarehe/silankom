@@ -93,15 +93,21 @@ class Login extends PagesLogin
                 ]);
             }
 
-            // 4. Jika Super Admin, redirect ke dashboard Super Admin
-            if ($user?->isSuperAdmin()) {
-                $url = SuperAdminDashboard::getUrl();
+            // 4. Custom Login Redirects based on Role
+            if ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isTeknisiKomlek() || $user?->isKaryawan()) {
+                $url = match (true) {
+                    $user->isSuperAdmin() => SuperAdminDashboard::getUrl(),
+                    $user->isAdminKomlek() => \App\Filament\Pages\AdminKomlekDashboard::getUrl(),
+                    $user->isTeknisiKomlek() => \App\Filament\Pages\TeknisiKomlekDashboard::getUrl(),
+                    $user->isKaryawan() => \App\Filament\Pages\KaryawanDashboard::getUrl(),
+                    default => '/',
+                };
 
                 return new class($url) implements ContractLoginResponse
                 {
                     public function __construct(protected string $url) {}
 
-                    public function toResponse($request): \Illuminate\Http\RedirectResponse | \Livewire\Features\SupportRedirects\Redirector
+                    public function toResponse($request): \Illuminate\Http\RedirectResponse|\Livewire\Features\SupportRedirects\Redirector
                     {
                         return redirect()->to($this->url);
                     }
