@@ -2,16 +2,16 @@
 
 namespace App\Filament\Pages\Auth;
 
+use App\Filament\Pages\SuperAdminDashboard;
 use App\Models\User;
-use Filament\Pages\Page;
 use Filament\Actions\Action;
-use Filament\Schemas\Schema;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as ContractLoginResponse;
+use Filament\Auth\Pages\Login as PagesLogin;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
-use Filament\Auth\Pages\Login as PagesLogin;
+use Filament\Schemas\Schema;
 use Illuminate\Validation\ValidationException;
-use Filament\Auth\Http\Responses\LoginResponse;
 
 class Login extends PagesLogin
 {
@@ -76,12 +76,12 @@ class Login extends PagesLogin
             ->submit('authenticate');
     }
 
-    public function authenticate(): ?LoginResponse
+    public function authenticate(): ?ContractLoginResponse
     {
         try {
             // 1. Jalankan proses login bawaan Filament
             $response = parent::authenticate();
-            
+
             // 2. Jika berhasil (tidak error), ambil user yang sedang login
             /** @var User $user */
             $user = Filament::auth()->user();
@@ -92,7 +92,22 @@ class Login extends PagesLogin
                     'last_login' => now(),
                 ]);
             }
-    
+
+            // 4. Jika Super Admin, redirect ke dashboard Super Admin
+            if ($user?->isSuperAdmin()) {
+                $url = SuperAdminDashboard::getUrl();
+
+                return new class($url) implements ContractLoginResponse
+                {
+                    public function __construct(protected string $url) {}
+
+                    public function toResponse($request): \Illuminate\Http\RedirectResponse | \Livewire\Features\SupportRedirects\Redirector
+                    {
+                        return redirect()->to($this->url);
+                    }
+                };
+            }
+
             return $response;
 
         } catch (\Exception $e) {
