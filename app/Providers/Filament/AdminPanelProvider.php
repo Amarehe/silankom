@@ -26,6 +26,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/')
             ->brandLogo(view('components.brand-logo'))
+            ->homeUrl(fn (): string => match (true) {
+                auth()->user()?->isSuperAdmin() => \App\Filament\Pages\SuperAdminDashboard::getUrl(),
+                auth()->user()?->isAdminKomlek() => \App\Filament\Pages\AdminKomlekDashboard::getUrl(),
+                auth()->user()?->isTeknisiKomlek() => \App\Filament\Pages\TeknisiKomlekDashboard::getUrl(),
+                auth()->user()?->isKaryawan() => \App\Filament\Pages\KaryawanDashboard::getUrl(),
+                default => url('/'),
+            })
             ->favicon(asset('favicon.ico'))
             ->login(Login::class)
             ->colors([
