@@ -15,7 +15,7 @@ class Dashboard extends BaseDashboard
     {
         $user = Auth::user();
 
-        // Sembunyikan default Dashboard untuk Super Admin, Admin Komlek, dan Karyawan
-        return ! ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isKaryawan());
+        // Sembunyikan default Dashboard untuk semua role khusus
+        return ! ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isTeknisiKomlek() || $user?->isKaryawan());
     }
 }
