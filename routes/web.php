@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LaporanController;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Services\TandaTerimaService;
@@ -48,3 +49,10 @@ Route::get('/download-surat-perbaikan/{perbaikan}', function (PerbaikanModel $pe
 
     return TandaTerimaService::generatePerbaikan($perbaikan);
 })->middleware('auth')->name('download.surat-perbaikan');
+
+// Routes untuk Laporan (PDF & Excel)
+Route::middleware('auth')->prefix('laporan')->name('laporan.')->group(function () {
+    Route::get('/pdf/{jenis}', [LaporanController::class, 'exportPdf'])->name('pdf');
+    Route::get('/excel/{jenis}', [LaporanController::class, 'exportExcel'])->name('excel');
+    Route::get('/print/{jenis}', [LaporanController::class, 'exportPrint'])->name('print');
+});
