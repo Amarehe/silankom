@@ -13,6 +13,9 @@ class Dashboard extends BaseDashboard
      */
     public static function shouldRegisterNavigation(): bool
     {
-        return ! Auth::user()?->isSuperAdmin();
+        $user = Auth::user();
+
+        // Sembunyikan default Dashboard untuk Super Admin dan Karyawan
+        return ! ($user?->isSuperAdmin() || $user?->isKaryawan());
     }
 }
