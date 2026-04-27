@@ -1,12 +1,12 @@
 <x-filament-panels::page>
     <form wire:submit="tampilkanPreview">
         {{ $this->form }}
-        <div class="flex flex-wrap items-center gap-3 mt-8">
+        <div class="flex flex-wrap items-center gap-3 mt-6" style="margin-top: 1.5rem;">
             <x-filament::button type="submit" icon="heroicon-o-magnifying-glass" color="primary" size="lg">Tampilkan Data</x-filament::button>
             @if($showPreview)
-                <x-filament::button wire:click="exportPdf" type="button" icon="heroicon-o-document-arrow-down" color="danger" size="lg">📄 Export PDF</x-filament::button>
-                <x-filament::button wire:click="exportExcel" type="button" icon="heroicon-o-table-cells" color="success" size="lg">📊 Export Excel</x-filament::button>
-                <x-filament::button tag="a" href="{{ $this->getExportUrl('print') }}" target="_blank" icon="heroicon-o-printer" color="info" size="lg">🖨️ Print</x-filament::button>
+                <x-filament::button wire:click="exportPdf" type="button" icon="heroicon-o-document-arrow-down" color="danger" size="lg">Export PDF</x-filament::button>
+                <x-filament::button wire:click="exportExcel" type="button" icon="heroicon-o-table-cells" color="success" size="lg">Export Excel</x-filament::button>
+                <x-filament::button tag="a" href="{{ $this->getExportUrl('print') }}" target="_blank" icon="heroicon-o-printer" color="info" size="lg">Print</x-filament::button>
             @endif
         </div>
     </form>
@@ -116,7 +116,7 @@
             <x-filament::section>
                 <div class="flex flex-col items-center justify-center py-12 text-center">
                     <div class="text-6xl mb-4">🤝</div>
-                    <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">Pilih Periode Laporan</h3>
+                    <h3 class="text-lg font-semibold text-gray-600 dark:text-gray-300 mb-2">Pilih Periode Rekap</h3>
                     <p class="text-sm text-gray-400 dark:text-gray-500 max-w-md">Atur filter di atas lalu klik <strong>Tampilkan Data</strong> untuk preview. Setelah itu export ke PDF, Excel, atau print langsung.</p>
                 </div>
             </x-filament::section>

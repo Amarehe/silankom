@@ -14,13 +14,13 @@ class LaporanPerbaikanPage extends BaseLaporanPage
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::WrenchScrewdriver;
 
-    protected static ?string $navigationLabel = 'Laporan Perbaikan';
+    protected static ?string $navigationLabel = 'Rekap Perbaikan';
 
-    protected static ?string $title = 'Laporan Perbaikan Peralatan';
+    protected static ?string $title = 'Rekap Perbaikan Peralatan';
 
     protected static ?string $slug = 'laporan-perbaikan';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Laporan';
+    protected static string|UnitEnum|null $navigationGroup = 'Rekap';
 
     protected static ?int $navigationSort = 2;
 

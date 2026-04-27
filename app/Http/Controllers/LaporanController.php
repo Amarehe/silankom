@@ -19,7 +19,7 @@ class LaporanController extends Controller
     ) {}
 
     /**
-     * Export laporan as PDF.
+     * Export rekap as PDF.
      */
     public function exportPdf(Request $request, string $jenis): Response
     {
@@ -37,13 +37,13 @@ class LaporanController extends Controller
         ];
 
         $judulMap = [
-            'peminjaman' => 'Laporan_Peminjaman',
-            'perbaikan' => 'Laporan_Perbaikan',
-            'dukungan' => 'Laporan_Dukungan',
+            'peminjaman' => 'Rekap_Peminjaman',
+            'perbaikan' => 'Rekap_Perbaikan',
+            'dukungan' => 'Rekap_Dukungan',
         ];
 
-        $view = $viewMap[$jenis] ?? abort(404, 'Jenis laporan tidak valid.');
-        $judul = $judulMap[$jenis] ?? 'Laporan';
+        $view = $viewMap[$jenis] ?? abort(404, 'Jenis rekap tidak valid.');
+        $judul = $judulMap[$jenis] ?? 'Rekap';
 
         $pdf = PDF::loadView($view, [
             'data' => $data,
@@ -59,7 +59,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * Export laporan as Excel.
+     * Export rekap as Excel.
      */
     public function exportExcel(Request $request, string $jenis): BinaryFileResponse
     {
@@ -75,13 +75,13 @@ class LaporanController extends Controller
         ];
 
         $judulMap = [
-            'peminjaman' => 'Laporan_Peminjaman',
-            'perbaikan' => 'Laporan_Perbaikan',
-            'dukungan' => 'Laporan_Dukungan',
+            'peminjaman' => 'Rekap_Peminjaman',
+            'perbaikan' => 'Rekap_Perbaikan',
+            'dukungan' => 'Rekap_Dukungan',
         ];
 
-        $export = $exportMap[$jenis] ?? abort(404, 'Jenis laporan tidak valid.');
-        $judul = $judulMap[$jenis] ?? 'Laporan';
+        $export = $exportMap[$jenis] ?? abort(404, 'Jenis rekap tidak valid.');
+        $judul = $judulMap[$jenis] ?? 'Rekap';
 
         $filename = $judul.'_'.now()->format('Y-m-d_His').'.xlsx';
 
@@ -89,7 +89,7 @@ class LaporanController extends Controller
     }
 
     /**
-     * View laporan in browser for printing.
+     * View rekap in browser for printing.
      */
     public function exportPrint(Request $request, string $jenis): Response
     {
@@ -106,7 +106,7 @@ class LaporanController extends Controller
             'dukungan' => 'pdf.laporan_dukungan',
         ];
 
-        $view = $viewMap[$jenis] ?? abort(404, 'Jenis laporan tidak valid.');
+        $view = $viewMap[$jenis] ?? abort(404, 'Jenis rekap tidak valid.');
 
         return response()->view($view, [
             'data' => $data,
@@ -139,8 +139,6 @@ class LaporanController extends Controller
             'tipe_periode' => $request->query('tipe_periode'),
             'tahun' => $request->query('tahun'),
             'bulan' => $request->query('bulan'),
-            'triwulan' => $request->query('triwulan'),
-            'semester' => $request->query('semester'),
             'tanggal_dari' => $request->query('tanggal_dari'),
             'tanggal_sampai' => $request->query('tanggal_sampai'),
             'status_peminjaman' => $request->query('status_peminjaman'),

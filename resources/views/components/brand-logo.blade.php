@@ -16,14 +16,19 @@
     </div>
 @else
     {{-- Sidebar: Logo + SILANKOM --}}
-    <div style="display: inline-flex; align-items: center; gap: 0.5rem;">
+    <div style="display: inline-flex; align-items: center; gap: 0.75rem;">
         <img
             src="{{ asset('images/logo.png') }}"
             alt="Logo SILANKOM"
             style="height: 3.5rem; width: auto; max-width: 3.5rem; object-fit: contain; flex-shrink: 0;"
         />
-        <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: inherit; white-space: nowrap;">
-            SIKOMLEK
-        </span>
+        <div style="display: flex; flex-direction: column; justify-content: center;">
+            <span style="font-size: 1.25rem; font-weight: 800; letter-spacing: -0.025em; color: inherit; white-space: nowrap; line-height: 1.2;">
+                SIKOMLEK
+            </span>
+            <span style="font-size: 0.65rem; font-weight: 600; color: #6b7280; white-space: nowrap; text-transform: uppercase; letter-spacing: 0.02em;">
+                Lembaga Ketahanan Nasional RI
+            </span>
+        </div>
     </div>
 @endif

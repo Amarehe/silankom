@@ -78,8 +78,6 @@ abstract class BaseLaporanPage extends Page implements HasForms
                 ->label('Tipe Periode')
                 ->options([
                     'bulanan' => '📅 Bulanan',
-                    'triwulan' => '📊 Triwulan',
-                    'semester' => '📈 Semester',
                     'tahunan' => '📆 Tahunan',
                     'custom' => '🔍 Custom Range',
                 ])
@@ -102,7 +100,7 @@ abstract class BaseLaporanPage extends Page implements HasForms
                 ->default(now()->year)
                 ->required()
                 ->reactive()
-                ->visible(fn ($get) => in_array($get('tipe_periode'), ['bulanan', 'triwulan', 'semester', 'tahunan']))
+                ->visible(fn ($get) => in_array($get('tipe_periode'), ['bulanan', 'tahunan']))
                 ->afterStateUpdated(fn () => $this->resetPreview()),
 
             Select::make('bulan')
@@ -116,28 +114,6 @@ abstract class BaseLaporanPage extends Page implements HasForms
                 ->required()
                 ->reactive()
                 ->visible(fn ($get) => $get('tipe_periode') === 'bulanan')
-                ->afterStateUpdated(fn () => $this->resetPreview()),
-
-            Select::make('triwulan')
-                ->label('Triwulan')
-                ->options([
-                    1 => 'Triwulan I (Jan - Mar)',
-                    2 => 'Triwulan II (Apr - Jun)',
-                    3 => 'Triwulan III (Jul - Sep)',
-                    4 => 'Triwulan IV (Okt - Des)',
-                ])
-                ->reactive()
-                ->visible(fn ($get) => $get('tipe_periode') === 'triwulan')
-                ->afterStateUpdated(fn () => $this->resetPreview()),
-
-            Select::make('semester')
-                ->label('Semester')
-                ->options([
-                    1 => 'Semester I (Jan - Jun)',
-                    2 => 'Semester II (Jul - Des)',
-                ])
-                ->reactive()
-                ->visible(fn ($get) => $get('tipe_periode') === 'semester')
                 ->afterStateUpdated(fn () => $this->resetPreview()),
 
             DatePicker::make('tanggal_dari')
