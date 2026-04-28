@@ -12,13 +12,13 @@ class LaporanDukunganPage extends BaseLaporanPage
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::HandRaised;
 
-    protected static ?string $navigationLabel = 'Laporan Dukungan';
+    protected static ?string $navigationLabel = 'Rekap Dukungan';
 
-    protected static ?string $title = 'Laporan Dukungan Kegiatan';
+    protected static ?string $title = 'Rekap Dukungan Kegiatan';
 
     protected static ?string $slug = 'laporan-dukungan';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Laporan';
+    protected static string|UnitEnum|null $navigationGroup = 'Rekap';
 
     protected static ?int $navigationSort = 3;
 

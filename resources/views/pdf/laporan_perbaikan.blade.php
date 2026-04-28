@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Laporan Perbaikan Peralatan - {{ $periode }}</title>
+    <title>Rekap Perbaikan Peralatan - {{ $periode }}</title>
     <style>
         @page {
             margin: 1.5cm 1.5cm 1.5cm 1.5cm;
@@ -214,7 +214,7 @@
 
     <!-- JUDUL -->
     <div class="judul">
-        <h2>LAPORAN PERBAIKAN PERALATAN ELEKTRONIK</h2>
+        <h2>REKAP PERBAIKAN PERALATAN ELEKTRONIK</h2>
     </div>
 
     <div class="periode">

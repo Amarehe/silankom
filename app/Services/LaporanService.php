@@ -123,8 +123,6 @@ class LaporanService
         $tipePeriode = $filters['tipe_periode'] ?? null;
         $tahun = $filters['tahun'] ?? null;
         $bulan = $filters['bulan'] ?? null;
-        $triwulan = $filters['triwulan'] ?? null;
-        $semester = $filters['semester'] ?? null;
         $tanggalDari = $filters['tanggal_dari'] ?? null;
         $tanggalSampai = $filters['tanggal_sampai'] ?? null;
 
@@ -132,20 +130,6 @@ class LaporanService
             'bulanan' => $query->when($tahun && $bulan, fn (Builder $q) => $q
                 ->whereYear($dateColumn, $tahun)
                 ->whereMonth($dateColumn, $bulan)),
-
-            'triwulan' => $query->when($tahun && $triwulan, function (Builder $q) use ($dateColumn, $tahun, $triwulan) {
-                $startMonth = (($triwulan - 1) * 3) + 1;
-                $start = Carbon::create($tahun, $startMonth, 1)->startOfDay();
-                $end = $start->copy()->addMonths(2)->endOfMonth();
-                $q->whereBetween($dateColumn, [$start, $end]);
-            }),
-
-            'semester' => $query->when($tahun && $semester, function (Builder $q) use ($dateColumn, $tahun, $semester) {
-                $startMonth = $semester === 1 ? 1 : 7;
-                $start = Carbon::create($tahun, $startMonth, 1)->startOfDay();
-                $end = $start->copy()->addMonths(5)->endOfMonth();
-                $q->whereBetween($dateColumn, [$start, $end]);
-            }),
 
             'tahunan' => $query->when($tahun, fn (Builder $q) => $q->whereYear($dateColumn, $tahun)),
 
@@ -246,8 +230,6 @@ class LaporanService
 
         return match ($tipePeriode) {
             'bulanan' => 'Bulan '.($namaBulan[(int) $bulan] ?? '').' '.$tahun,
-            'triwulan' => 'Triwulan '.($filters['triwulan'] ?? '').' Tahun '.$tahun,
-            'semester' => 'Semester '.($filters['semester'] ?? '').' Tahun '.$tahun,
             'tahunan' => 'Tahun '.$tahun,
             'custom' => 'Periode '.($filters['tanggal_dari'] ? Carbon::parse($filters['tanggal_dari'])->translatedFormat('d F Y') : '...').' s/d '.($filters['tanggal_sampai'] ? Carbon::parse($filters['tanggal_sampai'])->translatedFormat('d F Y') : '...'),
             default => 'Semua Periode',

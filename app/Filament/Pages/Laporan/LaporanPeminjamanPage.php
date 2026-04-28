@@ -13,13 +13,13 @@ class LaporanPeminjamanPage extends BaseLaporanPage
 {
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $navigationLabel = 'Laporan Peminjaman';
+    protected static ?string $navigationLabel = 'Rekap Peminjaman';
 
-    protected static ?string $title = 'Laporan Peminjaman & Pengembalian';
+    protected static ?string $title = 'Rekap Peminjaman & Pengembalian';
 
     protected static ?string $slug = 'laporan-peminjaman';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Laporan';
+    protected static string|UnitEnum|null $navigationGroup = 'Rekap';
 
     protected static ?int $navigationSort = 1;
 
