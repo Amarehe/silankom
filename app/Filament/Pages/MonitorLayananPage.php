@@ -36,7 +36,7 @@ class MonitorLayananPage extends Page
     protected function getViewData(): array
     {
         return [
-            'peminjamanBaru' => ReqPinjamModel::with(['user', 'barang'])
+            'peminjamanBaru' => ReqPinjamModel::with(['user', 'kategori'])
                 ->where('status', 'diproses')
                 ->latest('created_at')
                 ->get(),
