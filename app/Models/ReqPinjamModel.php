@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Notifications\PengajuanBaruNotification;
+use App\Notifications\StatusUpdateNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -13,14 +14,27 @@ class ReqPinjamModel extends Model
 
     protected $guarded = [];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         // Kirim notifikasi ke admin saat ada pengajuan baru
-        static::created(function ($reqPinjam) {
-            // Ambil user pertama sebagai admin (atau bisa disesuaikan dengan logic role Anda)
-            $admin = User::first();
-            if ($admin) {
-                $admin->notify(new PengajuanBaruNotification($reqPinjam));
+        static::created(function (ReqPinjamModel $reqPinjam) {
+            PengajuanBaruNotification::send($reqPinjam);
+        });
+
+        // Kirim notifikasi ke pemohon saat status berubah
+        static::updated(function (ReqPinjamModel $reqPinjam) {
+            if ($reqPinjam->isDirty('status') && $reqPinjam->user) {
+                // Untuk status disetujui, notifikasi dikirim manual setelah PeminjamanModel dibuat
+                if ($reqPinjam->status === 'disetujui') {
+                    return;
+                }
+
+                StatusUpdateNotification::send(
+                    $reqPinjam->user,
+                    'Peminjaman',
+                    $reqPinjam->status,
+                    $reqPinjam->id,
+                );
             }
         });
     }

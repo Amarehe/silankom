@@ -2,36 +2,37 @@
 
 namespace App\Notifications;
 
+use App\Filament\Resources\Pengajuans\PengajuanResource;
 use App\Models\ReqPinjamModel;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 
-class PengajuanBaruNotification extends Notification
+class PengajuanBaruNotification
 {
-    use Queueable;
-
-    public function __construct(
-        private ReqPinjamModel $reqPinjam
-    ) {}
-
     /**
-     * Get the notification's delivery channels.
+     * Kirim notifikasi pengajuan peminjaman baru ke Super Admin & Admin Komlek.
      */
-    public function via($notifiable): array
+    public static function send(ReqPinjamModel $reqPinjam): void
     {
-        return ['database'];
-    }
+        $pemohon = $reqPinjam->user?->name ?? 'User';
+        $kategori = $reqPinjam->kategori?->nama_kategori ?? 'Barang';
+        $targetUrl = PengajuanResource::getUrl('index');
 
-    /**
-     * Get the array representation of the notification.
-     */
-    public function toDatabase($notifiable): array
-    {
-        return [
-            'title' => 'Pengajuan Peminjaman Baru',
-            'message' => "Pengajuan peminjaman dari {$this->reqPinjam->user->name} untuk kategori {$this->reqPinjam->kategori->nama_kategori}",
-            'req_pinjam_id' => $this->reqPinjam->id,
-            'url' => route('filament.admin.resources.pengajuan.index'),
-        ];
+        $admins = User::whereIn('role_id', [1, 2])->get();
+
+        $notification = Notification::make()
+            ->title('Pengajuan Peminjaman Baru')
+            ->body("Pengajuan peminjaman dari <strong>{$pemohon}</strong> untuk kategori <strong>{$kategori}</strong> ({$reqPinjam->jumlah} unit).")
+            ->icon('heroicon-o-inbox-stack')
+            ->iconColor('primary')
+            ->actions([
+                Action::make('lihat')
+                    ->label('Lihat Pengajuan')
+                    ->url($targetUrl)
+                    ->markAsRead(),
+            ]);
+
+        FilamentNotificationSender::send($notification, $admins, $targetUrl, $reqPinjam->id);
     }
 }

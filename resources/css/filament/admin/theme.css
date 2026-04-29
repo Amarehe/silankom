@@ -1,3 +1,36 @@
 @import 'tailwindcss';
 
 @source '../../../../resources/views/filament/**/*.blade.php';
+
+/* Animasi highlight row saat notifikasi diklik */
+@keyframes notification-highlight {
+    0% {
+        background-color: oklch(0.85 0.15 85);
+    }
+    50% {
+        background-color: oklch(0.92 0.08 85);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.fi-ta-row-highlight {
+    animation: notification-highlight 3s ease-out forwards;
+}
+
+:is(.dark .fi-ta-row-highlight) {
+    animation-name: notification-highlight-dark;
+}
+
+@keyframes notification-highlight-dark {
+    0% {
+        background-color: oklch(0.45 0.12 85);
+    }
+    50% {
+        background-color: oklch(0.35 0.06 85);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
