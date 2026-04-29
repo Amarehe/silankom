@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotificationRedirectController;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Services\TandaTerimaService;
@@ -9,6 +10,11 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+// Route untuk redirect notifikasi (tandai dibaca + highlight row)
+Route::get('/notification-redirect/{notification}', NotificationRedirectController::class)
+    ->middleware('auth')
+    ->name('notification.redirect');
 
 // Route untuk download PDF tanda terima
 Route::get('/download-tanda-terima/{peminjaman}', function (PeminjamanModel $peminjaman) {

@@ -265,10 +265,11 @@ class PengajuansTable
                                 ->rows(3),
                         ])
                         ->action(function (ReqPinjamModel $record, array $data) {
-                            DB::transaction(function () use ($record, $data) {
+                            $peminjaman = null;
+                            DB::transaction(function () use ($record, $data, &$peminjaman) {
                                 $record->update(['status' => 'disetujui']);
                                 $nomorSurat = NomorSuratService::generate();
-                                PeminjamanModel::create([
+                                $peminjaman = PeminjamanModel::create([
                                     'nomor_surat' => $nomorSurat,
                                     'req_pinjam_id' => $record->id,
                                     'barang_id' => $data['barang_id'],
@@ -280,6 +281,16 @@ class PengajuansTable
                                     'status_peminjaman' => 'dipinjam',
                                 ]);
                             });
+
+                            if ($record->user && $peminjaman) {
+                                \App\Notifications\StatusUpdateNotification::send(
+                                    $record->user,
+                                    'Peminjaman',
+                                    'disetujui',
+                                    $record->id,
+                                    $peminjaman->id
+                                );
+                            }
                         })
                         ->successNotificationTitle('Pengajuan berhasil disetujui')
                         ->modalSubmitActionLabel('Setujui & Buat Peminjaman')
