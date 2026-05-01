@@ -39,7 +39,9 @@ class EditProfile extends BaseEditProfile
                             ->prefixIcon('heroicon-o-identification'),
                         TextInput::make('name')
                             ->label('Nama Lengkap')
-                            ->required()
+                            ->required(fn (): bool => auth()->user()->isAdmin())
+                            ->disabled(fn (): bool => ! auth()->user()->isAdmin())
+                            ->dehydrated(fn (): bool => auth()->user()->isAdmin())
                             ->maxLength(255)
                             ->autofocus()
                             ->prefixIcon('heroicon-o-user'),
@@ -63,9 +65,9 @@ class EditProfile extends BaseEditProfile
                             ->hiddenLabel()
                             ->content(new HtmlString(
                                 '<div class="flex items-center gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 dark:border-amber-600/30 dark:bg-amber-900/20">'
-                                . '<span class="text-lg leading-none">ℹ️</span>'
-                                . '<span class="text-sm text-amber-800 dark:text-amber-200">Untuk perubahan <strong>jabatan</strong> dan <strong>unit kerja</strong>, silakan hubungi administrator.</span>'
-                                . '</div>'
+                                .'<span class="text-lg leading-none">ℹ️</span>'
+                                .'<span class="text-sm text-amber-800 dark:text-amber-200">Untuk perubahan <strong>nama</strong>, <strong>jabatan</strong>, dan <strong>unit kerja</strong>, silakan hubungi administrator.</span>'
+                                .'</div>'
                             )),
                     ])
                     ->compact(),
