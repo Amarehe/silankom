@@ -62,3 +62,19 @@ Route::middleware('auth')->prefix('laporan')->name('laporan.')->group(function (
     Route::get('/excel/{jenis}', [LaporanController::class, 'exportExcel'])->name('excel');
     Route::get('/print/{jenis}', [LaporanController::class, 'exportPrint'])->name('print');
 });
+
+// API untuk badge count
+Route::get('/api/badge-count', function () {
+    $model = request('model', 'pengajuan');
+
+    $counts = [
+        'pengajuan' => \App\Models\ReqPinjamModel::where('status', 'diproses')->count(),
+        'pengajuan-perbaikan' => \App\Models\PerbaikanModel::whereIn('status_perbaikan', ['diajukan', 'diproses'])->count(),
+        'pengajuan-dukungan' => \App\Models\ReqDukunganModel::where('status_dukungan', 'belum_didukung')->count(),
+    ];
+
+    return response()->json([
+        'count' => $counts[$model] ?? 0,
+        'timestamp' => now()->unix(),
+    ]);
+})->middleware('auth');
