@@ -2,7 +2,10 @@
 
 namespace App\Notifications;
 
+use App\Events\NotificationToastEvent;
 use App\Models\User;
+use BackedEnum;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -51,7 +54,23 @@ class FilamentNotificationSender
                 $dbNotification->update(['data' => $data]);
             }
 
-            $notification->broadcast($user);
+            // Dispatch event agar bell icon (database notifications) refresh real-time
+            DatabaseNotificationsSent::dispatch($user);
+
+            // Dispatch toast pop-up notification via custom event
+            // (Filament broadcast() tidak kompatibel dengan Reverb .notification() listener)
+            $icon = $notification->getIcon();
+            if ($icon instanceof BackedEnum) {
+                $icon = $icon->value;
+            }
+
+            NotificationToastEvent::dispatch(
+                $user,
+                $notification->getTitle(),
+                $notification->getBody(),
+                is_string($icon) ? $icon : null,
+                $notification->getIconColor(),
+            );
         }
     }
 }

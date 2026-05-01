@@ -43,7 +43,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->profile(\App\Filament\Pages\Auth\EditProfile::class, isSimple: false)
             ->databaseNotifications()
-            ->databaseNotificationsPolling('60s')
+            ->databaseNotificationsPolling('30s')
+            ->broadcasting()
             ->renderHook(
                 PanelsRenderHook::BODY_END,
                 fn (): string => Blade::render('@include("filament.notification-extras")'),
