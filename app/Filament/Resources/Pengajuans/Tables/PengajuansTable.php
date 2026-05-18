@@ -11,6 +11,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -74,7 +75,7 @@ class PengajuansTable
                     ->wrap()
                     ->placeholder('Tidak ada keterangan'),
             ])
-            ->modifyQueryUsing(fn ($query) => $query->with(['user.jabatan', 'user.unitkerja', 'kategori']))
+            ->modifyQueryUsing(fn ($query) => $query->with(['user.jabatan', 'user.unitkerja', 'user.peminjamans.barang', 'kategori']))
             ->actions([
                 ActionGroup::make([
                     // View Detail Action
@@ -161,8 +162,163 @@ class PengajuansTable
                                         ->color('danger'),
                                 ])
                                 ->visible(fn (ReqPinjamModel $record) => $record->status === 'ditolak' && ! empty($record->alasan_penolakan)),
+
+                            Section::make('Riwayat Peminjaman User')
+                                ->icon('heroicon-o-clock')
+                                ->description('Daftar barang yang sedang/pernah dipinjam oleh pemohon ini')
+                                ->schema([
+                                    RepeatableEntry::make('user.peminjamans')
+                                        ->label('')
+                                        ->schema([
+                                            TextEntry::make('barang.nama_barang')
+                                                ->label('Nama Barang')
+                                                ->icon('heroicon-m-cube')
+                                                ->weight('bold'),
+                                            TextEntry::make('status_peminjaman')
+                                                ->label('Status')
+                                                ->badge()
+                                                ->color(fn (string $state): string => match ($state) {
+                                                    'dipinjam' => 'warning',
+                                                    'dikembalikan' => 'success',
+                                                    default => 'gray',
+                                                })
+                                                ->formatStateUsing(fn (string $state): string => match ($state) {
+                                                    'dipinjam' => 'Masih Dipinjam',
+                                                    'dikembalikan' => 'Sudah Dikembalikan',
+                                                    default => ucfirst($state),
+                                                }),
+                                            TextEntry::make('tanggal_serah_terima')
+                                                ->label('Tgl Pinjam')
+                                                ->date('d M Y')
+                                                ->icon('heroicon-m-calendar'),
+                                            TextEntry::make('tanggal_kembali')
+                                                ->label('Tgl Kembali')
+                                                ->date('d M Y')
+                                                ->placeholder('Belum dikembalikan')
+                                                ->icon('heroicon-m-calendar-days'),
+                                        ])
+                                        ->columns(4)
+                                        ->placeholder('Belum ada riwayat peminjaman'),
+                                ])
+                                ->collapsible(),
                         ])
                         ->modalSubmitAction(false)
+                        ->extraModalFooterActions(fn (ReqPinjamModel $record): array => $record->status === 'diproses'
+                            ? [
+                                Action::make('approve_from_detail')
+                                    ->label('Setujui')
+                                    ->icon('heroicon-o-check-circle')
+                                    ->color('success')
+                                    ->cancelParentActions()
+                                    ->requiresConfirmation()
+                                    ->modalHeading('Setujui Pengajuan Peminjaman')
+                                    ->modalWidth('3xl')
+                                    ->form([
+                                        Select::make('barang_id')
+                                            ->label('Pilih Barang')
+                                            ->options(function () use ($record) {
+                                                return BarangModel::where('kategori_id', $record->kategori_id)
+                                                    ->where('status', 'tersedia')
+                                                    ->pluck('nama_barang', 'id_barang');
+                                            })
+                                            ->required()
+                                            ->placeholder('Pilih barang yang akan dipinjamkan')
+                                            ->searchable()
+                                            ->preload()
+                                            ->helperText('Hanya menampilkan barang dengan status tersedia'),
+
+                                        Select::make('kondisi_barang')
+                                            ->label('Kondisi Barang')
+                                            ->options([
+                                                'baik' => 'Baik',
+                                                'rusak ringan' => 'Rusak Ringan',
+                                                'rusak berat' => 'Rusak Berat',
+                                            ])
+                                            ->required()
+                                            ->default('baik')
+                                            ->native(false),
+
+                                        DatePicker::make('tanggal_serah_terima')
+                                            ->label('Tanggal Serah Terima')
+                                            ->required()
+                                            ->default(now())
+                                            ->native(false)
+                                            ->maxDate(now()),
+
+                                        Textarea::make('kelengkapan')
+                                            ->label('Kelengkapan')
+                                            ->placeholder('Contoh: Charger, Tas, Mouse, dll.')
+                                            ->rows(3),
+
+                                        Textarea::make('catatan_admin')
+                                            ->label('Catatan Admin')
+                                            ->placeholder('Catatan tambahan untuk peminjam (opsional)')
+                                            ->rows(3),
+                                    ])
+                                    ->action(function (ReqPinjamModel $record, array $data) {
+                                        $peminjaman = null;
+                                        DB::transaction(function () use ($record, $data, &$peminjaman) {
+                                            $record->update(['status' => 'disetujui']);
+                                            $nomorSurat = NomorSuratService::generate();
+                                            $peminjaman = PeminjamanModel::create([
+                                                'nomor_surat' => $nomorSurat,
+                                                'req_pinjam_id' => $record->id,
+                                                'barang_id' => $data['barang_id'],
+                                                'admin_id' => Auth::id(),
+                                                'tanggal_serah_terima' => $data['tanggal_serah_terima'],
+                                                'kondisi_barang' => $data['kondisi_barang'],
+                                                'kelengkapan' => $data['kelengkapan'] ?? null,
+                                                'catatan_admin' => $data['catatan_admin'] ?? null,
+                                                'status_peminjaman' => 'dipinjam',
+                                            ]);
+                                        });
+
+                                        if ($record->user && $peminjaman) {
+                                            \App\Notifications\StatusUpdateNotification::send(
+                                                $record->user,
+                                                'Peminjaman',
+                                                'disetujui',
+                                                $record->id,
+                                                $peminjaman->id
+                                            );
+                                        }
+                                    })
+                                    ->successNotificationTitle('Pengajuan berhasil disetujui')
+                                    ->modalSubmitActionLabel('Setujui & Buat Peminjaman')
+                                    ->modalCancelActionLabel('Batal')
+                                    ->after(function () {
+                                        return redirect(request()->header('Referer'));
+                                    }),
+                                Action::make('reject_from_detail')
+                                    ->label('Tolak')
+                                    ->icon('heroicon-o-x-circle')
+                                    ->color('danger')
+                                    ->cancelParentActions()
+                                    ->modalHeading('Tolak Pengajuan Peminjaman')
+                                    ->modalDescription('Berikan alasan penolakan yang jelas kepada pemohon')
+                                    ->modalWidth('xl')
+                                    ->form([
+                                        Textarea::make('alasan_penolakan')
+                                            ->label('Alasan Penolakan')
+                                            ->required()
+                                            ->placeholder('Jelaskan alasan penolakan pengajuan ini')
+                                            ->rows(3),
+                                    ])
+                                    ->action(function (ReqPinjamModel $record, array $data) {
+                                        $record->update([
+                                            'status' => 'ditolak',
+                                            'alasan_penolakan' => $data['alasan_penolakan'],
+                                        ]);
+                                    })
+                                    ->successNotificationTitle('Pengajuan ditolak')
+                                    ->modalSubmitActionLabel('Tolak Pengajuan')
+                                    ->modalCancelActionLabel('Batal')
+                                    ->after(function () {
+                                        return redirect(request()->header('Referer'));
+                                    }),
+                            ]
+                            : []
+                        )
                         ->modalCancelActionLabel('Tutup')
                         ->modalCancelAction(fn ($action) => $action->color('gray')),
 

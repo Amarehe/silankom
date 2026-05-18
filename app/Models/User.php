@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -37,6 +39,25 @@ class User extends Authenticatable
     public function unitkerja()
     {
         return $this->belongsTo(UnitKerjaModel::class, 'unitkerja_id', 'id');
+    }
+
+    // Relasi ke req_pinjam (pengajuan peminjaman)
+    public function reqPinjams(): HasMany
+    {
+        return $this->hasMany(ReqPinjamModel::class, 'user_id', 'id');
+    }
+
+    // Relasi ke peminjaman (melalui req_pinjam)
+    public function peminjamans(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            PeminjamanModel::class,
+            ReqPinjamModel::class,
+            'user_id',
+            'req_pinjam_id',
+            'id',
+            'id'
+        );
     }
 
     // Relasi ke model Role
