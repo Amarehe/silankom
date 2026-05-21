@@ -19,7 +19,7 @@ class PengajuanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::InboxStack;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Peminjaman';
+    protected static ?string $recordTitleAttribute = 'keterangan';
 
     protected static ?string $navigationLabel = 'Pengajuan Peminjaman';
 
@@ -32,6 +32,8 @@ class PengajuanResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Peminjaman';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function getNavigationBadge(): ?string
     {

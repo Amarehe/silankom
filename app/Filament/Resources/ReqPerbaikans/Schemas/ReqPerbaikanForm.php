@@ -36,9 +36,9 @@ class ReqPerbaikanForm
                 ->placeholder('Masukkan nama barang')
                 ->columnSpanFull(),
 
-            TextInput::make('tgl_pengajuan_display')
+            TextInput::make('_tgl_display')
                 ->label('Tanggal Pengajuan')
-                ->default(fn () => now()->translatedFormat('l, d F Y'))
+                ->default(now()->translatedFormat('l, d F Y'))
                 ->disabled()
                 ->dehydrated(false)
                 ->columnSpanFull(),
@@ -63,12 +63,12 @@ class ReqPerbaikanForm
 
             TextInput::make('nodis')
                 ->label('Nomor Nota Dinas')
-                ->placeholder('Masukkan nomor nota dinas (jika ada)')
-                ->helperText('Opsional. Pengisian nomor Nota Dinas akan membantu percepatan prioritas penanganan pengajuan.')
+                ->required()
+                ->placeholder('Masukkan nomor nota dinas')
                 ->columnSpanFull(),
 
             Hidden::make('pemohon_id')
-                ->default(fn () => Auth::id()),
+                ->default(Auth::id()),
 
             Hidden::make('status_perbaikan')
                 ->default('diajukan'),

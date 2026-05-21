@@ -18,7 +18,7 @@ class PeminjamanAdminResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Riwayat Peminjaman';
+    protected static ?string $recordTitleAttribute = 'nomor_surat';
 
     protected static ?string $navigationLabel = 'Riwayat Peminjaman';
 
@@ -29,6 +29,8 @@ class PeminjamanAdminResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $pluralModelLabel = 'Riwayat Peminjaman';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function shouldRegisterNavigation(): bool
     {

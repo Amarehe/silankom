@@ -21,7 +21,7 @@ class ReqPinjamResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentPlus;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Peminjaman';
+    protected static ?string $recordTitleAttribute = 'keterangan';
 
     protected static ?string $navigationLabel = 'Ajukan Peminjaman';
 
@@ -34,6 +34,8 @@ class ReqPinjamResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Peminjaman';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function shouldRegisterNavigation(): bool
     {

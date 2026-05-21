@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\NotificationRedirectController;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Services\TandaTerimaService;
@@ -10,11 +8,6 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-
-// Route untuk redirect notifikasi (tandai dibaca + highlight row)
-Route::get('/notification-redirect/{notification}', NotificationRedirectController::class)
-    ->middleware('auth')
-    ->name('notification.redirect');
 
 // Route untuk download PDF tanda terima
 Route::get('/download-tanda-terima/{peminjaman}', function (PeminjamanModel $peminjaman) {
@@ -55,10 +48,3 @@ Route::get('/download-surat-perbaikan/{perbaikan}', function (PerbaikanModel $pe
 
     return TandaTerimaService::generatePerbaikan($perbaikan);
 })->middleware('auth')->name('download.surat-perbaikan');
-
-// Routes untuk Laporan (PDF & Excel)
-Route::middleware('auth')->prefix('laporan')->name('laporan.')->group(function () {
-    Route::get('/pdf/{jenis}', [LaporanController::class, 'exportPdf'])->name('pdf');
-    Route::get('/excel/{jenis}', [LaporanController::class, 'exportExcel'])->name('excel');
-    Route::get('/print/{jenis}', [LaporanController::class, 'exportPrint'])->name('print');
-});

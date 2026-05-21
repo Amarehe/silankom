@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
@@ -20,7 +21,7 @@ class KategoriResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Tag;
 
-    protected static ?string $recordTitleAttribute = 'Kategori';
+    protected static ?string $recordTitleAttribute = 'nama_kategori';
 
     protected static ?string $navigationLabel = 'Kategori';
 
@@ -33,6 +34,11 @@ class KategoriResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Kategori';
+
+    public static function getGlobalSearchResultUrl(Model $record): ?string
+    {
+        return static::getUrl('index');
+    }
 
     public static function shouldRegisterNavigation(): bool
     {

@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
@@ -20,7 +21,7 @@ class UnitKerjaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice;
 
-    protected static ?string $recordTitleAttribute = 'Unit Kerja';
+    protected static ?string $recordTitleAttribute = 'nm_unitkerja';
 
     protected static ?string $navigationLabel = 'Unit Kerja';
 
@@ -33,6 +34,11 @@ class UnitKerjaResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Unit Kerja';
+
+    public static function getGlobalSearchResultUrl(Model $record): ?string
+    {
+        return static::getUrl('index');
+    }
 
     public static function shouldRegisterNavigation(): bool
     {

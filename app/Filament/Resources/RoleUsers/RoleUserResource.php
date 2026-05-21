@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
@@ -20,7 +21,7 @@ class RoleUserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Cog;
 
-    protected static ?string $recordTitleAttribute = 'Role User';
+    protected static ?string $recordTitleAttribute = 'nm_role';
 
     protected static ?string $navigationLabel = 'Role User';
 
@@ -33,6 +34,11 @@ class RoleUserResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Role User';
+
+    public static function getGlobalSearchResultUrl(Model $record): ?string
+    {
+        return static::getUrl('index');
+    }
 
     public static function shouldRegisterNavigation(): bool
     {

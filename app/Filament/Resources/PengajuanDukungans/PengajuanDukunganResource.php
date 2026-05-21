@@ -19,7 +19,7 @@ class PengajuanDukunganResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Dukungan';
+    protected static ?string $recordTitleAttribute = 'nama_kegiatan';
 
     protected static ?string $navigationLabel = 'Pengajuan Dukungan';
 
@@ -30,6 +30,8 @@ class PengajuanDukunganResource extends Resource
     protected static ?int $navigationSort = 1;
 
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Dukungan';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function getNavigationBadge(): ?string
     {

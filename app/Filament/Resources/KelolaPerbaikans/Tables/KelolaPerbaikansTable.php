@@ -2,12 +2,9 @@
 
 namespace App\Filament\Resources\KelolaPerbaikans\Tables;
 
-use App\Filament\Resources\PengajuanPerbaikans\Schemas\PengajuanPerbaikanEditForm;
 use App\Models\PerbaikanModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -28,18 +25,6 @@ class KelolaPerbaikansTable
                     ->label('No')
                     ->rowIndex()
                     ->alignCenter(),
-
-                TextColumn::make('nodis')
-                    ->label('No. Nota Dinas')
-                    ->searchable()
-                    ->sortable()
-                    ->placeholder('-')
-                    ->weight('bold')
-                    ->color('primary')
-                    ->placeholder('-')
-                    ->icon('heroicon-o-document-text')
-                    ->copyable()
-                    ->toggleable(),
 
                 TextColumn::make('pemohon.name')
                     ->label('Pemohon')
@@ -98,7 +83,7 @@ class KelolaPerbaikansTable
 
                 TextColumn::make('updated_at')
                     ->label('Tgl. Selesai')
-                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('d M Y'))
+                    ->formatStateUsing(fn ($state) => $state?->translatedFormat('l, d F Y'))
                     ->sortable(),
             ])
             ->modifyQueryUsing(fn ($query) => $query->with(['pemohon.jabatan', 'pemohon.unitkerja', 'kategori', 'merek', 'teknisi']))
@@ -153,20 +138,9 @@ class KelolaPerbaikansTable
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
                                             ->icon('heroicon-m-user'),
-                                        TextEntry::make('pemohon.jabatan.nm_jabatan')
-                                            ->label('Jabatan')
-                                            ->icon('heroicon-m-briefcase')
-                                            ->placeholder('-'),
                                         TextEntry::make('pemohon.unitkerja.nm_unitkerja')
                                             ->label('Unit Kerja')
                                             ->icon('heroicon-m-building-office'),
-                                        TextEntry::make('nodis')
-                                            ->label('No. Nota Dinas')
-                                            ->placeholder('-')
-                                            ->color('primary')
-                                            ->weight('bold')
-                                            ->copyable()
-                                            ->icon('heroicon-m-document-text'),
                                         TextEntry::make('tgl_pengajuan')
                                             ->label('Tanggal Pengajuan')
                                             ->date('l, d F Y')
@@ -192,9 +166,6 @@ class KelolaPerbaikansTable
                                         TextEntry::make('no_surat_perbaikan')
                                             ->label('No. Surat')
                                             ->icon('heroicon-m-document-text')
-                                            ->color('primary')
-                                            ->weight('bold')
-                                            ->copyable()
                                             ->placeholder('-'),
                                         TextEntry::make('updated_at')
                                             ->label('Tanggal Selesai')
@@ -259,18 +230,6 @@ class KelolaPerbaikansTable
                         ->visible(fn (PerbaikanModel $record): bool => ! empty($record->no_surat_perbaikan))
                         ->url(fn (PerbaikanModel $record): string => route('download.surat-perbaikan', $record))
                         ->openUrlInNewTab(),
-
-                    EditAction::make()
-                        ->modalHeading('Edit Data Perbaikan')
-                        ->modalWidth('2xl')
-                        ->form(PengajuanPerbaikanEditForm::getFormSchema())
-                        ->successNotificationTitle('Data perbaikan berhasil diperbarui')
-                        ->modalSubmitAction(fn ($action) => $action->label('Simpan Perubahan')->color('success'))
-                        ->modalCancelAction(fn ($action) => $action->label('Batal')->color('gray'))
-                        ->visible(fn () => auth()?->user()?->role_id == 1),
-                    DeleteAction::make()
-                        ->modalHeading('Hapus Data Perbaikan')
-                        ->visible(fn () => auth()?->user()?->role_id == 1),
                 ])
                     ->button()
                     ->label('Aksi')

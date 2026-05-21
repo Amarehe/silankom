@@ -19,7 +19,7 @@ class RiwayatPeminjamanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Riwayat Peminjaman';
+    protected static ?string $recordTitleAttribute = 'nomor_surat';
 
     protected static ?string $navigationLabel = 'Riwayat Peminjaman';
 
@@ -32,6 +32,8 @@ class RiwayatPeminjamanResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Riwayat Peminjaman Saya';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function shouldRegisterNavigation(): bool
     {

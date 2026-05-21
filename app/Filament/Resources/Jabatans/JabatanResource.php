@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
 
@@ -20,7 +21,7 @@ class JabatanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Briefcase;
 
-    protected static ?string $recordTitleAttribute = 'Jabatan';
+    protected static ?string $recordTitleAttribute = 'nm_jabatan';
 
     protected static ?string $navigationLabel = 'Jabatan';
 
@@ -33,6 +34,11 @@ class JabatanResource extends Resource
 
     // Label untuk banyak item (Plural) - Ini yang muncul di Judul Tabel List
     protected static ?string $pluralModelLabel = 'Daftar Jabatan';
+
+    public static function getGlobalSearchResultUrl(Model $record): ?string
+    {
+        return static::getUrl('index');
+    }
 
     public static function shouldRegisterNavigation(): bool
     {

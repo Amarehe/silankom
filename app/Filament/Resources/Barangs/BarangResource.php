@@ -21,9 +21,25 @@ class BarangResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArchiveBox;
 
-    protected static ?string $recordTitleAttribute = 'Barang';
+    protected static ?string $recordTitleAttribute = 'nama_barang';
 
     protected static ?string $navigationLabel = 'Barang / Inventaris';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nama_barang', 'serial_number', 'label'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'Serial Number' => $record->serial_number ?? '-',
+            'Status' => $record->status,
+        ];
+    }
 
     protected static ?string $slug = 'barang';
 

@@ -24,9 +24,24 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::User;
 
-    protected static ?string $recordTitleAttribute = 'User';
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationLabel = 'User';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'nip'];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public static function getGlobalSearchResultDetails(\Illuminate\Database\Eloquent\Model $record): array
+    {
+        return [
+            'NIP' => $record->nip,
+        ];
+    }
 
     protected static ?string $slug = 'user';
 

@@ -19,7 +19,7 @@ class RiwayatDukunganResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Riwayat Dukungan';
+    protected static ?string $recordTitleAttribute = 'nama_kegiatan';
 
     protected static ?string $navigationLabel = 'Riwayat Dukungan';
 
@@ -30,6 +30,8 @@ class RiwayatDukunganResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $pluralModelLabel = 'Riwayat Dukungan';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function shouldRegisterNavigation(): bool
     {

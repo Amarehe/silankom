@@ -21,7 +21,7 @@ class PengajuanPerbaikanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::InboxStack;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Perbaikan';
+    protected static ?string $recordTitleAttribute = 'nm_barang';
 
     protected static ?string $navigationLabel = 'Pengajuan Perbaikan';
 
@@ -32,6 +32,8 @@ class PengajuanPerbaikanResource extends Resource
     protected static ?int $navigationSort = 1;
 
     protected static ?string $pluralModelLabel = 'Daftar Pengajuan Perbaikan';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function getNavigationBadge(): ?string
     {

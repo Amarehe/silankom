@@ -19,7 +19,7 @@ class KelolaPerbaikanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Riwayat Perbaikan';
+    protected static ?string $recordTitleAttribute = 'nm_barang';
 
     protected static ?string $navigationLabel = 'Riwayat Perbaikan';
 
@@ -30,6 +30,8 @@ class KelolaPerbaikanResource extends Resource
     protected static ?int $navigationSort = 2;
 
     protected static ?string $pluralModelLabel = 'Riwayat Perbaikan';
+
+    protected static bool $isGloballySearchable = false;
 
     public static function shouldRegisterNavigation(): bool
     {
