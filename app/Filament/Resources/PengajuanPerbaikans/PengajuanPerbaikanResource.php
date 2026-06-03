@@ -19,7 +19,7 @@ class PengajuanPerbaikanResource extends Resource
 {
     protected static ?string $model = PerbaikanModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::InboxStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Wrench;
 
     protected static ?string $recordTitleAttribute = 'keluhan';
 

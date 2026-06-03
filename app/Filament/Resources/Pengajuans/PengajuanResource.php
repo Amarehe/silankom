@@ -17,7 +17,7 @@ class PengajuanResource extends Resource
 {
     protected static ?string $model = ReqPinjamModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::InboxStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentPlus;
 
     protected static ?string $recordTitleAttribute = 'keterangan';
 
