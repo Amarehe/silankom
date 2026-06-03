@@ -21,7 +21,7 @@ class ReqPinjamResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentPlus;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Peminjaman';
+    protected static ?string $recordTitleAttribute = 'keterangan';
 
     protected static ?string $navigationLabel = 'Ajukan Peminjaman';
 

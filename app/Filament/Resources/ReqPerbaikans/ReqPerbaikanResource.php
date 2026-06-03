@@ -21,7 +21,7 @@ class ReqPerbaikanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Wrench;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Perbaikan';
+    protected static ?string $recordTitleAttribute = 'keluhan';
 
     protected static ?string $navigationLabel = 'Ajukan Perbaikan';
 

@@ -20,7 +20,7 @@ class KategoriResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Tag;
 
-    protected static ?string $recordTitleAttribute = 'Kategori';
+    protected static ?string $recordTitleAttribute = 'nama_kategori';
 
     protected static ?string $navigationLabel = 'Kategori';
 

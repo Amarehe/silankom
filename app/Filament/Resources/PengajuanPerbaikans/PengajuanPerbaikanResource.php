@@ -21,7 +21,7 @@ class PengajuanPerbaikanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::InboxStack;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Perbaikan';
+    protected static ?string $recordTitleAttribute = 'keluhan';
 
     protected static ?string $navigationLabel = 'Pengajuan Perbaikan';
 

@@ -16,8 +16,8 @@ class UserSeeder extends Seeder
     {
         User::create([
             'nip' => '12345678',
-            'name' => 'Quartiez',
-            'password' => Hash::make('admin123'),
+            'name' => 'Albert',
+            'password' => Hash::make('superadmin'),
             'jabatan_id' => 1 ,
             'unitkerja_id' => 1 ,
             'role_id' => 1 ,

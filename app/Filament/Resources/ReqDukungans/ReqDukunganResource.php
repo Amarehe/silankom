@@ -21,7 +21,7 @@ class ReqDukunganResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::HandRaised;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Dukungan';
+    protected static ?string $recordTitleAttribute = 'deskripsi_kegiatan';
 
     protected static ?string $navigationLabel = 'Ajukan Dukungan';
 
