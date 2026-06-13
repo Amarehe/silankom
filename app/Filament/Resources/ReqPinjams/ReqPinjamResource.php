@@ -37,12 +37,12 @@ class ReqPinjamResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->isKaryawan() ?? false;
+        return Auth::user()?->isKaryawanOrAdminTU() ?? false;
     }
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->isKaryawan() ?? false;
+        return Auth::user()?->isKaryawanOrAdminTU() ?? false;
     }
 
     public static function form(Schema $schema): Schema

@@ -38,12 +38,14 @@ class PengajuansTable
                     ->label('Nama Pemohon')
                     ->searchable()
                     ->sortable()
-                    ->description(fn (ReqPinjamModel $record): string => $record->user->nip ?? '-')
+                    ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->nama_pemohon ?? $record->user->name ?? '-')
+                    ->description(fn (ReqPinjamModel $record): string => $record->nip_pemohon ?? $record->user->nip ?? '-')
                     ->weight('medium')
                     ->wrap(),
 
                 TextColumn::make('user.unitkerja.nm_unitkerja')
                     ->label('Unit Kerja')
+                    ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->unitkerja_pemohon ?? $record->user->unitkerja->nm_unitkerja ?? '-')
                     ->searchable()
                     ->wrap()
                     ->badge()
@@ -93,18 +95,22 @@ class PengajuansTable
                                         TextEntry::make('user.name')
                                             ->label('Nama Lengkap')
                                             ->icon('heroicon-m-user')
-                                            ->weight('bold'),
+                                            ->weight('bold')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->nama_pemohon ?? $record->user->name ?? '-'),
                                         TextEntry::make('user.nip')
                                             ->label('NIP')
                                             ->icon('heroicon-m-identification')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->nip_pemohon ?? $record->user->nip ?? '-'),
                                         TextEntry::make('user.jabatan.nm_jabatan')
                                             ->label('Jabatan')
                                             ->icon('heroicon-m-briefcase')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->jabatan_pemohon ?? $record->user->jabatan->nm_jabatan ?? '-'),
                                         TextEntry::make('user.unitkerja.nm_unitkerja')
                                             ->label('Unit Kerja')
-                                            ->icon('heroicon-m-building-office'),
+                                            ->icon('heroicon-m-building-office')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->unitkerja_pemohon ?? $record->user->unitkerja->nm_unitkerja ?? '-'),
                                     ]),
                                 ])->collapsible(),
 
@@ -338,14 +344,17 @@ class PengajuansTable
                                         TextEntry::make('user.name')
                                             ->label('Nama Lengkap')
                                             ->icon('heroicon-m-user')
-                                            ->weight('bold'),
+                                            ->weight('bold')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->nama_pemohon ?? $record->user->name ?? '-'),
                                         TextEntry::make('user.nip')
                                             ->label('NIP')
                                             ->icon('heroicon-m-identification')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->nip_pemohon ?? $record->user->nip ?? '-'),
                                         TextEntry::make('user.unitkerja.nm_unitkerja')
                                             ->label('Unit Kerja')
-                                            ->icon('heroicon-m-building-office'),
+                                            ->icon('heroicon-m-building-office')
+                                            ->formatStateUsing(fn (ReqPinjamModel $record): string => $record->unitkerja_pemohon ?? $record->user->unitkerja->nm_unitkerja ?? '-'),
                                     ]),
                                 ])->collapsible(),
 

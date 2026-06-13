@@ -33,12 +33,12 @@ class RiwayatPerbaikanResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()?->isKaryawan() ?? false;
+        return Auth::user()?->isKaryawanOrAdminTU() ?? false;
     }
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->isKaryawan() ?? false;
+        return Auth::user()?->isKaryawanOrAdminTU() ?? false;
     }
 
     public static function table(Table $table): Table

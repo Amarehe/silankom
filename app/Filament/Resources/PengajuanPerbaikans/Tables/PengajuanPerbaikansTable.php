@@ -54,10 +54,12 @@ class PengajuanPerbaikansTable
                                 ->orWhereHas('unitkerja', function (Builder $query) use ($search) {
                                     $query->where('nm_unitkerja', 'like', "%{$search}%");
                                 });
-                        });
+                        })
+                            ->orWhere('nama_pemohon', 'like', "%{$search}%");
                     })
                     ->sortable()
-                    ->description(fn (PerbaikanModel $record): string => $record->pemohon->unitkerja->nm_unitkerja ?? '-')
+                    ->formatStateUsing(fn (PerbaikanModel $record): string => $record->nama_pemohon ?? $record->pemohon->name ?? '-')
+                    ->description(fn (PerbaikanModel $record): string => $record->unitkerja_pemohon ?? $record->pemohon->unitkerja->nm_unitkerja ?? '-')
                     ->weight('medium')
                     ->wrap(),
 
@@ -165,14 +167,17 @@ class PengajuanPerbaikansTable
                                     Grid::make(3)->schema([
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
-                                            ->icon('heroicon-m-user'),
+                                            ->icon('heroicon-m-user')
+                                            ->formatStateUsing(fn (PerbaikanModel $record): string => $record->nama_pemohon ?? $record->pemohon->name ?? '-'),
                                         TextEntry::make('pemohon.jabatan.nm_jabatan')
                                             ->label('Jabatan')
                                             ->icon('heroicon-m-briefcase')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (PerbaikanModel $record): string => $record->jabatan_pemohon ?? $record->pemohon->jabatan->nm_jabatan ?? '-'),
                                         TextEntry::make('pemohon.unitkerja.nm_unitkerja')
                                             ->label('Unit Kerja')
-                                            ->icon('heroicon-m-building-office'),
+                                            ->icon('heroicon-m-building-office')
+                                            ->formatStateUsing(fn (PerbaikanModel $record): string => $record->unitkerja_pemohon ?? $record->pemohon->unitkerja->nm_unitkerja ?? '-'),
                                         TextEntry::make('nodis')
                                             ->label('No. Nota Dinas')
                                             ->placeholder('-')
@@ -208,7 +213,7 @@ class PengajuanPerbaikansTable
                                             ->weight('bold')
                                             ->copyable()
                                             ->icon('heroicon-m-document-check')
-                                            ->visible(fn ($record) => !empty($record->no_surat_perbaikan)),
+                                            ->visible(fn ($record) => ! empty($record->no_surat_perbaikan)),
                                     ]),
                                 ])->collapsible(),
 

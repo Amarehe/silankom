@@ -75,7 +75,8 @@ class RiwayatPeminjamansTable
                     ->icon('heroicon-o-user')
                     ->searchable(['name', 'nip'])
                     ->sortable()
-                    ->weight(FontWeight::Medium),
+                    ->weight(FontWeight::Medium)
+                    ->visible(fn (): bool => ! auth()->user()?->isKaryawanOrAdminTU()),
 
                 TextColumn::make('barang.nama_barang')
                     ->label('Barang')
@@ -276,12 +277,13 @@ class RiwayatPeminjamansTable
                                 ->icon('heroicon-o-arrow-down-tray')
                                 ->color('info')
                                 ->url(fn (PeminjamanModel $record) => route('download.tanda-terima', $record))
-                                ->openUrlInNewTab(),
+                                ->openUrlInNewTab()
+                                ->visible(fn (): bool => ! auth()->user()?->isKaryawanOrAdminTU()),
                             Action::make('download_pengembalian_from_detail')
                                 ->label('📄 Pengembalian')
                                 ->icon('heroicon-o-arrow-down-tray')
                                 ->color('success')
-                                ->visible(fn (PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian)
+                                ->visible(fn (PeminjamanModel $record): bool => ! auth()->user()?->isKaryawanOrAdminTU() && $record->status_peminjaman === 'dikembalikan' && $record->nomor_surat_pengembalian)
                                 ->url(fn (PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
                                 ->openUrlInNewTab(),
                         ])
@@ -295,7 +297,8 @@ class RiwayatPeminjamansTable
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('info')
                         ->url(fn (PeminjamanModel $record) => route('download.tanda-terima', $record))
-                        ->openUrlInNewTab(),
+                        ->openUrlInNewTab()
+                        ->visible(fn (): bool => ! auth()->user()?->isKaryawanOrAdminTU()),
 
                     // Download Tanda Terima Pengembalian
                     Action::make('download_tanda_terima_pengembalian')
@@ -305,7 +308,8 @@ class RiwayatPeminjamansTable
                         ->url(fn (PeminjamanModel $record) => route('download.tanda-terima-pengembalian', $record))
                         ->openUrlInNewTab()
                         ->visible(
-                            fn (PeminjamanModel $record) => $record->status_peminjaman === 'dikembalikan' &&
+                            fn (PeminjamanModel $record): bool => ! auth()->user()?->isKaryawanOrAdminTU() &&
+                                $record->status_peminjaman === 'dikembalikan' &&
                                 $record->nomor_surat_pengembalian !== null
                         ),
                 ])

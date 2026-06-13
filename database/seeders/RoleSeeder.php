@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\RoleModel;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class RoleSeeder extends Seeder
 {
@@ -24,6 +23,9 @@ class RoleSeeder extends Seeder
         ]);
         RoleModel::create([
             'nm_role' => 'Karyawan',
+        ]);
+        RoleModel::create([
+            'nm_role' => 'Admin TU',
         ]);
     }
 }

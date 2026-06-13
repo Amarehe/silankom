@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\ReqDukungans\Schemas;
 
+use App\Models\JabatanModel;
+use App\Models\UnitKerjaModel;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +18,11 @@ class ReqDukunganForm
 {
     public static function configure(Schema $schema): Schema
     {
-        return $schema->schema([
+        $isAdminTU = Auth::user()?->isAdminTU() ?? false;
+
+        return $schema->schema(array_filter([
+            $isAdminTU ? self::dataPemohonSection() : null,
+
             TextInput::make('nomor_nodis')
                 ->label('Nomor Nodis')
                 ->required()
@@ -83,6 +91,44 @@ class ReqDukunganForm
 
             Hidden::make('status_dukungan')
                 ->default('belum_didukung'),
-        ]);
+
+            $isAdminTU ? Hidden::make('submitted_by')->default(Auth::id()) : null,
+        ]));
+    }
+
+    private static function dataPemohonSection(): Section
+    {
+        return Section::make('Data Pemohon')
+            ->description('Isi data pemohon yang mengajukan permintaan ini')
+            ->icon('heroicon-o-user')
+            ->schema([
+                TextInput::make('nama_pemohon')
+                    ->label('Nama Pemohon')
+                    ->required()
+                    ->placeholder('Masukkan nama lengkap pemohon'),
+
+                TextInput::make('nip_pemohon')
+                    ->label('NIP Pemohon')
+                    ->required()
+                    ->placeholder('Masukkan NIP pemohon'),
+
+                Select::make('jabatan_pemohon')
+                    ->label('Jabatan Pemohon')
+                    ->options(JabatanModel::query()->pluck('nm_jabatan', 'nm_jabatan'))
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Pilih jabatan pemohon'),
+
+                Select::make('unitkerja_pemohon')
+                    ->label('Unit Kerja Pemohon')
+                    ->options(UnitKerjaModel::query()->pluck('nm_unitkerja', 'nm_unitkerja'))
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Pilih unit kerja pemohon'),
+            ])
+            ->columns(2)
+            ->collapsible();
     }
 }

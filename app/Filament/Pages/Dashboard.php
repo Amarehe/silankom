@@ -16,7 +16,7 @@ class Dashboard extends BaseDashboard
         $user = Auth::user();
 
         // Sembunyikan default Dashboard untuk semua role khusus
-        return ! ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isTeknisiKomlek() || $user?->isKaryawan());
+        return ! ($user?->isSuperAdmin() || $user?->isAdminKomlek() || $user?->isTeknisiKomlek() || $user?->isKaryawanOrAdminTU());
     }
 
     public function mount()
@@ -28,7 +28,7 @@ class Dashboard extends BaseDashboard
                 $user->isSuperAdmin() => SuperAdminDashboard::getUrl(),
                 $user->isAdminKomlek() => AdminKomlekDashboard::getUrl(),
                 $user->isTeknisiKomlek() => TeknisiKomlekDashboard::getUrl(),
-                $user->isKaryawan() => KaryawanDashboard::getUrl(),
+                $user->isKaryawanOrAdminTU() => KaryawanDashboard::getUrl(),
                 default => null,
             };
 
