@@ -17,7 +17,7 @@ class PengajuanDukunganResource extends Resource
 {
     protected static ?string $model = ReqDukunganModel::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::HandRaised;
 
     protected static ?string $recordTitleAttribute = 'deskripsi_kegiatan';
 
