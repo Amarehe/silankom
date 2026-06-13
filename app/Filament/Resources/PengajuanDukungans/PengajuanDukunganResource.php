@@ -19,7 +19,7 @@ class PengajuanDukunganResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentCheck;
 
-    protected static ?string $recordTitleAttribute = 'Pengajuan Dukungan';
+    protected static ?string $recordTitleAttribute = 'deskripsi_kegiatan';
 
     protected static ?string $navigationLabel = 'Pengajuan Dukungan';
 

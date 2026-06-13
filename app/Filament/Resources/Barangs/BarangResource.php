@@ -21,7 +21,7 @@ class BarangResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ArchiveBox;
 
-    protected static ?string $recordTitleAttribute = 'Barang';
+    protected static ?string $recordTitleAttribute = 'nama_barang';
 
     protected static ?string $navigationLabel = 'Barang / Inventaris';
 

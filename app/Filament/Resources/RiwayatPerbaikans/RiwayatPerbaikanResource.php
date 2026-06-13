@@ -19,7 +19,7 @@ class RiwayatPerbaikanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Riwayat Perbaikan';
+    protected static ?string $recordTitleAttribute = 'nm_barang';
 
     protected static ?string $navigationLabel = 'Riwayat Perbaikan';
 

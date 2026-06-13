@@ -20,7 +20,7 @@ class UnitKerjaResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice;
 
-    protected static ?string $recordTitleAttribute = 'Unit Kerja';
+    protected static ?string $recordTitleAttribute = 'nm_unitkerja';
 
     protected static ?string $navigationLabel = 'Unit Kerja';
 

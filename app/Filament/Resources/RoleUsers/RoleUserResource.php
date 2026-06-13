@@ -20,7 +20,7 @@ class RoleUserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Cog;
 
-    protected static ?string $recordTitleAttribute = 'Role User';
+    protected static ?string $recordTitleAttribute = 'nm_role';
 
     protected static ?string $navigationLabel = 'Role User';
 

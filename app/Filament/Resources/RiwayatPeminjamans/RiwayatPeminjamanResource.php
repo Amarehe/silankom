@@ -19,7 +19,7 @@ class RiwayatPeminjamanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::ClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Riwayat Peminjaman';
+    protected static ?string $recordTitleAttribute = 'nomor_surat';
 
     protected static ?string $navigationLabel = 'Riwayat Peminjaman';
 
