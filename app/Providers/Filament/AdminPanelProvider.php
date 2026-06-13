@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
                 auth()->user()?->isSuperAdmin() => \App\Filament\Pages\SuperAdminDashboard::getUrl(),
                 auth()->user()?->isAdminKomlek() => \App\Filament\Pages\AdminKomlekDashboard::getUrl(),
                 auth()->user()?->isTeknisiKomlek() => \App\Filament\Pages\TeknisiKomlekDashboard::getUrl(),
-                auth()->user()?->isKaryawan() => \App\Filament\Pages\KaryawanDashboard::getUrl(),
+                auth()->user()?->isKaryawanOrAdminTU() => \App\Filament\Pages\KaryawanDashboard::getUrl(),
                 default => url('/'),
             })
             ->favicon(asset('favicon.ico'))

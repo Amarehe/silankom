@@ -99,11 +99,13 @@ class ReqPerbaikansTable
                                     Grid::make(3)->schema([
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
-                                            ->icon('heroicon-m-user'),
+                                            ->icon('heroicon-m-user')
+                                            ->formatStateUsing(fn (PerbaikanModel $record): string => $record->nama_pemohon ?? $record->pemohon->name ?? '-'),
                                         TextEntry::make('pemohon.jabatan.nm_jabatan')
                                             ->label('Jabatan')
                                             ->icon('heroicon-m-briefcase')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (PerbaikanModel $record): string => $record->jabatan_pemohon ?? $record->pemohon->jabatan->nm_jabatan ?? '-'),
                                         TextEntry::make('nodis')
                                             ->label('Nomor Nota Dinas')
                                             ->weight('bold')
@@ -154,7 +156,7 @@ class ReqPerbaikansTable
                                             ->weight('bold')
                                             ->copyable()
                                             ->icon('heroicon-m-document-check')
-                                            ->visible(fn ($record) => !empty($record->no_surat_perbaikan)),
+                                            ->visible(fn ($record) => ! empty($record->no_surat_perbaikan)),
                                     ]),
                                 ]),
                         ])

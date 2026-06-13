@@ -92,6 +92,19 @@ class User extends Authenticatable
         return $this->role_id === 4;
     }
 
+    public function isAdminTU(): bool
+    {
+        return $this->role_id === 5;
+    }
+
+    /**
+     * Returns true for Karyawan & Admin TU (shared access).
+     */
+    public function isKaryawanOrAdminTU(): bool
+    {
+        return in_array($this->role_id, [4, 5]);
+    }
+
     /**
      * Returns true for Super Admin & Admin Komlek.
      */

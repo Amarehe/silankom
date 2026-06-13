@@ -18,7 +18,7 @@ class KaryawanDashboard extends BaseDashboard
 
     public static function canAccess(): bool
     {
-        return Auth::user()?->isKaryawan() ?? false;
+        return Auth::user()?->isKaryawanOrAdminTU() ?? false;
     }
 
     /**

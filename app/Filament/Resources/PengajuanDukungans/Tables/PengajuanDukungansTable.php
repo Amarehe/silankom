@@ -83,7 +83,8 @@ class PengajuanDukungansTable
                 TextColumn::make('pemohon.name')
                     ->label('Pemohon')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn (ReqDukunganModel $record): string => $record->nama_pemohon ?? $record->pemohon->name ?? '-'),
             ])
             ->actions([
                 ActionGroup::make([
@@ -102,15 +103,18 @@ class PengajuanDukungansTable
                                         TextEntry::make('pemohon.name')
                                             ->label('Nama Pemohon')
                                             ->icon('heroicon-m-user')
-                                            ->weight('bold'),
+                                            ->weight('bold')
+                                            ->formatStateUsing(fn (ReqDukunganModel $record): string => $record->nama_pemohon ?? $record->pemohon->name ?? '-'),
                                         TextEntry::make('pemohon.unitkerja.nm_unitkerja')
                                             ->label('Unit Kerja')
                                             ->icon('heroicon-m-building-office')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (ReqDukunganModel $record): string => $record->unitkerja_pemohon ?? $record->pemohon->unitkerja->nm_unitkerja ?? '-'),
                                         TextEntry::make('pemohon.jabatan.nm_jabatan')
                                             ->label('Jabatan')
                                             ->icon('heroicon-m-briefcase')
-                                            ->placeholder('-'),
+                                            ->placeholder('-')
+                                            ->formatStateUsing(fn (ReqDukunganModel $record): string => $record->jabatan_pemohon ?? $record->pemohon->jabatan->nm_jabatan ?? '-'),
                                     ]),
                                 ])->collapsible(),
 
