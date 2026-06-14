@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\BarangModel;
 use App\Models\PerbaikanModel;
 use Carbon\Carbon;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -19,7 +20,7 @@ class StatsOverviewTeknisi extends BaseWidget
     /**
      * @var int | array<string, ?int> | null
      */
-    protected int|array|null $columns = 4;
+    protected int|array|null $columns = 3;
 
     protected function getStats(): array
     {
@@ -27,11 +28,34 @@ class StatsOverviewTeknisi extends BaseWidget
         $startOfMonth = Carbon::now()->startOfMonth();
 
         return [
+            $this->buildBarangPerluPerbaikanStat(),
+            $this->buildBarangRusakStat(),
             $this->buildPerbaikanDiambilStat($userId, $startOfMonth),
             $this->buildPerbaikanSelesaiStat($userId, $startOfMonth),
             $this->buildDukunganDiambilStat($userId, $startOfMonth),
             $this->buildDukunganSelesaiStat($userId, $startOfMonth),
         ];
+    }
+
+    private function buildBarangPerluPerbaikanStat(): Stat
+    {
+        $perluPerbaikan = BarangModel::query()->where('kondisi', 'perlu_perbaikan')->count();
+        $total = BarangModel::query()->count();
+
+        return Stat::make('Perlu Perbaikan', number_format($perluPerbaikan))
+            ->description("dari {$total} total barang")
+            ->descriptionIcon('heroicon-m-exclamation-triangle')
+            ->color('warning');
+    }
+
+    private function buildBarangRusakStat(): Stat
+    {
+        $rusak = BarangModel::query()->where('kondisi', 'rusak')->count();
+
+        return Stat::make('Barang Rusak', number_format($rusak))
+            ->description('Tidak bisa digunakan')
+            ->descriptionIcon('heroicon-m-x-circle')
+            ->color('danger');
     }
 
     private function buildPerbaikanDiambilStat(int $userId, Carbon $startOfMonth): Stat
