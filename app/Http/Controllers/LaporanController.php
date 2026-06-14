@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\DukunganExport;
+use App\Exports\InventoryExport;
 use App\Exports\PeminjamanExport;
 use App\Exports\PerbaikanExport;
 use App\Services\LaporanService;
@@ -34,12 +35,14 @@ class LaporanController extends Controller
             'peminjaman' => 'pdf.laporan_peminjaman',
             'perbaikan' => 'pdf.laporan_perbaikan',
             'dukungan' => 'pdf.laporan_dukungan',
+            'inventory' => 'pdf.laporan_inventory',
         ];
 
         $judulMap = [
             'peminjaman' => 'Rekap_Peminjaman',
             'perbaikan' => 'Rekap_Perbaikan',
             'dukungan' => 'Rekap_Dukungan',
+            'inventory' => 'Rekap_Inventory',
         ];
 
         $view = $viewMap[$jenis] ?? abort(404, 'Jenis rekap tidak valid.');
@@ -72,12 +75,14 @@ class LaporanController extends Controller
             'peminjaman' => new PeminjamanExport($filters, $dicetakOleh),
             'perbaikan' => new PerbaikanExport($filters, $dicetakOleh),
             'dukungan' => new DukunganExport($filters, $dicetakOleh),
+            'inventory' => new InventoryExport($filters, $dicetakOleh),
         ];
 
         $judulMap = [
             'peminjaman' => 'Rekap_Peminjaman',
             'perbaikan' => 'Rekap_Perbaikan',
             'dukungan' => 'Rekap_Dukungan',
+            'inventory' => 'Rekap_Inventory',
         ];
 
         $export = $exportMap[$jenis] ?? abort(404, 'Jenis rekap tidak valid.');
@@ -104,6 +109,7 @@ class LaporanController extends Controller
             'peminjaman' => 'pdf.laporan_peminjaman',
             'perbaikan' => 'pdf.laporan_perbaikan',
             'dukungan' => 'pdf.laporan_dukungan',
+            'inventory' => 'pdf.laporan_inventory',
         ];
 
         $view = $viewMap[$jenis] ?? abort(404, 'Jenis rekap tidak valid.');
@@ -150,6 +156,9 @@ class LaporanController extends Controller
             'teknisi_id' => $request->query('teknisi_id'),
             'status_dukungan' => $request->query('status_dukungan'),
             'pic_dukungan_id' => $request->query('pic_dukungan_id'),
+            'kondisi' => $request->query('kondisi'),
+            'status_barang' => $request->query('status_barang'),
+            'tahun_perolehan' => $request->query('tahun_perolehan'),
         ];
     }
 
@@ -164,6 +173,7 @@ class LaporanController extends Controller
             'peminjaman' => $this->laporanService->getQueryPeminjaman($filters)->get(),
             'perbaikan' => $this->laporanService->getQueryPerbaikan($filters)->get(),
             'dukungan' => $this->laporanService->getQueryDukungan($filters)->get(),
+            'inventory' => $this->laporanService->getQueryInventory($filters)->get(),
             default => collect(),
         };
     }

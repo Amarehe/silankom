@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\BarangModel;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Models\ReqDukunganModel;
@@ -22,7 +23,7 @@ class StatsOverviewKaryawan extends BaseWidget
     /**
      * @var int | array<string, ?int> | null
      */
-    protected int|array|null $columns = 4;
+    protected int|array|null $columns = 3;
 
     protected function getStats(): array
     {
@@ -30,11 +31,35 @@ class StatsOverviewKaryawan extends BaseWidget
         $startOfMonth = Carbon::now()->startOfMonth();
 
         return [
+            $this->buildBarangTersediaStat(),
+            $this->buildBarangDipinjamStat(),
             $this->buildPengajuanPinjamStat($userId, $startOfMonth),
             $this->buildPeminjamanAktifStat($userId, $startOfMonth),
             $this->buildPengajuanPerbaikanStat($userId, $startOfMonth),
             $this->buildTiketDukunganStat($userId, $startOfMonth),
         ];
+    }
+
+    private function buildBarangTersediaStat(): Stat
+    {
+        $tersedia = BarangModel::query()->where('status', 'tersedia')->count();
+        $total = BarangModel::query()->count();
+        $persen = $total > 0 ? round(($tersedia / $total) * 100) : 0;
+
+        return Stat::make('Barang Tersedia', number_format($tersedia))
+            ->description("{$persen}% dari {$total} total barang")
+            ->descriptionIcon('heroicon-m-check-circle')
+            ->color('success');
+    }
+
+    private function buildBarangDipinjamStat(): Stat
+    {
+        $dipinjam = BarangModel::query()->where('status', 'dipinjam')->count();
+
+        return Stat::make('Barang Dipinjam', number_format($dipinjam))
+            ->description('Sedang dipinjam')
+            ->descriptionIcon('heroicon-m-arrow-path')
+            ->color('warning');
     }
 
     private function buildPengajuanPinjamStat(int $userId, Carbon $startOfMonth): Stat

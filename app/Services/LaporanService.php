@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BarangModel;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Models\ReqDukunganModel;
@@ -114,6 +115,45 @@ class LaporanService
     }
 
     /**
+     * Build filtered query for Inventory reports.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    public function getQueryInventory(array $filters): Builder
+    {
+        $query = BarangModel::query()
+            ->with([
+                'kategori',
+                'merek',
+                'user',
+            ]);
+
+        $this->applyPeriodFilter($query, 'created_at', $filters);
+
+        if (! empty($filters['kondisi'])) {
+            $query->where('kondisi', $filters['kondisi']);
+        }
+
+        if (! empty($filters['status_barang'])) {
+            $query->where('status', $filters['status_barang']);
+        }
+
+        if (! empty($filters['kategori_id'])) {
+            $query->where('kategori_id', $filters['kategori_id']);
+        }
+
+        if (! empty($filters['merek_id'])) {
+            $query->where('merek_id', $filters['merek_id']);
+        }
+
+        if (! empty($filters['tahun_perolehan'])) {
+            $query->where('tahun', $filters['tahun_perolehan']);
+        }
+
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    /**
      * Apply period-based date filters to the query.
      *
      * @param  array<string, mixed>  $filters
@@ -153,6 +193,7 @@ class LaporanService
             'peminjaman' => $this->getStatistikPeminjaman($filters),
             'perbaikan' => $this->getStatistikPerbaikan($filters),
             'dukungan' => $this->getStatistikDukungan($filters),
+            'inventory' => $this->getStatistikInventory($filters),
             default => [],
         };
     }
@@ -208,6 +249,25 @@ class LaporanService
             'belum_didukung' => $data->where('status_dukungan', 'belum_didukung')->count(),
             'didukung' => $data->where('status_dukungan', 'didukung')->count(),
             'tidak_didukung' => $data->where('status_dukungan', 'tidak_didukung')->count(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function getStatistikInventory(array $filters): array
+    {
+        $query = $this->getQueryInventory($filters);
+        $data = $query->get();
+
+        return [
+            'total' => $data->count(),
+            'kondisi_baik' => $data->where('kondisi', 'baik')->count(),
+            'perlu_perbaikan' => $data->where('kondisi', 'perlu_perbaikan')->count(),
+            'rusak' => $data->where('kondisi', 'rusak')->count(),
+            'tersedia' => $data->where('status', 'tersedia')->count(),
+            'dipinjam' => $data->where('status', 'dipinjam')->count(),
         ];
     }
 
