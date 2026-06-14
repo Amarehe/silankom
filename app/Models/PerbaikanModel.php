@@ -6,6 +6,7 @@ use App\Notifications\PerbaikanBaruNotification;
 use App\Notifications\StatusUpdateNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class PerbaikanModel extends Model
 {
@@ -62,5 +63,10 @@ class PerbaikanModel extends Model
     public function teknisi(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teknisi_id');
+    }
+
+    public function review(): MorphOne
+    {
+        return $this->morphOne(ReviewLayananModel::class, 'reviewable');
     }
 }

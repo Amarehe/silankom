@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\RiwayatPeminjamans\Tables;
 
+use App\Filament\Resources\Concerns\HasReviewAction;
 use App\Models\PeminjamanModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class RiwayatPeminjamansTable
 {
+    use HasReviewAction;
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -28,6 +31,7 @@ class RiwayatPeminjamansTable
                 'barang.merek',
                 'barang.kategori',
                 'admin',
+                'review',
             ]))
             ->columns([
                 TextColumn::make('rowIndex')
@@ -155,9 +159,24 @@ class RiwayatPeminjamansTable
                     })
                     ->sortable()
                     ->alignCenter(),
+
+                TextColumn::make('review.rating')
+                    ->label('Review')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state ? str_repeat('⭐', (int) $state) : '⏳ Belum')
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->alignCenter()
+                    ->placeholder('⏳ Belum')
+                    ->toggleable(),
             ])
             ->actions([
                 ActionGroup::make([
+                    // Review Actions
+                    self::makeReviewAction()
+                        ->visible(fn (PeminjamanModel $record): bool => $record->status_peminjaman === 'dikembalikan' && $record->review === null),
+                    self::makeViewReviewAction()
+                        ->visible(fn (PeminjamanModel $record): bool => $record->review !== null),
+
                     // View Detail Action
                     Action::make('view_detail')
                         ->label('Lihat Detail')

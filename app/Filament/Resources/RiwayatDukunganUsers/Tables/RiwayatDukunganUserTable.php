@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\RiwayatDukunganUsers\Tables;
 
+use App\Filament\Resources\Concerns\HasReviewAction;
 use App\Models\ReqDukunganModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -14,10 +15,12 @@ use Filament\Tables\Table;
 
 class RiwayatDukunganUserTable
 {
+    use HasReviewAction;
+
     public static function configure(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn ($query) => $query->with(['picDukungan']))
+            ->modifyQueryUsing(fn ($query) => $query->with(['picDukungan', 'review']))
             ->columns([
                 TextColumn::make('rowIndex')
                     ->label('No')
@@ -125,9 +128,24 @@ class RiwayatDukunganUserTable
                 TextColumn::make('picDukungan.name')
                     ->label('PIC Admin')
                     ->placeholder('-'),
+
+                TextColumn::make('review.rating')
+                    ->label('Review')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state ? str_repeat('⭐', (int) $state) : '⏳ Belum')
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->alignCenter()
+                    ->placeholder('⏳ Belum')
+                    ->toggleable(),
             ])
             ->actions([
                 ActionGroup::make([
+                    // Review Actions
+                    self::makeReviewAction()
+                        ->visible(fn (ReqDukunganModel $record): bool => in_array($record->status_dukungan, ['didukung', 'tidak_didukung']) && $record->review === null),
+                    self::makeViewReviewAction()
+                        ->visible(fn (ReqDukunganModel $record): bool => $record->review !== null),
+
                     Action::make('view_detail')
                         ->label('Lihat Detail')
                         ->icon('heroicon-o-eye')

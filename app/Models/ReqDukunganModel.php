@@ -6,6 +6,7 @@ use App\Notifications\DukunganBaruNotification;
 use App\Notifications\StatusUpdateNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class ReqDukunganModel extends Model
 {
@@ -54,5 +55,10 @@ class ReqDukunganModel extends Model
     public function picDukungan(): BelongsTo
     {
         return $this->belongsTo(User::class, 'pic_dukungan_id');
+    }
+
+    public function review(): MorphOne
+    {
+        return $this->morphOne(ReviewLayananModel::class, 'reviewable');
     }
 }
