@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\BarangModel;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Models\ReqDukunganModel;
@@ -115,46 +116,42 @@ class LaporanService
     }
 
     /**
-     * Build filtered query for Review Layanan reports.
+     * Build filtered query for Inventory reports.
      *
      * @param  array<string, mixed>  $filters
      */
-    public function getQueryReview(array $filters): Builder
+    public function getQueryInventory(array $filters): Builder
     {
-        $query = ReviewLayananModel::query()
-            ->with(['user.unitkerja', 'user.jabatan', 'reviewable']);
+        $query = BarangModel::query()
+            ->with([
+                'kategori',
+                'merek',
+                'user',
+            ]);
 
-        $this->applyPeriodFilter($query, 'review_layanan.created_at', $filters);
+        $this->applyPeriodFilter($query, 'created_at', $filters);
 
-        if (! empty($filters['reviewable_type'])) {
-            $query->where('reviewable_type', $filters['reviewable_type']);
+        if (! empty($filters['kondisi'])) {
+            $query->where('kondisi', $filters['kondisi']);
         }
 
-        if (! empty($filters['rating'])) {
-            $query->where('rating', $filters['rating']);
+        if (! empty($filters['status_barang'])) {
+            $query->where('status', $filters['status_barang']);
         }
 
-        if (! empty($filters['unit_kerja_id'])) {
-            $query->whereHas('user', fn (Builder $q) => $q->where('unitkerja_id', $filters['unit_kerja_id']));
+        if (! empty($filters['kategori_id'])) {
+            $query->where('kategori_id', $filters['kategori_id']);
         }
 
-        if (! empty($filters['pic_id'])) {
-            $query->whereHasMorph(
-                'reviewable',
-                [PeminjamanModel::class, PerbaikanModel::class, ReqDukunganModel::class],
-                function (Builder $q, string $type) use ($filters) {
-                    if ($type === PeminjamanModel::class) {
-                        $q->where('admin_id', $filters['pic_id']);
-                    } elseif ($type === PerbaikanModel::class) {
-                        $q->where('teknisi_id', $filters['pic_id']);
-                    } elseif ($type === ReqDukunganModel::class) {
-                        $q->where('pic_dukungan_id', $filters['pic_id']);
-                    }
-                }
-            );
+        if (! empty($filters['merek_id'])) {
+            $query->where('merek_id', $filters['merek_id']);
         }
 
-        return $query->orderBy('review_layanan.created_at', 'desc');
+        if (! empty($filters['tahun_perolehan'])) {
+            $query->where('tahun', $filters['tahun_perolehan']);
+        }
+
+        return $query->orderBy('created_at', 'desc');
     }
 
     /**
@@ -197,7 +194,7 @@ class LaporanService
             'peminjaman' => $this->getStatistikPeminjaman($filters),
             'perbaikan' => $this->getStatistikPerbaikan($filters),
             'dukungan' => $this->getStatistikDukungan($filters),
-            'review' => $this->getStatistikReview($filters),
+            'inventory' => $this->getStatistikInventory($filters),
             default => [],
         };
     }
@@ -260,20 +257,18 @@ class LaporanService
      * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
-    private function getStatistikReview(array $filters): array
+    private function getStatistikInventory(array $filters): array
     {
-        $query = $this->getQueryReview($filters);
+        $query = $this->getQueryInventory($filters);
         $data = $query->get();
 
         return [
             'total' => $data->count(),
-            'avg_rating' => $data->avg('rating') ? round($data->avg('rating'), 1) : 0,
-            'avg_kecepatan' => $data->avg('aspek_kecepatan') ? round($data->avg('aspek_kecepatan'), 1) : 0,
-            'avg_kualitas' => $data->avg('aspek_kualitas') ? round($data->avg('aspek_kualitas'), 1) : 0,
-            'avg_pelayanan' => $data->avg('aspek_pelayanan') ? round($data->avg('aspek_pelayanan'), 1) : 0,
-            'peminjaman' => $data->where('reviewable_type', PeminjamanModel::class)->count(),
-            'perbaikan' => $data->where('reviewable_type', PerbaikanModel::class)->count(),
-            'dukungan' => $data->where('reviewable_type', ReqDukunganModel::class)->count(),
+            'kondisi_baik' => $data->where('kondisi', 'baik')->count(),
+            'perlu_perbaikan' => $data->where('kondisi', 'perlu_perbaikan')->count(),
+            'rusak' => $data->where('kondisi', 'rusak')->count(),
+            'tersedia' => $data->where('status', 'tersedia')->count(),
+            'dipinjam' => $data->where('status', 'dipinjam')->count(),
         ];
     }
 
