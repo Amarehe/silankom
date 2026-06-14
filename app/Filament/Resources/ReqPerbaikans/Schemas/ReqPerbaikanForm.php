@@ -116,7 +116,8 @@ class ReqPerbaikanForm
                     ->preload()
                     ->placeholder('Pilih unit kerja pemohon'),
             ])
-            ->columns(2)
-            ->collapsible();
+            ->columns(['default' => 1, 'md' => 2])
+            ->collapsible()
+            ->columnSpanFull();
     }
 }

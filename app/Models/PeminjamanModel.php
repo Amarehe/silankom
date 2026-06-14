@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class PeminjamanModel extends Model
 {
@@ -56,5 +57,10 @@ class PeminjamanModel extends Model
     public function peminjam()
     {
         return $this->reqPinjam?->user;
+    }
+
+    public function review(): MorphOne
+    {
+        return $this->morphOne(ReviewLayananModel::class, 'reviewable');
     }
 }

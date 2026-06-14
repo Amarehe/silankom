@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\RiwayatPerbaikans\Tables;
 
+use App\Filament\Resources\Concerns\HasReviewAction;
 use App\Models\PerbaikanModel;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -14,6 +15,8 @@ use Filament\Tables\Table;
 
 class RiwayatPerbaikansTable
 {
+    use HasReviewAction;
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -81,11 +84,26 @@ class RiwayatPerbaikansTable
                     ->label('No. Surat')
                     ->placeholder('-')
                     ->copyable(),
+
+                TextColumn::make('review.rating')
+                    ->label('Review')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state ? str_repeat('⭐', (int) $state) : '⏳ Belum')
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
+                    ->alignCenter()
+                    ->placeholder('⏳ Belum')
+                    ->toggleable(),
             ])
-            ->modifyQueryUsing(fn ($query) => $query->with(['kategori', 'merek', 'teknisi']))
+            ->modifyQueryUsing(fn ($query) => $query->with(['kategori', 'merek', 'teknisi', 'review']))
             ->defaultSort('created_at', 'desc')
             ->actions([
                 ActionGroup::make([
+                    // Review Actions
+                    self::makeReviewAction()
+                        ->visible(fn (PerbaikanModel $record): bool => in_array($record->status_perbaikan, ['selesai', 'tidak_bisa_diperbaiki']) && $record->review === null),
+                    self::makeViewReviewAction()
+                        ->visible(fn (PerbaikanModel $record): bool => $record->review !== null),
+
                     Action::make('view_detail')
                         ->label('Lihat Detail')
                         ->icon('heroicon-o-eye')
