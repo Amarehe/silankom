@@ -67,10 +67,10 @@ trait ChecksPendingReview
             $items->push([
                 'jenis' => 'Peminjaman',
                 'count' => $peminjamanCount,
-                'label' => "{$peminjamanCount} Peminjaman belum di-review",
+                'label' => "Isi Review Peminjaman ({$peminjamanCount})",
                 'url' => url('/riwayat-peminjaman'),
-                'icon' => 'heroicon-o-document-plus',
-                'color' => 'info',
+                'icon' => 'heroicon-o-star',
+                'color' => 'warning',
             ]);
         }
 
@@ -85,9 +85,9 @@ trait ChecksPendingReview
             $items->push([
                 'jenis' => 'Perbaikan',
                 'count' => $perbaikanCount,
-                'label' => "{$perbaikanCount} Perbaikan belum di-review",
+                'label' => "Isi Review Perbaikan ({$perbaikanCount})",
                 'url' => url('/riwayat-perbaikan'),
-                'icon' => 'heroicon-o-wrench',
+                'icon' => 'heroicon-o-star',
                 'color' => 'warning',
             ]);
         }
@@ -103,10 +103,10 @@ trait ChecksPendingReview
             $items->push([
                 'jenis' => 'Dukungan',
                 'count' => $dukunganCount,
-                'label' => "{$dukunganCount} Dukungan belum di-review",
+                'label' => "Isi Review Dukungan ({$dukunganCount})",
                 'url' => url('/riwayat-dukungan-user'),
-                'icon' => 'heroicon-o-hand-raised',
-                'color' => 'primary',
+                'icon' => 'heroicon-o-star',
+                'color' => 'warning',
             ]);
         }
 

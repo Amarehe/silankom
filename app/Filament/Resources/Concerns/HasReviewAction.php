@@ -78,11 +78,25 @@ trait HasReviewAction
                     ->schema([
                         Placeholder::make('jenis_layanan')
                             ->label('Jenis Layanan')
-                            ->content(fn () => new HtmlString(
-                                '<span class="fi-badge fi-color-custom px-2 py-1 text-xs font-medium rounded-md" style="background-color: rgba(59, 130, 246, 0.1); color: rgb(59, 130, 246);">'
-                                .self::getJenisLabel($record)
-                                .'</span>'
-                            )),
+                            ->content(function () use ($record) {
+                                $colorStr = match (get_class($record)) {
+                                    PeminjamanModel::class => 'rgba(34, 197, 94, 1)', // success
+                                    PerbaikanModel::class => 'rgba(239, 68, 68, 1)', // danger
+                                    ReqDukunganModel::class => 'rgba(59, 130, 246, 1)', // info
+                                    default => 'rgba(107, 114, 128, 1)', // gray
+                                };
+                                $bgStr = match (get_class($record)) {
+                                    PeminjamanModel::class => 'rgba(34, 197, 94, 0.1)',
+                                    PerbaikanModel::class => 'rgba(239, 68, 68, 0.1)',
+                                    ReqDukunganModel::class => 'rgba(59, 130, 246, 0.1)',
+                                    default => 'rgba(107, 114, 128, 0.1)',
+                                };
+                                return new HtmlString(
+                                    '<span class="fi-badge fi-color-custom px-2 py-1 text-xs font-medium rounded-md" style="background-color: '.$bgStr.'; color: '.$colorStr.';">'
+                                    .self::getJenisLabel($record)
+                                    .'</span>'
+                                );
+                            }),
                         Placeholder::make('pic_info')
                             ->label(self::getPicLabel($record))
                             ->content(fn () => new HtmlString(
@@ -189,8 +203,8 @@ trait HasReviewAction
     {
         return Action::make('lihat_review')
             ->label('Lihat Review')
-            ->icon('heroicon-o-star')
-            ->color('success')
+            ->icon('heroicon-o-eye')
+            ->color('info')
             ->modalHeading('Review Pelayanan Anda')
             ->modalWidth('lg')
             ->infolist(fn (Model $record): array => [
@@ -202,7 +216,12 @@ trait HasReviewAction
                                 ->label('Jenis Layanan')
                                 ->state(fn () => self::getJenisLabel($record))
                                 ->badge()
-                                ->color('info'),
+                                ->color(fn () => match(get_class($record)) {
+                                    PeminjamanModel::class => 'success',
+                                    PerbaikanModel::class => 'danger',
+                                    ReqDukunganModel::class => 'info',
+                                    default => 'gray',
+                                }),
                             TextEntry::make('pic_display')
                                 ->label(self::getPicLabel($record))
                                 ->state(fn () => self::getPicInfo($record))

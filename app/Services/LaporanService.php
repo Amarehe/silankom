@@ -6,7 +6,6 @@ use App\Models\BarangModel;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Models\ReqDukunganModel;
-use App\Models\ReviewLayananModel;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -155,6 +154,53 @@ class LaporanService
     }
 
     /**
+     * Build filtered query for Review Layanan reports.
+     *
+     * @param  array<string, mixed>  $filters
+     */
+    public function getQueryReview(array $filters): Builder
+    {
+        $query = \App\Models\ReviewLayananModel::query()
+            ->with([
+                'user.jabatan',
+                'user.unitkerja',
+                'reviewable',
+            ]);
+
+        $this->applyPeriodFilter($query, 'created_at', $filters);
+
+        if (! empty($filters['reviewable_type'])) {
+            $query->where('reviewable_type', $filters['reviewable_type']);
+        }
+
+        if (! empty($filters['rating'])) {
+            $query->where('rating', $filters['rating']);
+        }
+
+        if (! empty($filters['unit_kerja_id'])) {
+            $query->whereHas('user', fn (Builder $q) => $q->where('unitkerja_id', $filters['unit_kerja_id']));
+        }
+
+        if (! empty($filters['pic_id'])) {
+            $query->whereHasMorph(
+                'reviewable',
+                [PeminjamanModel::class, PerbaikanModel::class, ReqDukunganModel::class],
+                function (Builder $q, string $type) use ($filters) {
+                    if ($type === PeminjamanModel::class) {
+                        $q->where('admin_id', $filters['pic_id']);
+                    } elseif ($type === PerbaikanModel::class) {
+                        $q->where('teknisi_id', $filters['pic_id']);
+                    } elseif ($type === ReqDukunganModel::class) {
+                        $q->where('pic_dukungan_id', $filters['pic_id']);
+                    }
+                }
+            );
+        }
+
+        return $query->orderBy('created_at', 'desc');
+    }
+
+    /**
      * Apply period-based date filters to the query.
      *
      * @param  array<string, mixed>  $filters
@@ -195,6 +241,7 @@ class LaporanService
             'perbaikan' => $this->getStatistikPerbaikan($filters),
             'dukungan' => $this->getStatistikDukungan($filters),
             'inventory' => $this->getStatistikInventory($filters),
+            'review' => $this->getStatistikReview($filters),
             default => [],
         };
     }
@@ -269,6 +316,34 @@ class LaporanService
             'rusak' => $data->where('kondisi', 'rusak')->count(),
             'tersedia' => $data->where('status', 'tersedia')->count(),
             'dipinjam' => $data->where('status', 'dipinjam')->count(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function getStatistikReview(array $filters): array
+    {
+        $query = $this->getQueryReview($filters);
+        $data = $query->get();
+
+        $total = $data->count();
+
+        $avgRating = $total > 0 ? round($data->avg('rating'), 1) : 0;
+        $avgKecepatan = $total > 0 ? round($data->avg('aspek_kecepatan'), 1) : 0;
+        $avgKualitas = $total > 0 ? round($data->avg('aspek_kualitas'), 1) : 0;
+        $avgPelayanan = $total > 0 ? round($data->avg('aspek_pelayanan'), 1) : 0;
+
+        return [
+            'total' => $total,
+            'avg_rating' => number_format($avgRating, 1),
+            'avg_kecepatan' => number_format($avgKecepatan, 1),
+            'avg_kualitas' => number_format($avgKualitas, 1),
+            'avg_pelayanan' => number_format($avgPelayanan, 1),
+            'peminjaman' => $data->where('reviewable_type', PeminjamanModel::class)->count(),
+            'perbaikan' => $data->where('reviewable_type', PerbaikanModel::class)->count(),
+            'dukungan' => $data->where('reviewable_type', ReqDukunganModel::class)->count(),
         ];
     }
 

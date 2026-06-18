@@ -51,9 +51,9 @@ class RekapReviewsTable
                         default => 'Lainnya',
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        PeminjamanModel::class => 'info',
-                        PerbaikanModel::class => 'warning',
-                        ReqDukunganModel::class => 'primary',
+                        PeminjamanModel::class => 'success',
+                        PerbaikanModel::class => 'danger',
+                        ReqDukunganModel::class => 'info',
                         default => 'gray',
                     })
                     ->icon(fn (string $state): string => match ($state) {
@@ -153,9 +153,9 @@ class RekapReviewsTable
                                                 default => 'Lainnya',
                                             })
                                             ->color(fn (string $state): string => match ($state) {
-                                                PeminjamanModel::class => 'info',
-                                                PerbaikanModel::class => 'warning',
-                                                ReqDukunganModel::class => 'primary',
+                                                PeminjamanModel::class => 'success',
+                                                PerbaikanModel::class => 'danger',
+                                                ReqDukunganModel::class => 'info',
                                                 default => 'gray',
                                             }),
                                         TextEntry::make('created_at')

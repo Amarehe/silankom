@@ -255,17 +255,17 @@
             <tr>
                 <td class="label">Review Peminjaman</td>
                 <td>:</td>
-                <td><span class="badge badge-info">{{ $statistik['peminjaman'] }}</span></td>
+                <td><span class="badge badge-success">{{ $statistik['peminjaman'] }}</span></td>
             </tr>
             <tr>
                 <td class="label">Review Perbaikan</td>
                 <td>:</td>
-                <td><span class="badge badge-warning">{{ $statistik['perbaikan'] }}</span></td>
+                <td><span class="badge badge-danger">{{ $statistik['perbaikan'] }}</span></td>
             </tr>
             <tr>
                 <td class="label">Review Dukungan</td>
                 <td>:</td>
-                <td><span class="badge badge-primary">{{ $statistik['dukungan'] }}</span></td>
+                <td><span class="badge badge-info">{{ $statistik['dukungan'] }}</span></td>
             </tr>
         </table>
     </div>
@@ -299,9 +299,9 @@
                     default => '-',
                 };
                 $jenisClass = match($item->reviewable_type) {
-                    \App\Models\PeminjamanModel::class => 'badge-info',
-                    \App\Models\PerbaikanModel::class => 'badge-warning',
-                    \App\Models\ReqDukunganModel::class => 'badge-primary',
+                    \App\Models\PeminjamanModel::class => 'badge-success',
+                    \App\Models\PerbaikanModel::class => 'badge-danger',
+                    \App\Models\ReqDukunganModel::class => 'badge-info',
                     default => 'badge-gray',
                 };
                 $picName = match($item->reviewable_type) {

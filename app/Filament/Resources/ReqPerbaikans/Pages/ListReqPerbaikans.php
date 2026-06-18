@@ -24,9 +24,9 @@ class ListReqPerbaikans extends ListRecords
         return array_filter([
             $hasPending
                 ? Action::make('review_warning')
-                    ->label("⚠️ {$pendingCount} review belum diisi")
+                    ->label("{$pendingCount} Review Belum Diisi")
+                    ->icon('heroicon-m-exclamation-triangle')
                     ->color('danger')
-                    ->icon('heroicon-o-exclamation-triangle')
                     ->extraAttributes(['class' => 'animate-pulse'])
                     ->modalHeading('⚠️ Review Pelayanan Belum Diisi')
                     ->modalDescription('Anda harus mengisi review untuk semua layanan yang sudah selesai sebelum mengajukan request baru. Silakan klik tombol di bawah untuk mengisi review.')
