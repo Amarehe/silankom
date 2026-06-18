@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\ReqPinjams\Schemas;
 
+use App\Models\BarangModel;
 use App\Models\JabatanModel;
+use App\Models\KategoriModel;
 use App\Models\UnitKerjaModel;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -23,7 +25,19 @@ class ReqPinjamForm
 
             Select::make('kategori_id')
                 ->label('Kategori Barang')
-                ->relationship('kategori', 'nama_kategori')
+                ->options(function (): array {
+                    return KategoriModel::query()
+                        ->get()
+                        ->mapWithKeys(function (KategoriModel $kategori): array {
+                            $tersedia = BarangModel::query()
+                                ->where('kategori_id', $kategori->id)
+                                ->where('status', 'tersedia')
+                                ->count();
+
+                            return [$kategori->id => "{$kategori->nama_kategori} ({$tersedia} tersedia)"];
+                        })
+                        ->toArray();
+                })
                 ->required()
                 ->placeholder('Pilih kategori barang yang ingin dipinjam')
                 ->searchable()

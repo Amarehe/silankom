@@ -85,7 +85,7 @@
             </h3>
             
             <div class="fi-ta-content divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:bg-gray-900 border border-gray-200 dark:border-white/10 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:ring-white/10">
-                <table class="fi-ta-table w-full text-left divide-y divide-gray-200 dark:divide-white/5">
+                <table class="fi-ta-table w-full min-w-max text-left divide-y divide-gray-200 dark:divide-white/5">
                     <thead class="bg-gray-50 dark:bg-white/5">
                         <tr>
                             <th class="fi-ta-header-cell text-sm font-semibold text-gray-950 dark:text-white text-center" style="padding: 12px 16px; white-space: nowrap;">No</th>
