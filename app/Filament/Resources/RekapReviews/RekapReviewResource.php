@@ -20,25 +20,15 @@ class RekapReviewResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'komentar';
 
-    protected static ?string $navigationLabel = 'Rekap Review Layanan';
+    protected static ?string $navigationLabel = 'Review Layanan';
 
     protected static ?string $slug = 'rekap-review';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Rekap';
+    protected static string|UnitEnum|null $navigationGroup = 'Review';
 
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $pluralModelLabel = 'Rekap Review Layanan';
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getModel()::count() ?: null;
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        return 'success';
-    }
+    protected static ?string $pluralModelLabel = 'Review Layanan';
 
     public static function shouldRegisterNavigation(): bool
     {

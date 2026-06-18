@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\BarangModel;
+use App\Models\KategoriModel;
 use App\Models\PeminjamanModel;
 use App\Models\PerbaikanModel;
 use App\Models\ReqDukunganModel;
@@ -56,11 +57,18 @@ class StatsOverview extends BaseWidget
     private function buildBarangTersediaStat(): Stat
     {
         $tersedia = BarangModel::query()->where('status', 'tersedia')->count();
-        $total = BarangModel::query()->count();
-        $persen = $total > 0 ? round(($tersedia / $total) * 100) : 0;
+
+        $kategoriInfo = KategoriModel::query()->get()->map(function (KategoriModel $kategori): string {
+            $count = BarangModel::query()
+                ->where('kategori_id', $kategori->id)
+                ->where('status', 'tersedia')
+                ->count();
+
+            return "{$kategori->nama_kategori}: {$count}";
+        })->implode(' | ');
 
         return Stat::make('Barang Tersedia', number_format($tersedia))
-            ->description("{$persen}% dari total")
+            ->description($kategoriInfo ?: 'Tidak ada kategori')
             ->descriptionIcon('heroicon-m-check-circle')
             ->color('success');
     }
