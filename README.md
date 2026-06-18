@@ -1,4 +1,4 @@
-# 🏢 SILANKOM — Sistem Layanan Komunikasi
+# 🏢 SIKOMLEK — Sistem Informasi Bag Komlek
 
 <p align="center">
   <img src="https://img.shields.io/badge/Laravel-v12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white" alt="Laravel">
@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/PHP-8.4-777BB4?style=for-the-badge&logo=php&logoColor=white" alt="PHP">
 </p>
 
-**SILANKOM** adalah sistem informasi berbasis web untuk mengelola layanan internal organisasi, mencakup **peminjaman barang**, **perbaikan peralatan**, **dukungan kegiatan**, **inventaris**, dan **review layanan**. Dibangun dengan Laravel 12, Filament v5, dan Tailwind CSS v4.
+**SIKOMLEK** adalah sistem informasi berbasis web untuk mengelola layanan internal organisasi, mencakup **peminjaman barang**, **perbaikan peralatan**, **dukungan kegiatan**, **inventaris**, dan **review layanan**. Dibangun dengan Laravel 12, Filament v5, dan Tailwind CSS v4.
 
 ---
 
